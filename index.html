@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ─────────────────────────────────────────────────────────────
+       SEO — Primary meta
+       NOT: Kanonik alan adı https://www.robust.film varsayıldı.
+       Farklıysa aşağıdaki tüm URL'leri kendi alan adınla değiştir.
+  ────────────────────────────────────────────────────────────── -->
+  <title>Robust — Independent Film & Visual Studio in Istanbul</title>
+  <meta name="description" content="Robust is an independent film and visual studio based in Istanbul. We shape ideas into stories, motion and visuals — commercials, music videos, branded content and post-production." />
+  <meta name="keywords" content="Robust, film studio Istanbul, prodüksiyon, video prodüksiyon, reklam filmi, müzik videosu, yönetmen, post prodüksiyon, motion design, İstanbul film şirketi, creative studio" />
+  <meta name="author" content="Robust" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="theme-color" content="#ff4500" />
+  <link rel="canonical" href="https://www.robust.film/" />
+
+  <!-- Language alternates (site is bilingual EN/TR) -->
+  <link rel="alternate" hreflang="tr" href="https://www.robust.film/" />
+  <link rel="alternate" hreflang="en" href="https://www.robust.film/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.robust.film/" />
+
+  <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Robust" />
+  <meta property="og:title" content="Robust — Independent Film & Visual Studio in Istanbul" />
+  <meta property="og:description" content="We shape ideas into stories, motion and visuals. Independent film & visual studio based in Istanbul." />
+  <meta property="og:url" content="https://www.robust.film/" />
+  <meta property="og:locale" content="tr_TR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <!-- TODO: 1200×630 kapak görselini yükleyip yolunu güncelle -->
+  <meta property="og:image" content="https://www.robust.film/og-cover.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Robust — film & visual studio Istanbul" />
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Robust — Independent Film & Visual Studio in Istanbul" />
+  <meta name="twitter:description" content="We shape ideas into stories, motion and visuals. Independent film & visual studio based in Istanbul." />
+  <meta name="twitter:image" content="https://www.robust.film/og-cover.jpg" />
+
+  <!-- Structured data — Organization / LocalBusiness (Google Knowledge Panel) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Robust",
+    "description": "Independent film and visual studio based in Istanbul. Commercials, music videos, branded content, motion and post-production.",
+    "url": "https://www.robust.film/",
+    "email": "contact@robust.film",
+    "image": "https://www.robust.film/og-cover.jpg",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "İstanbul",
+      "addressCountry": "TR"
+    },
+    "areaServed": "Worldwide",
+    "sameAs": [
+      "https://www.instagram.com/robust.film/",
+      "https://vimeo.com/robust",
+      "https://www.linkedin.com/company/robust-film"
+    ]
+  }
+  </script>
+
+  <!-- Favicon — solid brand-orange disk -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ccircle%20cx='50'%20cy='50'%20r='50'%20fill='%23ff4500'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Warm up the Vimeo hosts so film links open without a cold TLS handshake -->
+  <link rel="preconnect" href="https://player.vimeo.com" crossorigin />
+  <link rel="preconnect" href="https://i.vimeocdn.com" crossorigin />
+  <link rel="preconnect" href="https://f.vimeocdn.com" crossorigin />
+  <link rel="dns-prefetch" href="https://player.vimeo.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <link href="robust.css" rel="stylesheet" />
+
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body {
+      background: #050505;
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Custom cursor (hide default everywhere) ── */
+    * { cursor: none !important; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar        { width: 2px; }
+    ::-webkit-scrollbar-track  { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb  { background: var(--orange); }
+
+    /* ── Selection ── */
+    ::selection { background: var(--orange); color: #050505; }
+
+    /* ── Custom cursor elements ── */
+    #rb-cursor {
+      position: fixed;
+      width: 7px; height: 7px;
+      background: var(--orange);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease, opacity 0.2s;
+      mix-blend-mode: normal;
+    }
+    #rb-cursor-ring {
+      position: fixed;
+      width: 30px; height: 30px;
+      border: 1px solid rgba(var(--orange-rgb), 0.45);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      display: flex; align-items: center; justify-content: center;
+      transition: width 0.3s ease, height 0.3s ease, opacity 0.3s, background 0.3s ease, border-color 0.3s ease;
+    }
+    #rb-cursor-ring::after {
+      content: 'PLAY';
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      color: #050505;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+    /* Cursor over a work card → orange PLAY badge */
+    body.cursor-work #rb-cursor { opacity: 0; }
+    body.cursor-work #rb-cursor-ring {
+      width: 74px; height: 74px;
+      background: rgba(var(--orange-rgb), 0.95);
+      border-color: transparent;
+      box-shadow: 0 0 36px rgba(var(--orange-rgb), 0.35);
+    }
+    body.cursor-work #rb-cursor-ring::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+    body.cursor-active #rb-cursor       { transform: translate(-50%, -50%) scale(2.5); opacity: 0.5; }
+    body.cursor-active #rb-cursor-ring  { opacity: 0; transition: none; }
+
+    /* ── Section wire divider (orange lit line) ── */
+    .rb-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(var(--orange-rgb), 0.5) 40%, rgba(var(--orange-rgb), 0.5) 60%, transparent);
+      box-shadow: 0 0 12px rgba(var(--orange-rgb), 0.18);
+    }
+
+    /* ── Utility ── */
+    #root { min-height: 100vh; }
+
+    /* Page padding-bottom safety */
+    body::after {
+      content: '';
+      display: block;
+      height: 1px;
+      background: transparent;
+    }
+  </style>
+
+  <!-- React 18 + Babel (pinned, with integrity) -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+          integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+          integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+          integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+          crossorigin="anonymous"></script>
+
+  <!-- GSAP — micro-animations (hero entrance, magnetic CTAs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
+  <!-- Vimeo Player API — lets the work overlay autoplay then unmute programmatically -->
+  <script src="https://player.vimeo.com/api/player.js"></script>
+<link id="gfont-Fira-Sans" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&amp;display=swap">
+<link id="gfont-Space-Grotesk" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap">
+</head>
+<body>
+
+  <!-- Full-page background reel — the studio's own showreel edit, looping
+       muted behind the hero. Static HTML + vanilla script so it starts
+       immediately. Home view only via body[data-view]. -->
+  <div id="rb-bg-reel"></div>
+  <script src="hero-reel.js"></script>
+
+  <!-- Interactive Repel Warp background — home view only (hidden on Works via CSS) -->
+  <canvas id="rb-warp"></canvas>
+
+  <div id="root"></div>
+
+  <!-- SEO / no-JS fallback — crawlers and users without JavaScript see the
+       studio's core identity, offering and contact even before React mounts. -->
+  <noscript>
+    <div style="max-width:720px;margin:0 auto;padding:64px 24px;color:#fff;font-family:sans-serif;">
+      <h1 style="font-size:32px;font-weight:700;">Robust — Independent Film &amp; Visual Studio, Istanbul</h1>
+      <p style="color:#c9c9c9;font-size:18px;line-height:1.6;margin-top:16px;">
+        We shape ideas into stories, motion and visuals. Robust is an independent film and visual
+        studio based in Istanbul, working on commercials, music videos, branded content, motion
+        design and post-production.
+      </p>
+      <p style="color:#9a9a9a;margin-top:20px;">
+        İstanbul merkezli bağımsız film ve görsel prodüksiyon stüdyosu — reklam filmi, müzik videosu,
+        marka içeriği, motion tasarım ve post prodüksiyon.
+      </p>
+      <p style="margin-top:24px;">
+        <a href="mailto:contact@robust.film" style="color:#ff4500;">contact@robust.film</a>
+      </p>
+      <ul style="color:#9a9a9a;margin-top:16px;list-style:none;padding:0;">
+        <li><a href="https://www.instagram.com/robust.film/" style="color:#9a9a9a;">Instagram</a></li>
+        <li><a href="https://vimeo.com/robust" style="color:#9a9a9a;">Vimeo</a></li>
+        <li><a href="https://www.linkedin.com/company/robust-film" style="color:#9a9a9a;">LinkedIn</a></li>
+      </ul>
+    </div>
+  </noscript>
+
+  <!-- Custom cursor DOM nodes -->
+  <div id="rb-cursor"></div>
+  <div id="rb-cursor-ring"></div>
+
+  <!-- Cursor animation script -->
+  <script>
+    (function () {
+      var dot  = document.getElementById('rb-cursor');
+      var ring = document.getElementById('rb-cursor-ring');
+      var mx = window.innerWidth / 2, my = window.innerHeight / 2;
+      var rx = mx, ry = my;
+
+      var CLICKABLE = 'a, button, input, textarea, label, select, summary, [role="button"], [role="link"], [onclick], [tabindex]';
+      function isClickable(el) {
+        return el && el.closest && el.closest(CLICKABLE);
+      }
+
+      // Position the dot AND re-evaluate the interactive state on every move.
+      // Driving "cursor-active" from mousemove (instead of mouseover/mouseout)
+      // makes it self-healing: if the element under the cursor changes — e.g.
+      // a clicked link unmounts during a view change — the very next movement
+      // re-checks what's actually beneath the cursor and restores the ring.
+      // (mouseout never fires for an element that was removed, which used to
+      // leave the ring permanently hidden over the sphere.)
+      document.addEventListener('mousemove', function (e) {
+        mx = e.clientX; my = e.clientY;
+        dot.style.left = mx + 'px';
+        dot.style.top  = my + 'px';
+
+        // The ring only collapses when actually interacting with something.
+        if (!document.body.classList.contains('cursor-work')) {
+          if (isClickable(e.target)) document.body.classList.add('cursor-active');
+          else document.body.classList.remove('cursor-active');
+        }
+      });
+
+      // Smooth ring follow
+      (function loop() {
+        rx += (mx - rx) * 0.14;
+        ry += (my - ry) * 0.14;
+        ring.style.left = Math.round(rx) + 'px';
+        ring.style.top  = Math.round(ry) + 'px';
+        requestAnimationFrame(loop);
+      })();
+
+    })();
+  </script>
+
+  <!-- Shared language store (plain JS, must load before component scripts) -->
+  <script src="i18n.js"></script>
+
+  <!-- Component files (order matters — each exports to window) -->
+  <script type="text/babel" src="loader-ascii.jsx"></script>
+  <script type="text/babel" src="kinetic.jsx"></script>
+  <script type="text/babel" src="nav.jsx"></script>
+  <script type="text/babel" src="hero.jsx"></script>
+  <script type="text/babel" src="about-ticker.jsx"></script>
+  <script type="text/babel" src="works-vitrin.jsx"></script>
+  <script type="text/babel" src="project-case.jsx"></script>
+  <script type="text/babel" src="services-contact.jsx"></script>
+  <script type="text/babel" src="works-archive.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+
+  <!-- Interactive background (vanilla JS, renders into #rb-warp) -->
+  <script src="warp-bg.js"></script>
+
+</body>
+</html>
