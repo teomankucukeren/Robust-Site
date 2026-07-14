@@ -19,7 +19,9 @@
     { sel: '.contact-form .cf-field', v: 'rise' },  // brief form fields, staggered
     { sel: '.contact-form .cf-foot', v: 'rise' },
     { sel: '.footer-grid > div', v: 'rise' },       // footer blocks, staggered
-    { sel: '.footer-bottom', v: 'fade' },
+    // NOTE: .footer-bottom (© line + Back-to-top) is intentionally NOT animated.
+    // As the page's very last element it kept landing in the observer's bottom
+    // dead-zone and never revealed, so we leave it permanently visible.
     { sel: '.rb-divider', v: 'wire' }               // hairlines draw across
   ];
 
@@ -37,7 +39,7 @@
     incoming.forEach(function (e, i) {
       e.target.style.setProperty('--mm-d', Math.min(i * 90, 360) + 'ms');
       e.target.setAttribute('data-mm-in', '');
-      io.unobserve(e.target);
+      if (io) io.unobserve(e.target);
     });
   }
 
