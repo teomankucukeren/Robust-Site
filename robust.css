@@ -161,6 +161,11 @@ body[data-view="works"] #rb-warp { display: none; }
   letter-spacing: -0.035em;
   color: var(--white);
 }
+/* "Work" is split into one span per letter for the cursor-light effect,
+   which loses the font's own kerning — the W/o pair in particular reads
+   with a much bigger gap than o/r or r/k. Nudge just that pair in, in em
+   so it scales with the fluid font-size at every breakpoint. */
+.display-xl .kchar:nth-child(2) { margin-left: -12px; }
 .display-l {
   font-family: var(--f-display);
   font-weight: 800;
@@ -328,7 +333,7 @@ body[data-view="works"] #rb-warp { display: none; }
 .rv-fade.is-in { opacity: 1; }
 
 /* masked line reveal for big headlines */
-.rv-mask { overflow: hidden; display: block; padding-bottom: 0.22em; margin-bottom: -0.22em; }
+.rv-mask { overflow: hidden; display: block; padding-bottom: clamp(10px, 1.1vw, 18px); margin-bottom: clamp(-18px, -1.1vw, -10px); }
 .rv-mask .rv-mask-inner {
   display: block;
   transform: translateY(112%);
@@ -466,6 +471,12 @@ body[data-view="works"] #rb-warp { display: none; }
   gap: 10px;
   opacity: 0.35;
 }
+/* Mobile-only orange arrow lives inside the cue; hidden on desktop */
+.hero-scrollcue-arrow { display: none; }
+@keyframes rb-arrow-nudge {
+  0%, 100% { transform: translateY(0);   opacity: 0.55; }
+  50%      { transform: translateY(4px); opacity: 1; }
+}
 
 /* ── About ────────────────────────────────────────────────── */
 
@@ -525,7 +536,9 @@ body[data-view="works"] #rb-warp { display: none; }
   text-align: left;
   /* shift the readout right so it clears the parked octopus head/dot */
   padding-left: 28px;
+  margin-left: -10px;
 }
+
 /* hide the global cursor over the clients section — the octopus IS the cursor */
 body.cursor-octopus #rb-cursor,
 body.cursor-octopus #rb-cursor-ring { display: none !important; }
@@ -556,27 +569,25 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
   border: none;
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 0;
   font-family: var(--f-display);
   font-weight: 700;
   font-size: clamp(17px, 1.4vw, 21px);
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: #5a5a5a;
-  padding: 14px clamp(22px, 2.6vw, 40px);
+  padding: 14px clamp(12px, 1.5vw, 20px);
   flex-shrink: 0;
   transition: color 0.35s ease, text-shadow 0.35s ease;
 }
+/* Play icon removed from view — reserved space/hover-reveal was throwing off
+   the name's box (and the HUD tracking rectangle drawn around it) relative to
+   brands with no film. Clicking still opens the film via the button itself. */
 .ticker-brand .tb-play {
-  font-size: 8px;
-  color: var(--orange);
-  opacity: 0;
-  transform: translateX(-6px);
-  transition: opacity 0.3s ease, transform 0.4s var(--ease);
+  display: none;
 }
 @media (hover: hover) {
   .ticker-brand:hover { color: var(--white); text-shadow: 0 0 18px rgba(255, 92, 26, 0.3); }
-  .ticker-brand:hover .tb-play { opacity: 1; transform: translateX(0); }
 }
 
 /* ── Works vitrin ─────────────────────────────────────────── */
@@ -992,7 +1003,7 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
   align-items: baseline;
   gap: clamp(12px, 1.6vw, 24px);
   width: 100%;
-  padding: clamp(18px, 2.2vw, 28px) 0;
+  padding: clamp(14px, 1.7vw, 28px) 0;
   background: transparent;
   border: none;
   text-align: left;
@@ -1000,7 +1011,7 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
 
 .svc-title {
   font-family: var(--f-display);
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(18px, 1.75vw, 28px);
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -1026,6 +1037,19 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
   transition: opacity 0.3s ease, transform 0.5s var(--ease);
 }
 .svc-item.on .svc-arrow { opacity: 1; transform: translateX(0); }
+
+/* Plus toggle — shown only on mobile accordion rows; rotates to × when open. */
+.svc-plus {
+  display: none;
+  font-family: var(--f-text);
+  font-weight: 300;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--orange);
+  justify-self: end;
+  transition: transform 0.4s var(--ease);
+}
+.svc-plus.is-open { transform: rotate(45deg); }
 
 /* ── Vertical rolodex (wide / scroll-driven) ───────────────── */
 .svc-track { position: relative; }
@@ -1207,6 +1231,1315 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
   .svc-split { grid-template-columns: 1fr; gap: 0; }
   .svc-panel { display: none; }
 }
+
+/* ── Services — editorial index (desktop alternative) ───────
+   number · title+tags · description, all visible, hairline rows.
+   Desktop-only: below 961px the component falls back to the accordion. */
+.svcx-wrap {
+  padding-left: var(--align-x);
+  padding-right: var(--align-x);
+}
+.svcx-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) minmax(0, 1.15fr) 44px;
+  gap: clamp(24px, 3.4vw, 64px);
+  align-items: start;
+  padding: clamp(30px, 3.2vw, 44px) 0;
+  border-top: 1px solid var(--hairline);
+}
+.svcx-wrap > :last-child .svcx-row { border-bottom: 1px solid var(--hairline); }
+/* orange hairline sweeps across the top edge of the hovered row */
+.svcx-row::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+.svcx-row:hover::after { transform: scaleX(1); }
+.svcx-num {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--orange);
+  padding-top: 9px; /* optically aligns with the title cap height */
+}
+.svcx-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(24px, 2.1vw, 34px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin: 0;
+  text-wrap: balance;
+  transition: transform 0.5s var(--ease);
+}
+.svcx-row:hover .svcx-title { transform: translateX(8px); }
+.svcx-tags { margin-top: 18px; margin-bottom: 0; }
+.svcx-desc {
+  max-width: 52ch;
+  padding-top: 6px;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.75;
+}
+.svcx-arrow {
+  justify-self: end;
+  align-self: center;
+  font-size: 28px;
+}
+.svcx-row:hover .svcx-arrow { opacity: 1; transform: translateX(0); }
+
+/* ── Services — card grid (desktop alternative 02) ──────────
+   Hairline-framed cards, 2 per row, the 5th spanning full width. */
+.svcg-wrap {
+  padding-left: var(--align-x);
+  padding-right: var(--align-x);
+}
+.svcg-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(18px, 1.8vw, 28px);
+}
+.svcg-cell:last-child { grid-column: 1 / -1; }
+.svcg-cell { display: grid; } /* stretch the card to the full row height */
+.svcg-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  padding: clamp(26px, 2.6vw, 40px);
+  border: 1px solid var(--hairline);
+  background: transparent;
+  transition: background 0.45s ease, border-color 0.45s ease, transform 0.55s var(--ease);
+}
+.svcg-card:hover {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(var(--orange-rgb), 0.35);
+  transform: translateY(-4px);
+}
+.svcg-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.svcg-num {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--orange);
+}
+.svcg-arrow { font-size: 24px; }
+.svcg-card:hover .svcg-arrow { opacity: 1; transform: translateX(0); }
+.svcg-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(22px, 1.8vw, 30px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin: clamp(22px, 2.4vw, 36px) 0 0;
+  text-wrap: balance;
+}
+.svcg-desc {
+  margin-top: 16px;
+  max-width: 58ch;
+  font-size: clamp(15px, 1.1vw, 16.5px);
+  line-height: 1.7;
+}
+.svcg-tags { margin-top: auto; padding-top: clamp(20px, 2vw, 30px); margin-bottom: 0; }
+
+/* ── Services — editorial accordion (desktop alternative 03) ──
+   Hairline rows: number · big title · plus. One open at a time;
+   the body drops in under the title column. NB: transitions get
+   pinned on toggled nodes in this app, so the body animates in
+   with a keyframe instead. */
+.svca-wrap {
+  padding-left: var(--align-x);
+  padding-right: var(--align-x);
+}
+.svca-row { border-top: 1px solid var(--hairline); }
+.svca-wrap > :last-child .svca-row { border-bottom: 1px solid var(--hairline); }
+.svca-head {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) 44px;
+  gap: clamp(24px, 3.4vw, 64px);
+  align-items: baseline;
+  padding: clamp(26px, 2.8vw, 38px) 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+.svca-num {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--orange);
+}
+.svca-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(26px, 2.4vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: #5e5e5e;
+  transition: color 0.35s ease, transform 0.5s var(--ease);
+  text-wrap: balance;
+}
+.svca-head:hover .svca-title,
+.svca-row.is-open .svca-title { color: var(--white); }
+.svca-head:hover .svca-title { transform: translateX(8px); }
+.svca-row.is-open .svca-head:hover .svca-title { transform: none; }
+.svca-plus {
+  justify-self: end;
+  align-self: center;
+  font-family: var(--f-text);
+  font-weight: 300;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--orange);
+  transition: transform 0.4s var(--ease);
+}
+.svca-row.is-open .svca-plus { transform: rotate(45deg); }
+@keyframes svca-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.svca-body {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) 44px;
+  gap: clamp(24px, 3.4vw, 64px);
+  padding-bottom: clamp(30px, 3.2vw, 44px);
+  animation: svca-in 0.55s var(--ease) backwards;
+}
+.svca-body::before { content: ''; } /* empty number column */
+.svca-body > .svca-tags { grid-column: 2; margin-bottom: 0; }
+.svca-body > .svca-desc {
+  grid-column: 2;
+  margin-top: 18px;
+  max-width: 56ch;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.75;
+}
+
+/* ── Services — full-bleed index (desktop alternative 04) ────
+   Rows and hairlines run the full viewport width; only the page
+   gutter remains at the edges. Oversized titles left, description
+   + tags right — everything visible, no dead side columns. */
+.svcb-wrap { width: 100%; }
+.svcb-row {
+  display: grid;
+  grid-template-columns: clamp(64px, 6vw, 110px) minmax(0, 1.5fr) minmax(320px, 1fr);
+  gap: clamp(28px, 4vw, 80px);
+  align-items: start;
+  padding: clamp(34px, 3.8vw, 56px) var(--gutter);
+  border-top: 1px solid var(--hairline);
+  position: relative;
+}
+.svcb-wrap > :last-child .svcb-row { border-bottom: 1px solid var(--hairline); }
+/* orange hairline sweeps the full row width on hover */
+.svcb-row::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s var(--ease);
+}
+.svcb-row:hover::after { transform: scaleX(1); }
+.svcb-num {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  color: var(--orange);
+  padding-top: clamp(12px, 1.2vw, 20px); /* optically aligns with the title cap height */
+}
+.svcb-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(36px, 3.6vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin: 0;
+  text-wrap: balance;
+  transition: transform 0.5s var(--ease);
+}
+.svcb-row:hover .svcb-title { transform: translateX(10px); }
+.svcb-side { padding-top: clamp(8px, 0.9vw, 14px); }
+.svcb-desc {
+  margin: 0;
+  max-width: none;
+  font-size: clamp(15px, 1.2vw, 17.5px);
+  line-height: 1.75;
+}
+.svcb-tags { margin-top: 22px; margin-bottom: 0; }
+
+/* ── Services — quiet index (desktop alternative 05) ─────────
+   Full-width rows like 04, but restrained: modest titles, the tag
+   words as a quiet mono line under them, description on the right. */
+.svcq-wrap { width: 100%; }
+.svcq-row {
+  display: grid;
+  grid-template-columns: clamp(64px, 6vw, 110px) minmax(0, 1fr) minmax(360px, 1.25fr);
+  gap: clamp(28px, 4vw, 90px);
+  align-items: start;
+  padding: clamp(26px, 2.8vw, 40px) var(--gutter);
+  border-top: 1px solid var(--hairline);
+  position: relative;
+}
+.svcq-wrap > :last-child .svcq-row { border-bottom: 1px solid var(--hairline); }
+.svcq-num {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--gray-4);
+  padding-top: 7px;
+  transition: color 0.35s ease;
+}
+.svcq-row:hover .svcq-num { color: var(--orange); }
+.svcq-title {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(20px, 1.7vw, 27px);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  margin: 0;
+  text-wrap: balance;
+}
+.svcq-tagline {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--orange);
+  opacity: 0.85;
+}
+.svcq-desc {
+  margin: 0;
+  max-width: 62ch;
+  padding-top: 4px;
+  font-size: clamp(14.5px, 1.1vw, 16.5px);
+  line-height: 1.75;
+  color: var(--gray-3);
+  transition: color 0.35s ease;
+}
+.svcq-row:hover .svcq-desc { color: #c9c9c9; }
+
+/* ── Services — film credits (desktop alternative 06) ────────
+   Centered end-credits blocks: number · title · description ·
+   tag line, separated by short centered hairlines. */
+.svcc-wrap {
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+.svcc-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(26px, 2.8vw, 40px) 0;
+}
+.svcc-rule {
+  display: block;
+  width: 64px;
+  height: 1px;
+  background: var(--hairline);
+  margin-bottom: clamp(26px, 2.8vw, 40px);
+}
+.svcc-num {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--orange);
+}
+.svcc-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(24px, 2.2vw, 36px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin: 16px 0 0;
+  text-wrap: balance;
+}
+.svcc-desc {
+  margin: 18px 0 0;
+  max-width: 62ch;
+  font-size: clamp(14.5px, 1.1vw, 16.5px);
+  line-height: 1.75;
+  text-align: center;
+  text-wrap: pretty;
+}
+.svcc-tagline {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gray-4);
+  transition: color 0.35s ease;
+}
+.svcc-block:hover .svcc-tagline { color: var(--orange); }
+
+/* ── Services — expanding panels (desktop alternative 07) ────
+   Five tall panels side by side, like frames on a film strip.
+   The active one widens (flex-grow) and reveals its description;
+   collapsed ones show a vertical title. */
+.svcp-row {
+  display: flex;
+  width: 100%;
+  height: clamp(440px, 54vh, 560px);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.svcp-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  display: block;
+  padding: clamp(22px, 2.2vw, 32px);
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--hairline);
+  text-align: left;
+  transition: flex-grow 0.65s var(--ease), background 0.5s ease;
+}
+.svcp-panel:first-child { border-left: none; }
+.svcp-panel.is-on {
+  flex-grow: 3.2;
+  background: rgba(255, 255, 255, 0.022);
+}
+/* orange hairline slides across the top of the active panel */
+.svcp-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.65s var(--ease);
+}
+.svcp-panel.is-on::after { transform: scaleX(1); }
+.svcp-num {
+  position: absolute;
+  top: clamp(22px, 2.2vw, 32px);
+  left: clamp(22px, 2.2vw, 32px);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--gray-4);
+  transition: color 0.35s ease;
+}
+.svcp-panel.is-on .svcp-num { color: var(--orange); }
+/* collapsed state: title runs bottom-up along the panel */
+.svcp-vtitle {
+  position: absolute;
+  bottom: clamp(22px, 2.2vw, 32px);
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  writing-mode: vertical-rl;
+  max-height: 70%;
+  overflow: hidden;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(16px, 1.35vw, 21px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: #5e5e5e;
+  transition: opacity 0.3s ease, color 0.35s ease;
+}
+.svcp-panel:hover .svcp-vtitle { color: #8a8a8a; }
+.svcp-panel.is-on .svcp-vtitle { opacity: 0; }
+/* expanded content pinned to the bottom, fades up in place */
+.svcp-body {
+  position: absolute;
+  left: clamp(22px, 2.2vw, 32px);
+  right: clamp(22px, 2.2vw, 32px);
+  bottom: clamp(22px, 2.2vw, 32px);
+  min-width: 300px;
+  max-width: 54ch;
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.55s var(--ease);
+}
+.svcp-panel.is-on .svcp-body {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.18s;
+}
+.svcp-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(24px, 2vw, 32px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin: 0;
+  text-wrap: balance;
+}
+.svcp-desc {
+  margin: 16px 0 0;
+  font-size: clamp(14.5px, 1.05vw, 16px);
+  line-height: 1.7;
+  max-width: none;
+}
+.svcp-tagline {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+
+/* ── Services — ghost numerals (desktop alternative 08) ──────
+   Massive outlined numbers behind the copy; rows zigzag
+   left/right across the full page width. */
+.svcn-wrap {
+  width: 100%;
+  padding-inline: var(--gutter);
+  overflow: hidden;
+}
+.svcn-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: clamp(200px, 22vw, 300px);
+  padding: clamp(18px, 2vw, 30px) 0;
+}
+.svcn-ghost {
+  position: absolute;
+  top: 50%;
+  right: 2%;
+  transform: translateY(-50%);
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(160px, 19vw, 290px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.13);
+  letter-spacing: -0.04em;
+  user-select: none;
+  pointer-events: none;
+  transition: -webkit-text-stroke-color 0.5s ease, opacity 0.5s ease;
+}
+.svcn-row:hover .svcn-ghost { -webkit-text-stroke-color: rgba(var(--orange-rgb), 0.5); }
+.svcn-row.is-flip { justify-content: flex-end; }
+.svcn-row.is-flip .svcn-ghost { right: auto; left: 2%; }
+.svcn-content {
+  position: relative;
+  z-index: 2;
+  max-width: 56ch;
+  padding-left: clamp(0px, 4vw, 70px);
+}
+.svcn-row.is-flip .svcn-content {
+  padding-left: 0;
+  padding-right: clamp(0px, 4vw, 70px);
+  text-align: right;
+}
+.svcn-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(26px, 2.4vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin: 0;
+  text-wrap: balance;
+}
+.svcn-desc {
+  margin: 16px 0 0;
+  font-size: clamp(14.5px, 1.1vw, 16.5px);
+  line-height: 1.72;
+  max-width: 52ch;
+}
+.svcn-row.is-flip .svcn-desc { margin-left: auto; }
+.svcn-tagline {
+  display: block;
+  margin-top: 16px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--orange);
+  opacity: 0.85;
+}
+
+/* ── Services — cinema strip (desktop alternative 09) ────────
+   07's expanding panels, elevated: ghost numeral watermark in the
+   open frame, mask-reveal title, tag chips, orange index tick. */
+.svcs-row {
+  display: flex;
+  width: 100%;
+  height: clamp(460px, 56vh, 580px);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.svcs-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: clamp(22px, 2.2vw, 32px);
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--hairline);
+  text-align: left;
+  transition: flex-grow 0.7s var(--ease), background 0.55s ease;
+}
+.svcs-panel:first-child { border-left: none; }
+.svcs-panel.is-on {
+  flex-grow: 3.4;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(var(--orange-rgb), 0.035));
+}
+/* collapsed: title runs bottom-up along the panel */
+.svcs-vtitle {
+  position: absolute;
+  bottom: clamp(22px, 2.2vw, 32px);
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  writing-mode: vertical-rl;
+  max-height: 72%;
+  overflow: hidden;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(16px, 1.35vw, 21px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: #6b6b6b;
+  transition: opacity 0.3s ease, color 0.35s ease;
+}
+.svcs-panel:hover .svcs-vtitle { color: #9a9a9a; }
+.svcs-panel.is-on .svcs-vtitle { opacity: 0; }
+/* open: horizontal title above the description */
+.svcs-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(26px, 2.2vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+/* open content — in flow at the bottom of the column, so it can
+   never collide with the title above */
+.svcs-body {
+  min-width: 0;
+  max-width: 54ch;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.45s ease, transform 0.6s var(--ease);
+}
+.svcs-panel.is-on .svcs-body { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+.svcs-desc {
+  margin: 0;
+  font-size: clamp(14.5px, 1.05vw, 16px);
+  line-height: 1.7;
+  max-width: none;
+}
+.svcs-tags { margin: 20px 0 0; }
+
+/* ── Services — rack focus (desktop alternative 10) ──────────
+   Depth-of-field strip: collapsed frames sit softly out of focus
+   (blur + dim); the open frame racks sharp and widens, title
+   bottom-left with the description landing beside it. */
+.svcf-row {
+  display: flex;
+  width: 100%;
+  height: clamp(380px, 46vh, 480px);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.svcf-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 24px;
+  padding: clamp(22px, 2.2vw, 34px);
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--hairline);
+  text-align: left;
+  transition: flex-grow 0.75s var(--ease), background 0.55s ease;
+}
+.svcf-panel:first-child { border-left: none; }
+.svcf-panel.is-on {
+  flex-grow: 3.6;
+  background: rgba(255, 255, 255, 0.02);
+}
+/* tag words — quiet mono line, top of the frame */
+.svcf-tagline {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gray-4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.45s ease, transform 0.55s var(--ease), color 0.35s ease;
+}
+.svcf-panel.is-on .svcf-tagline {
+  opacity: 1;
+  transform: translateY(0);
+  color: var(--orange);
+  transition-delay: 0.24s;
+}
+/* bottom row: title left, description beside it — bottom-aligned */
+.svcf-foot {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(28px, 3vw, 56px);
+  min-width: 0;
+}
+.svcf-title {
+  flex: none;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(20px, 1.7vw, 27px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: #d0d0d0;
+  margin: 0;
+  max-width: 11ch;
+  text-wrap: balance;
+  filter: blur(1.6px);
+  opacity: 0.55;
+  transition: color 0.45s ease, filter 0.55s ease, opacity 0.45s ease,
+    font-size 0.55s var(--ease), max-width 0.55s var(--ease);
+}
+.svcf-panel:hover .svcf-title { opacity: 0.75; filter: blur(0.8px); }
+.svcf-panel.is-on .svcf-title {
+  color: var(--white);
+  opacity: 1;
+  filter: blur(0);
+  font-size: clamp(24px, 2vw, 33px);
+  max-width: 13ch;
+}
+.svcf-desc {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  max-width: 44ch;
+  font-size: clamp(14px, 1.02vw, 15.5px);
+  line-height: 1.68;
+  opacity: 0;
+  transform: translateX(16px);
+  pointer-events: none;
+  transition: opacity 0.45s ease, transform 0.65s var(--ease);
+}
+.svcf-panel.is-on .svcf-desc { opacity: 1; transform: translateX(0); transition-delay: 0.22s; }
+
+/* ── Services — frames (desktop alternative 11) ──────────────
+   Five separate hairline-framed panels with gaps; horizontal,
+   legible titles from the start. The open frame widens, warms its
+   border and reveals the description. */
+.svcv-stage {
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+.svcv-strip {
+  display: flex;
+  gap: clamp(12px, 1.3vw, 20px);
+  width: 100%;
+  height: clamp(360px, 44vh, 470px);
+}
+.svcv-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 24px;
+  padding: clamp(22px, 2.2vw, 32px);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  text-align: left;
+  transition: flex-grow 0.7s var(--ease), border-color 0.5s ease, background 0.55s ease;
+}
+.svcv-panel:hover { border-color: rgba(255, 255, 255, 0.18); }
+.svcv-panel.is-on {
+  flex-grow: 3.4;
+  border-color: rgba(var(--orange-rgb), 0.4);
+  background: rgba(255, 255, 255, 0.02);
+}
+.svcv-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(19px, 1.6vw, 26px);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: #a8a8a8;
+  margin: 0;
+  max-width: 12ch;
+  text-wrap: balance;
+  transition: color 0.4s ease, font-size 0.55s var(--ease), max-width 0.55s var(--ease);
+}
+.svcv-panel:hover .svcv-title { color: #d4d4d4; }
+.svcv-panel.is-on .svcv-title {
+  color: var(--white);
+  font-size: clamp(24px, 2vw, 32px);
+  max-width: 16ch;
+}
+.svcv-body {
+  min-width: 0;
+  max-width: 52ch;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.45s ease, transform 0.6s var(--ease);
+}
+.svcv-panel.is-on .svcv-body { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+.svcv-desc {
+  margin: 0;
+  font-size: clamp(14.5px, 1.05vw, 16px);
+  line-height: 1.7;
+  max-width: none;
+}
+.svcv-tagline {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--orange);
+  opacity: 0.85;
+}
+
+/* ── Services — index accordion (desktop alternative 12) ─────
+   01's hairline rows as an accordion: the open row shows its
+   description side by side with the title. */
+.svcy-wrap {
+  padding-left: var(--align-x);
+  padding-right: var(--align-x);
+}
+.svcy-row { border-top: 1px solid var(--hairline); position: relative; }
+.svcy-wrap > :last-child .svcy-row { border-bottom: 1px solid var(--hairline); }
+/* orange hairline sweeps across the top edge of the open row */
+.svcy-row::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+.svcy-row.is-open::after { transform: scaleX(1); }
+.svcy-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) minmax(0, 1.15fr) 44px;
+  gap: clamp(24px, 3.4vw, 64px);
+  align-items: start;
+  padding: clamp(24px, 2.6vw, 36px) 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+.svcy-num {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--gray-4);
+  padding-top: 8px;
+  transition: color 0.35s ease;
+}
+.svcy-row.is-open .svcy-num,
+.svcy-grid:hover .svcy-num { color: var(--orange); }
+.svcy-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(22px, 1.9vw, 31px);
+  line-height: 1.14;
+  letter-spacing: -0.015em;
+  color: #6b6b6b;
+  margin: 0;
+  text-wrap: balance;
+  transition: color 0.35s ease, transform 0.5s var(--ease);
+}
+.svcy-grid:hover .svcy-title { transform: translateX(8px); color: #9a9a9a; }
+.svcy-row.is-open .svcy-title { color: var(--white); transform: none; }
+@keyframes svcy-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.svcy-tags {
+  margin: 18px 0 0;
+  animation: svcy-in 0.5s var(--ease) 0.08s backwards;
+}
+.svcy-desc {
+  margin: 0;
+  padding-top: 5px;
+  max-width: 52ch;
+  font-size: clamp(14.5px, 1.1vw, 16.5px);
+  line-height: 1.72;
+  animation: svcy-in 0.55s var(--ease) backwards;
+}
+.svcy-plus {
+  justify-self: end;
+  padding-top: 2px;
+  font-family: var(--f-text);
+  font-weight: 300;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--orange);
+  transition: transform 0.4s var(--ease);
+}
+.svcy-row.is-open .svcy-plus { transform: rotate(45deg); }
+
+/* ── Services — column accordion (desktop alternative 13) ────
+   Five columns side by side, split by vertical hairlines — no
+   boxes. The open column widens; description + tags unfold under
+   its title. */
+.svcz-row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-height: clamp(300px, 36vh, 400px);
+  padding-inline: var(--gutter);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.svcz-col {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: clamp(26px, 2.6vw, 38px) clamp(20px, 2vw, 30px);
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--hairline);
+  text-align: left;
+  transition: flex-grow 0.7s var(--ease);
+}
+.svcz-col:first-child { border-left: none; padding-left: 0; }
+.svcz-col.is-on { flex-grow: 2.9; }
+/* orange tick sweeps the top edge of the open column */
+.svcz-col::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+.svcz-col.is-on::after { transform: scaleX(1); }
+.svcz-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+.svcz-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(19px, 1.6vw, 26px);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: #6b6b6b;
+  margin: 0;
+  max-width: 13ch;
+  text-wrap: balance;
+  transition: color 0.4s ease, font-size 0.55s var(--ease), max-width 0.55s var(--ease);
+}
+.svcz-col:hover .svcz-title { color: #9a9a9a; }
+.svcz-col.is-on .svcz-title {
+  color: var(--white);
+  font-size: clamp(23px, 1.9vw, 31px);
+  max-width: 18ch;
+}
+.svcz-plus {
+  flex: none;
+  font-family: var(--f-text);
+  font-weight: 300;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--gray-4);
+  transition: transform 0.4s var(--ease), color 0.35s ease;
+}
+.svcz-col:hover .svcz-plus { color: var(--orange); }
+.svcz-col.is-on .svcz-plus { transform: rotate(45deg); color: var(--orange); }
+.svcz-body {
+  min-width: 0;
+  max-width: 50ch;
+  margin-top: clamp(20px, 2vw, 30px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.45s ease, transform 0.6s var(--ease);
+}
+.svcz-col.is-on .svcz-body { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+.svcz-desc {
+  margin: 0;
+  font-size: clamp(14.5px, 1.05vw, 16px);
+  line-height: 1.7;
+  max-width: none;
+}
+.svcz-tags { margin: 20px 0 0; }
+
+/* ── Services — crosshair grid (desktop alternative 14) ──────
+   Continuous technical grid: 3 cells over 2, shared hairlines,
+   '+' registration marks at the interior intersections. */
+.svch-wrap {
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+.svch-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border-top: 1px solid var(--hairline);
+}
+.svch-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(28px, 2.8vw, 42px) clamp(24px, 2.4vw, 36px);
+  border-bottom: 1px solid var(--hairline);
+  border-right: 1px solid var(--hairline);
+  transition: background 0.45s ease;
+}
+.svch-cell:hover { background: rgba(255, 255, 255, 0.022); }
+.svch-cell-a { grid-column: span 2; }
+.svch-cell-b { grid-column: span 3; }
+.svch-cell-a:nth-child(3),
+.svch-cell-b:nth-child(5) { border-right: none; }
+.svch-top {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.svch-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(20px, 1.7vw, 27px);
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin: 0;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+.svch-arrow { flex: none; font-size: 24px; }
+.svch-cell:hover .svch-arrow { opacity: 1; transform: translateX(0); }
+.svch-desc {
+  margin: 16px 0 0;
+  font-size: clamp(14px, 1.02vw, 15.5px);
+  line-height: 1.68;
+  max-width: 46ch;
+}
+.svch-tagline {
+  display: block;
+  margin-top: auto;
+  padding-top: clamp(18px, 1.8vw, 26px);
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gray-4);
+  transition: color 0.35s ease;
+}
+.svch-cell:hover .svch-tagline { color: var(--orange); }
+/* '+' registration marks at interior intersections */
+.svch-mark {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--f-mono);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--gray-4);
+  background: var(--bg, #050505);
+  padding: 3px;
+  pointer-events: none;
+  z-index: 2;
+}
+.svch-grid:hover .svch-mark { color: var(--orange); transition: color 0.5s ease; }
+
+/* ── Services — spotlight list (desktop alternative 15) ──────
+   Bare oversized titles; a floating description card trails the
+   cursor over the hovered row. */
+.svcw-list {
+  position: relative;
+  width: 100%;
+  padding-inline: var(--gutter);
+  border-top: 1px solid var(--hairline);
+}
+.svcw-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(24px, 2.6vw, 38px) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.svcw-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(32px, 3.2vw, 56px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin: 0;
+  text-wrap: balance;
+  transition: color 0.4s ease, transform 0.5s var(--ease);
+}
+/* when any row is hovered, the others recede */
+.svcw-list.has-hov .svcw-row:not(.is-hov) .svcw-title { color: #4c4c4c; }
+.svcw-row.is-hov .svcw-title { transform: translateX(12px); }
+.svcw-arrow { flex: none; font-size: 30px; }
+.svcw-row.is-hov .svcw-arrow { opacity: 1; transform: translateX(0); }
+/* floating viewfinder card */
+.svcw-float {
+  position: fixed;
+  z-index: 60;
+  width: 380px;
+  transform: translateY(-50%);
+  padding: 22px 26px;
+  background: rgba(8, 8, 8, 0.92);
+  border: 1px solid rgba(var(--orange-rgb), 0.35);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  animation: rb-fadein 0.25s ease backwards;
+}
+.svcw-float-tags {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+.svcw-float-desc {
+  margin: 12px 0 0;
+  font-family: var(--f-text);
+  font-weight: 400;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--gray-3);
+}
+/* visually hidden fallback */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── Services — showcase reel (desktop alternative 16) ───────
+   Tab rail on top, wide stage below. Auto-advances; the active
+   tab carries a thin filling meter. */
+.svct-wrap {
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+.svct-rail {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(28px, 3vw, 56px);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.svct-tab {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 18px 0 20px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(13px, 1.05vw, 16px);
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--gray-4);
+  transition: color 0.35s ease;
+}
+.svct-tab:hover { color: #a8a8a8; }
+.svct-tab.is-on { color: var(--white); }
+@keyframes svct-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.svct-meter {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  transform-origin: left;
+  animation: svct-fill 5s linear;
+}
+@keyframes svct-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.svct-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: clamp(40px, 5vw, 100px);
+  align-items: start;
+  padding: clamp(44px, 5vw, 76px) 0 clamp(30px, 3.4vw, 52px);
+  animation: svct-in 0.6s var(--ease) backwards;
+}
+.svct-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(40px, 4.2vw, 76px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin: 0;
+  text-wrap: balance;
+}
+.svct-side { padding-top: clamp(6px, 0.8vw, 14px); }
+.svct-desc {
+  margin: 0;
+  max-width: 52ch;
+  font-size: clamp(15px, 1.2vw, 17.5px);
+  line-height: 1.75;
+}
+.svct-tagline {
+  display: block;
+  margin-top: 22px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--orange);
+  opacity: 0.85;
+}
+
+/* ── Services — call sheet (desktop alternative 17) ──────────
+   Production call-sheet table: slate strip, mono column labels,
+   hairline rows. */
+/* ── Services — call sheet (desktop alternative 17) ──────────
+   Shot-list rows; each row's hairline draws itself across the page
+   as the row fades in (staggered via the Reveal wrapper's delay). */
+.svcd-wrap {
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+.svcd-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr) minmax(120px, 0.45fr);
+  gap: clamp(28px, 3.4vw, 72px);
+  align-items: start;
+}
+.svcd-row {
+  position: relative;
+  padding: clamp(26px, 2.8vw, 40px) 0;
+  transition: background 0.4s ease;
+}
+/* the row's own hairline — draws left → right when the row enters view */
+.svcd-row::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--hairline);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1s var(--ease);
+  transition-delay: calc(var(--rv-delay, 0s) + 0.2s);
+}
+.rv-fade.is-in .svcd-row::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .svcd-row::after { transform: scaleX(1) !important; transition: none !important; }
+}
+.svcd-row:hover { background: rgba(255, 255, 255, 0.016); }
+.svcd-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(20px, 1.75vw, 28px);
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin: 0;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+.svcd-desc {
+  margin: 0;
+  padding-top: 4px;
+  max-width: 64ch;
+  font-size: clamp(14.5px, 1.08vw, 16px);
+  line-height: 1.7;
+}
+.svcd-tags {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  padding-top: 6px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gray-4);
+  transition: color 0.35s ease;
+}
+.svcd-row:hover .svcd-tags { color: var(--orange); }
 
 /* ── Contact (premium) ────────────────────────────────────── */
 
@@ -1601,6 +2934,7 @@ textarea.cf-input { min-height: 76px; }
 /* ── Works archive ────────────────────────────────────────── */
 
 .arch-list { position: relative; }
+.arch-cat { display: none; }
 .arch-row {
   position: relative;
   overflow: hidden;
@@ -1679,6 +3013,32 @@ textarea.cf-input { min-height: 76px; }
 .arch-row.spring-in {
   animation: arch-spring 0.6s var(--ease) backwards;
   animation-delay: var(--spring-delay, 0s);
+}
+
+/* Mobile archive: the focused row is chosen from scroll position (see
+   works-archive.jsx) and expands exactly as on desktop — borders stay aligned,
+   so nothing here changes the row itself. Each project's category is laid over
+   its thumbnail. */
+@media (max-width: 760px) {
+  .arch-cat {
+    display: inline-block;
+    position: absolute;
+    top: 14px;
+    right: clamp(14px, 4.5vw, 40px);
+    z-index: 3;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--orange);
+    background: rgba(5, 5, 5, 0.5);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+  }
 }
 
 /* ── Project case study page ──────────────────────────────── */
@@ -1989,7 +3349,7 @@ textarea.cf-input { min-height: 76px; }
    hamburger occupies (same 40×40 box, nav padding offsets). */
 .mmenu-close {
   position: absolute;
-  top: calc(env(safe-area-inset-top, 0px) + 42px);
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
   right: var(--gutter);
   width: 40px; height: 40px;
   background: none; border: none;
@@ -2060,10 +3420,10 @@ textarea.cf-input { min-height: 76px; }
      otherwise .rb-nav-right lands in the middle `auto` column instead of the edge */
   .rb-nav { grid-template-columns: 1fr auto; }
   /* clear the phone notch / earpiece so the logo isn't cut off (esp. when scrolled) */
-  .rb-nav { padding-top: calc(env(safe-area-inset-top, 0px) + 42px); }
-  .rb-nav.scrolled { padding-top: calc(env(safe-area-inset-top, 0px) + 32px); }
+  .rb-nav { padding-top: calc(env(safe-area-inset-top, 0px) + 16px); }
+  .rb-nav.scrolled { padding-top: calc(env(safe-area-inset-top, 0px) + 12px); }
   /* Works archive header: match the homepage nav's vertical placement */
-  .arch-header { padding-top: calc(env(safe-area-inset-top, 0px) + 53px) !important; }
+  .arch-header { padding-top: calc(env(safe-area-inset-top, 0px) + 24px) !important; }
   .rb-nav-links { display: none; }
   .rb-nav-right { gap: 18px; }
   .rb-burger {
@@ -2088,7 +3448,9 @@ textarea.cf-input { min-height: 76px; }
   .rb-burger span:nth-child(1) { width: 26px; }
   .rb-burger span:nth-child(2) { width: 18px; }
   .rb-burger.open span { background: var(--orange); }
-  .rb-burger.open { display: none; }
+  /* keep the 40px box (visibility, not display:none) so hiding the burger doesn't
+     collapse the nav row and re-centre the logo upward */
+  .rb-burger.open { visibility: hidden; }
   .rb-burger.open span:nth-child(1) { width: 24px; transform: translateY(3.25px) rotate(45deg); }
   .rb-burger.open span:nth-child(2) { width: 24px; transform: translateY(-3.25px) rotate(-45deg); }
 
@@ -2098,7 +3460,16 @@ textarea.cf-input { min-height: 76px; }
     backdrop-filter: none; -webkit-backdrop-filter: none;
     padding: calc(env(safe-area-inset-top, 0px) + 92px) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 46px);
   }
-  .mmenu-lang-top { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 40px); left: 0; right: 0; text-align: center; }
+  .mmenu-lang-top {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+    height: 40px;
+    right: calc(var(--gutter) + 40px + 18px);
+    left: auto;
+    display: flex;
+    align-items: center;
+    text-align: left;
+  }
   .mmenu-lang-top .rb-lang { display: inline-flex; }
   .mmenu-list { flex: 1; justify-content: center; align-items: stretch; gap: 3px; }
   .mmenu-link {
@@ -2139,9 +3510,9 @@ textarea.cf-input { min-height: 76px; }
 
   /* keep socials anchored inside the hero on mobile (not floating over every section) */
   /* social icons: pushed to the right edge, nudged down on mobile */
-  .hero-socials { position: absolute; flex-direction: row; gap: 22px; bottom: 112px; left: auto; right: calc(clamp(12px, 2.2vw, 34px) + 4px); transform: none; z-index: 5; }
+  .hero-socials { position: absolute; flex-direction: row; gap: 22px; bottom: 42px; left: auto; right: calc(clamp(12px, 2.2vw, 34px) + 4px); transform: none; z-index: 5; }
   /* raise the whole hero copy block so the "Showreel" CTA lines up with the social icons */
-  section#hero { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 104px) !important; }
+  section#hero { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 34px) !important; }
   #hero .hero-actions > button:last-child { transform: none; }
   #hero .hero-actions > button:first-child { transform: translateY(3px); }
   .hero-socials::before { display: none; }
@@ -2154,6 +3525,16 @@ textarea.cf-input { min-height: 76px; }
     right: auto;
     transform: translateX(-50%);
     bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
+    opacity: 1;
+  }
+  /* Mobile cue = a straight orange vertical line dropping downward */
+  .hero-scrollcue-text,
+  .hero-scrollcue-arrow { display: none; }
+  .hero-scrollcue-line {
+    display: block;
+    width: 2px !important;
+    height: 40px !important;
+    background: linear-gradient(to bottom, var(--orange), transparent) !important;
   }
   /* but hide it while the fullscreen menu is open */
   body.menu-open .hero-scrollcue { display: none; }
@@ -2174,9 +3555,13 @@ textarea.cf-input { min-height: 76px; }
   /* nudge the "03 / What We Do" services block (and everything after) down (50 + 30)px */
   #services { margin-top: calc(clamp(-150px, -12vh, -50px) + 80px - 5px) !important; }
 
-  /* hide the ⇀ arrows on the accordion rows on mobile */
-  #services .svc-row-grid { grid-template-columns: 1fr; }
+  /* hide the ⇀ arrows on the accordion rows on mobile — use the + toggle instead */
+  #services .svc-row-grid { grid-template-columns: 1fr auto; align-items: center; }
   #services .svc-arrow { display: none; }
+  #services .svc-plus { display: block; }
+  /* headings stay white and static on tap — the enlarge/shift is hover-only */
+  #services .svc-title { color: var(--white); }
+  #services .svc-item.on .svc-title { transform: none; }
 
   /* pull everything below the "What We Do" heading up 30px (was 36px gap) */
   #services .svc-split { margin-top: 6px !important; }
@@ -2208,7 +3593,20 @@ textarea.cf-input { min-height: 76px; }
   /* ── Mobile footer — editorial sign-off: large wordmark, full-width menu
      list with row hairlines, mono social chips. The "© 2026 Robust · Back to
      top" bar is deliberately left untouched. ── */
-  .rb-footer { padding-top: 42px; margin-top: 24px !important; }
+  /* Soft dusk into black: no divider line, the animated ribbons continue down
+     from the section above and a gentle gradient darkens them to solid black
+     toward the bottom bar. */
+  .rb-footer {
+    padding-top: 64px;
+    margin-top: 0 !important;
+    border-top: none;
+    background: linear-gradient(to bottom,
+      rgba(5, 5, 5, 0)    0%,
+      rgba(5, 5, 5, 0)    20%,
+      rgba(5, 5, 5, 0.5)  56%,
+      rgba(5, 5, 5, 0.9)  80%,
+      var(--bg)           94%);
+  }
   .footer-grid {
     display: flex;
     flex-direction: column;
@@ -2256,7 +3654,7 @@ textarea.cf-input { min-height: 76px; }
     justify-content: space-between;
     width: 100%;
     font-size: 21px;
-    font-weight: 500;
+    font-weight: 300;
     letter-spacing: -0.01em;
     color: #e8e8e8;
     padding: 16px 2px;
@@ -2422,10 +3820,25 @@ img, svg, video, canvas, iframe { max-width: 100%; }
     padding-left: 16px;
     font-size: 9px;
   }
-  .clients-head { gap: 10px 16px; }
+  /* push the TRACKING readout (and the octopus, which anchors to it) lower so
+     it no longer overlaps the About text above */
+  .clients-head { gap: 10px 16px; padding-top: 40px; }
+  /* nudge the whole Clients block (tracking text, client names, and the octopus
+     canvas, which all live inside #clients) 10px to the right */
+  #clients { transform: translateX(15px); }
+  /* tighten the spacing between the flowing client names so more fit on screen */
+  .ticker-brand {
+    padding-left: 11px;
+    padding-right: 11px;
+    gap: 7px;
+    font-size: 16px;
+    letter-spacing: 0.2em;
+  }
+  /* hint that the names can be swiped */
+  .vt-wrap { touch-action: pan-y; cursor: grab; }
 }
 @media (max-width: 480px) {
-  .track-status { display: none; }
+  .track-status { font-size: 8px; letter-spacing: 0.16em; padding-left: 14px; }
 }
 
 /* About — stacked layout: content sits cleanly under the header with a
@@ -2447,6 +3860,9 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   /* Clients marquee — trim the big padding above/below the flowing names by
      ~20px each side. */
   .vt-wrap { padding-top: 39px !important; padding-bottom: 39px !important; }
+  /* Tighten the spacing BETWEEN the flowing client names (side padding) to
+     match the desktop proportions. */
+  .ticker-brand { padding-left: clamp(9px, 1.1vw, 14px) !important; padding-right: clamp(9px, 1.1vw, 14px) !important; }
 }
 
 /* (Funnel info + service list now align via their shell containers — no
@@ -2472,6 +3888,10 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   gap: 18px;
   flex-wrap: wrap;
   padding-bottom: clamp(64px, 10vh, 96px);
+}
+/* nudge the "View Full Archive" button 10px lower (mobile only) */
+.mworks-head button {
+  transform: translateY(10px);
 }
 .mworks-list {
   display: flex;
@@ -2661,4 +4081,183 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   html::-webkit-scrollbar,
   body::-webkit-scrollbar,
   *::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }
+}
+
+/* Section number eyebrows (01/02/03…) — raised a touch, sitting tight
+   against their line. Applies on desktop homepage, tablet and mobile. */
+.eyebrow { display: inline-block; }
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE scroll choreography (phones ≤760px only)
+   Creative direction: "FOOTAGE BEING LOGGED" — no added graphics,
+   only the existing elements animating. Timecode eyebrows flicker
+   on and lock their tracking; headlines roll up off the slate with
+   a straightening tilt; each work cover wipes open from a different
+   direction while the photo settles from a zoom (counter-scale) and
+   catches a brief orange exposure; the mono category types itself;
+   titles slide + un-skew into place; service rows wipe in like a
+   cue sheet. All triggers ride the existing IntersectionObservers
+   (.is-in / [data-mm-in]); transform + opacity + clip-path only.
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
+
+  /* ── Base: everything lands from below with real travel ── */
+  .rv {
+    transform: translateY(56px);
+    transition: opacity 0.9s ease, transform 1s var(--ease);
+    transition-delay: var(--rv-delay, 0s);
+  }
+  .rv.is-in { transform: translateY(0); }
+
+  .rv-fade {
+    transform: translateY(28px);
+    transition: opacity 0.85s ease, transform 0.95s var(--ease);
+    transition-delay: var(--rv-delay, 0s);
+  }
+  .rv-fade.is-in { transform: translateY(0); }
+
+  /* ── Timecode eyebrows: flicker on like a REC indicator, then the
+        letter-tracking locks tight ── */
+  .rv-fade .eyebrow {
+    transition: letter-spacing 1.1s var(--ease);
+    transition-delay: var(--rv-delay, 0s);
+  }
+  .rv-fade:not(.is-in) .eyebrow { letter-spacing: 0.58em; }
+  .rv-fade.is-in .eyebrow {
+    animation: rb-tc-flicker 0.75s steps(1, end) both;
+    animation-delay: var(--rv-delay, 0s);
+  }
+
+  /* ── Headlines: roll up off the slate with a slight tilt that
+        straightens as the line seats ── */
+  .rv-mask .rv-mask-inner {
+    transform: translateY(118%) rotate(3.5deg);
+    transform-origin: 0 100%;
+  }
+  .rv-mask.is-in .rv-mask-inner { transform: translateY(0) rotate(0deg); }
+
+  /* ── Highlights: no per-card ENTRANCE animation (kept clean). Instead
+        the stack comes alive on SCROLL, the same way the Works page rows
+        do — the card whose centre sits nearest the viewport centre eases
+        up to full presence (cover zooms in, caption seats, siblings dim
+        back). JS (mobile-motion.js) drives a lerped --foc 0→1 per card;
+        everything here is transform/opacity only. ── */
+  /* ── Highlights: a simple, clean REVEAL on entrance (the .rv-fade
+        wrapper fades + rises as each card enters) PLUS a pronounced
+        scroll-FOCUS — the card nearest the viewport centre clearly
+        pops: it scales up and brightens while neighbours shrink and
+        dim back, the cover zooms hard, the caption lifts. Bigger,
+        unmistakable moves; transform/opacity only. ── */
+  .mworks-list > .rv-fade .mwork-media,
+  .mworks-list > .rv-fade .mwork-cat,
+  .mworks-list > .rv-fade .mwork-title,
+  .mworks-list > .rv-fade .mwork-client {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    filter: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  .mworks-list > .rv-fade .mwork-media::after { display: none !important; }
+
+  /* entrance reveal: each thumbnail rises + fades in as you scroll down to it
+     (handled by the .rv-fade wrapper) */
+  .mworks-list > .rv-fade { transform: translateY(52px); }
+  .mworks-list > .rv-fade.is-in { transform: translateY(0); }
+
+  /* scroll-scale (premium carousel feel): the card nearest the viewport centre
+     grows to full size, the others shrink back — PURE scale, no opacity or
+     brightness changes anywhere. JS drives a proportional --foc (0..1). */
+  .mworks-list .mwork {
+    will-change: transform;
+    transform: scale(calc(0.86 + 0.14 * var(--foc, 0)));
+    transform-origin: center center;
+    transition: transform 0.3s ease-out;
+  }
+
+  /* ── Contact: the big mail underline sweeps through once ── */
+  .rv-fade.is-in .contact-bigmail .u::after {
+    animation: rb-underline-sweep 1.2s var(--ease) both;
+    animation-delay: 0.55s;
+  }
+
+  /* ── data-mm layer (elements tagged by mobile-motion.js) ── */
+  [data-mm="rise"] {
+    opacity: 0;
+    transform: translateY(42px);
+    transition: opacity 0.75s ease, transform 0.9s var(--ease);
+    transition-delay: var(--mm-d, 0s);
+  }
+  [data-mm="rise"][data-mm-in] { opacity: 1; transform: translateY(0); }
+
+  [data-mm="fade"] {
+    opacity: 0;
+    transition: opacity 1s ease;
+    transition-delay: var(--mm-d, 0s);
+  }
+  [data-mm="fade"][data-mm-in] { opacity: 1; }
+
+  /* ── Client band: slides in against its own scroll direction ── */
+  [data-mm="band"] {
+    opacity: 0;
+    transform: translateX(72px);
+    transition: opacity 0.9s ease, transform 1.15s var(--ease);
+    transition-delay: var(--mm-d, 0s);
+  }
+  [data-mm="band"][data-mm-in] { opacity: 1; transform: translateX(0); }
+
+  /* ── Service rows: one smooth, staggered rise per row — no
+        double effects on the titles ── */
+  [data-mm="cue"] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.9s var(--ease);
+    transition-delay: var(--mm-d, 0s);
+  }
+  [data-mm="cue"][data-mm-in] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Footer: blocks rise; the coordinates readout types in ── */
+  .footer-grid > :nth-child(1)[data-mm-in]::before {
+    animation: rb-type-in 0.9s steps(18, end) both;
+    animation-delay: 0.35s;
+  }
+
+  /* hairline dividers draw themselves across */
+  [data-mm="wire"] {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1.4s var(--ease);
+    transition-delay: var(--mm-d, 0s);
+  }
+  [data-mm="wire"][data-mm-in] { transform: scaleX(1); }
+
+  /* ── Shared keyframes ── */
+  @keyframes rb-tc-flicker {
+    0%   { opacity: 0; }
+    14%  { opacity: 1; }
+    28%  { opacity: 0.25; }
+    44%  { opacity: 1; }
+    58%  { opacity: 0.4; }
+    72%  { opacity: 1; }
+    100% { opacity: 1; }
+  }
+  @keyframes rb-exposure {
+    0%   { opacity: 0; }
+    30%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes rb-type-in {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+  @keyframes rb-underline-sweep {
+    0%   { transform: scaleX(0); transform-origin: left; }
+    45%  { transform: scaleX(1); transform-origin: left; }
+    55%  { transform: scaleX(1); transform-origin: right; }
+    100% { transform: scaleX(0); transform-origin: right; }
+  }
 }

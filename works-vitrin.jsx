@@ -41,7 +41,7 @@ const FEATURED_WORKS = [
 },
 {
   id: 6, title: 'EVERYTHING Teaser', client: 'NOHLAB', type: 'Teaser Edit', year: '2021',
-  cat: 'POST-PRODUCTION', role: 'Video Edit — Teoman Küçükeren',
+  cat: 'POST-PRODUCTION', editor: 'Teoman Küçükeren',
   desc: 'Teaser edit for Nohlab’s immersive experience EVERYTHING — observing everything as it is and suggesting new possibilities in three parts.',
   color: '#020a10', vimeoId: '1195419528',
   cover: 'https://i.vimeocdn.com/video/2162856955-57c5679f7c3384518d98e1c84b304e0d4e167158cdf659980fd0e0c401cdab60-d_1280x720?region=us'
@@ -69,7 +69,7 @@ const FEATURED_WORKS = [
 },
 {
   id: 10, title: 'Wastetopia', client: 'PINAR AKKURT', type: 'Exhibition Video', year: '2023',
-  cat: 'PRODUCTION', production: 'Robust', director: 'Sinan Akpınar & Teoman Küçükeren',
+  cat: 'PRODUCTION', production: 'Robust', role: 'Production',
   desc: 'Exhibition video for Wastetopia / Atıklar Diyarı, part of Pınar Akkurt’s solo show “Şeyler / Things” at Vision Art Platform.',
   color: '#000a0f', vimeoId: '1197203918',
   cover: 'https://i.vimeocdn.com/video/2163488829-6e183c95bef951aad5aa9a7146f3b0d0bccfafe683b67761ff5d10d12e093a58-d_1280x720?region=us'
@@ -111,7 +111,7 @@ const FEATURED_WORKS = [
 },
 {
   id: 13, title: 'Van Gogh: An Immersive Journey', client: 'NOHLAB', type: 'Teaser Edit', year: '2023',
-  cat: 'POST-PRODUCTION', director: 'Nohlab — Candaş Şişman & Deniz Kader', role: 'Video Edit — Teoman Küçükeren',
+  cat: 'POST-PRODUCTION', director: 'Nohlab — Candaş Şişman & Deniz Kader', editor: 'Teoman Küçükeren',
   desc: 'Teaser edit for Nohlab’s immersive experience Van Gogh: An Immersive Journey — the artist’s life and work transformed into audiovisual storytelling across four parts, from his subconscious to the confinement window at Saint Rémy.',
   color: '#020a10', vimeoId: '1195419527',
   cover: 'https://i.vimeocdn.com/video/2162859475-b13a35a14af3a34c7632d4c0076d2eb2491e2ae4f879b77602ff6be471fe89a4-d_1280x720?region=us'
@@ -125,7 +125,7 @@ const FEATURED_WORKS = [
 },
 {
   id: 18, title: 'Bang & Olufsen: Competition Film', client: 'BANG & OLUFSEN', type: '3D Product Animation', year: '2022',
-  cat: 'ANIMATION', role: 'Animation: Sinan Akpınar · Post: Robust Film',
+  cat: 'ANIMATION', role: 'Animation', director: 'Sinan Akpınar',
   desc: 'A cinematic 3D product animation for a brand competition film — Bang & Olufsen headphones set in a surreal world of floating rocks, dust and soft backlight, framing the product as an object of design, sound and presence.',
   color: '#00060f', vimeoId: '1197215629',
   cover: 'https://i.vimeocdn.com/video/2163903886-43e36db8ea9f7c4bea94ca68a45ffdf331d5b2345d133b20662599e30199c32b-d_1280x720?region=us'
@@ -377,7 +377,11 @@ function useIsTablet() {
 function MobileWorks({ works, onOpen, setView }) {
   const listRef = useRef(null);
 
-  // Gentle scroll parallax on the covers so the stack feels alive while scrolling.
+  // Scroll parallax on the covers + a live "focus" pass so the stack feels
+  // alive: the card nearest the viewport centre eases to full presence (bright,
+  // scaled up, cover zoomed) and cards further away recede — a continuous,
+  // proportional --foc (0..1) per card, smoothed by CSS transitions. Runs in
+  // the component's own loop so it can never be out of sync with the DOM.
   useEffect(() => {
     const root = listRef.current;
     if (!root) return;
@@ -387,12 +391,18 @@ function MobileWorks({ works, onOpen, setView }) {
     const update = () => {
       raf = 0;
       const vh = window.innerHeight || 1;
+      const mid = vh / 2;
       for (const c of covers) {
-        const r = c.parentElement.getBoundingClientRect();
-        if (r.bottom < -40 || r.top > vh + 40) continue;
-        const t = ((r.top + r.height / 2) - vh / 2) / (vh / 2); // -1 (top) .. 1 (bottom)
-        const par = Math.max(-1, Math.min(1, t)) * -14;
+        const card = c.parentElement.parentElement; // .mwork-cover → .mwork-media → .mwork
+        const r = card.getBoundingClientRect();
+        if (r.bottom < -60 || r.top > vh + 60) { card.style.setProperty('--foc', '0'); continue; }
+        const t = ((r.top + r.height / 2) - mid) / (vh / 2); // -1 (top) .. 1 (bottom)
+        const par = Math.max(-1, Math.min(1, t)) * -16;
         c.style.setProperty('--par', par.toFixed(1) + 'px');
+        // focus peaks at centre, fades out by ~70% of a half-viewport
+        const near = Math.max(0, 1 - Math.min(1, Math.abs(t) / 0.7));
+        const eased = near * near * (3 - 2 * near); // smoothstep
+        card.style.setProperty('--foc', eased.toFixed(4));
       }
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
@@ -414,7 +424,7 @@ function MobileWorks({ works, onOpen, setView }) {
             <span className="eyebrow">02</span>
           </Reveal>
           <Reveal variant="mask" delay={0.1} style={{ marginTop: '12px' }}>
-            <h2 className="display-l"><KineticText text="Selected Works" /></h2>
+            <h2 className="display-l"><KineticText text="Highlights" /></h2>
           </Reveal>
         </div>
         <Reveal variant="fade" delay={0.2}>
@@ -525,7 +535,7 @@ function TabletWorks({ works, onOpen, setView }) {
               <span className="eyebrow">02</span>
             </Reveal>
             <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
-              <h2 className="display-l"><KineticText text="Selected Works" /></h2>
+              <h2 className="display-l"><KineticText text="Highlights" /></h2>
             </Reveal>
           </div>
           <Reveal variant="fade" delay={0.25}>
@@ -836,7 +846,7 @@ function WorksFunnel({ works, onOpen, setView }) {
               <span className="eyebrow">02</span>
             </Reveal>
             <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
-              <h2 className="display-l"><KineticText text="Selected Works" /></h2>
+              <h2 className="display-l"><KineticText text="Highlights" /></h2>
             </Reveal>
           </div>
           <Reveal variant="fade" delay={0.25}>
@@ -1251,8 +1261,14 @@ function WorkOverlay({ work, onClose, onChange, big, links, list: navList }) {
             }}>
               {/* Canonical, locked credit order — same sequence for every work:
                   facts (Project · Client · Type · Year), then company credits
-                  (Production · Agency), then people (Director · DoP · Role).
-                  Names always read last. */}
+                  (Production · Agency), then named-role people credits
+                  (Director · DoP · Editor · any custom work.credits pairs),
+                  then a plain Role description as a last resort. Every entry
+                  uses the exact same block shape — LABEL on top, value below —
+                  so the row reads as one consistent pattern; a role (e.g.
+                  "Director") is never combined into the same line as the
+                  person's name, each always gets its own label + its own
+                  value line. */}
               {[
               { l: 'Project', v: work.title },
               { l: 'Client', v: work.client },
@@ -1262,6 +1278,8 @@ function WorkOverlay({ work, onClose, onChange, big, links, list: navList }) {
               work.agency && { l: 'Agency', v: work.agency },
               work.director && { l: 'Director', v: work.director },
               work.dop && { l: 'DoP', v: work.dop },
+              work.editor && { l: 'Editor', v: work.editor },
+              ...(work.credits || []).map((c) => ({ l: c.role, v: c.name })),
               work.role && { l: 'Role', v: work.role }].
               filter(Boolean).map(({ l, v }) =>
               <div key={l} style={{ whiteSpace: isMobile ? undefined : 'nowrap' }}>

@@ -34,9 +34,788 @@ const SERVICES_DATA = [
 }];
 
 
-function Services() {
-  // Vertical service list — hover to enlarge, arrows alongside each row.
+function Services({ layout = '01' }) {
+  // Desktop: '01' index · '02' cards · '03' accordion · '04' full-bleed ·
+  // '05' quiet · '06' credits · '07' expanding panels · '08' ghost numerals ·
+  // '09' cinema strip · '10' rack focus · '11' frames · '12' index accordion ·
+  // '13' column accordion · '14' crosshair grid · '15' spotlight list ·
+  // '16' showcase reel · '17' call sheet · 'list' original.
+  // Tablet/mobile always the compact accordion.
+  const [wide, setWide] = useState(() => window.matchMedia('(min-width: 961px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 961px)');
+    const fn = (e) => setWide(e.matches);
+    mq.addEventListener('change', fn);
+    return () => mq.removeEventListener('change', fn);
+  }, []);
+  const mode = layout === 'index' ? '01' : layout; // legacy stored value
+  if (mode === '01' && wide) return <ServicesIndex />;
+  if (mode === '02' && wide) return <ServicesCards />;
+  if (mode === '03' && wide) return <ServicesAccordionX />;
+  if (mode === '04' && wide) return <ServicesFullBleed />;
+  if (mode === '05' && wide) return <ServicesQuiet />;
+  if (mode === '06' && wide) return <ServicesCredits />;
+  if (mode === '07' && wide) return <ServicesPanels />;
+  if (mode === '08' && wide) return <ServicesNumerals />;
+  if (mode === '09' && wide) return <ServicesPanelsX />;
+  if (mode === '10' && wide) return <ServicesFocus />;
+  if (mode === '11' && wide) return <ServicesFrames />;
+  if (mode === '12' && wide) return <ServicesIndexAcc />;
+  if (mode === '13' && wide) return <ServicesColumns />;
+  if (mode === '14' && wide) return <ServicesCrosshair />;
+  if (mode === '15' && wide) return <ServicesSpotlight />;
+  if (mode === '16' && wide) return <ServicesShowcase />;
+  if (mode === '17' && wide) return <ServicesCallSheet />;
   return <ServicesAccordion />;
+}
+
+/* ── Desktop alternative 17: call sheet ──────────────────
+   Shot-list table — service · description · keywords in hairline
+   rows. Rows fade-rise in with a stagger while each row's hairline
+   draws itself across the page. */
+function ServicesCallSheet() {
+  const [open, setOpen] = useState(0);
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcd-wrap">
+        {SERVICES_DATA.map((svc, i) => {
+          const isOpen = open === i;
+          return (
+            <Reveal variant="fade" delay={0.09 * i} key={i}>
+              <div className={`svcd-row${isOpen ? ' is-open' : ''}`}>
+                <button className="svcd-head" style={{ cursor: 'none' }}
+                  aria-expanded={isOpen}
+                  onClick={() => setOpen(isOpen ? null : i)}>
+                  <h3 className="svcd-title">{svc.title}</h3>
+                  <span className="svcd-plus" aria-hidden="true">+</span>
+                </button>
+                <div className="svcd-collapse" style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}>
+                  <div className="svcd-collapse-inner">
+                    <p className="svc-desc svcd-desc">{svc.desc}</p>
+                    <div className="svcd-tags">
+                      {svc.tags.map((t) => <span key={t}>{t}</span>)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Reveal>);
+        })}
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 16: showcase reel ─────────────────
+   A tab rail of the five services up top; below, a wide stage where
+   the active service plays big — title left, description + tags
+   right. Auto-advances like a reel (pauses on hover); clicking a
+   tab jumps to it. */
+function ServicesShowcase() {
+  const [on, setOn] = useState(0);
+  const hovRef = useRef(false);
+  const reduced = typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  useEffect(() => {
+    if (reduced) return;
+    const t = setInterval(() => {
+      if (!hovRef.current) setOn((p) => (p + 1) % SERVICES_DATA.length);
+    }, 5000);
+    return () => clearInterval(t);
+  }, [reduced]);
+
+  const svc = SERVICES_DATA[on];
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <Reveal variant="fade">
+        <div className="svct-wrap"
+          onMouseEnter={() => {hovRef.current = true;}}
+          onMouseLeave={() => {hovRef.current = false;}}>
+
+          <div className="svct-rail" role="tablist">
+            {SERVICES_DATA.map((s, i) =>
+            <button key={i} role="tab" aria-selected={on === i}
+              className={`svct-tab${on === i ? ' is-on' : ''}`}
+              style={{ cursor: 'none' }}
+              onClick={() => setOn(i)}>
+                <span>{s.title}</span>
+                {on === i && !reduced && <i className="svct-meter" key={`m${i}`}></i>}
+              </button>
+            )}
+          </div>
+
+          <div className="svct-stage" key={on}>
+            <h3 className="svct-title">{svc.title}</h3>
+            <div className="svct-side">
+              <p className="svc-desc svct-desc">{svc.desc}</p>
+              <span className="svct-tagline">{svc.tags.join(' · ')}</span>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+    </section>);
+
+}
+
+/* ── Desktop alternative 15: spotlight list ────────────────
+   Big bare titles stacked full-width; a floating card with the
+   description + tags trails the cursor over the hovered row, like
+   a viewfinder readout. */
+function ServicesSpotlight() {
+  const [hov, setHov] = useState(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const onMove = (e) => setPos({ x: e.clientX, y: e.clientY });
+
+  const CARD_W = 380;
+  const flip = typeof window !== 'undefined' && pos.x > window.innerWidth - (CARD_W + 80);
+  const cardStyle = {
+    left: flip ? pos.x - CARD_W - 28 : pos.x + 28,
+    top: pos.y
+  };
+
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className={`svcw-list${hov !== null ? ' has-hov' : ''}`} onMouseMove={onMove} onMouseLeave={() => setHov(null)}>
+        {SERVICES_DATA.map((svc, i) =>
+        <Reveal key={i} variant="fade" delay={0.05 * i}>
+            <div className={`svcw-row${hov === i ? ' is-hov' : ''}`} onMouseEnter={() => setHov(i)}>
+              <h3 className="svcw-title">{svc.title}</h3>
+              <span className="svc-arrow svcw-arrow" aria-hidden="true">⇀</span>
+            </div>
+          </Reveal>
+        )}
+
+        {hov !== null &&
+        <div className="svcw-float" style={cardStyle}>
+            <span className="svcw-float-tags">{SERVICES_DATA[hov].tags.join(' · ')}</span>
+            <p className="svcw-float-desc">{SERVICES_DATA[hov].desc}</p>
+          </div>
+        }
+      </div>
+
+      {/* hover-less fallback content for touch/keyboard stays in the DOM */}
+      <div className="sr-only">
+        {SERVICES_DATA.map((svc, i) => <p key={i}>{svc.desc}</p>)}
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 14: crosshair grid ────────────────
+   A continuous technical grid — 3 cells over 2 — sharing hairlines,
+   with '+' registration marks at the interior intersections (like a
+   lens chart / technical drawing). Everything is visible at once;
+   hover lifts a cell and warms its marks. */
+function ServicesCrosshair() {
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <Reveal variant="fade">
+        <div className="svch-wrap">
+          <div className="svch-grid">
+            {SERVICES_DATA.map((svc, i) =>
+            <article key={i} className={`svch-cell svch-cell-${i < 3 ? 'a' : 'b'}`}>
+                <div className="svch-top">
+                  <h3 className="svch-title">{svc.title}</h3>
+                  <span className="svc-arrow svch-arrow" aria-hidden="true">⇀</span>
+                </div>
+                <p className="svc-desc svch-desc">{svc.desc}</p>
+                <span className="svch-tagline">{svc.tags.join(' · ')}</span>
+              </article>
+            )}
+            <span className="svch-mark" style={{ left: '33.333%', top: '50%' }} aria-hidden="true">+</span>
+            <span className="svch-mark" style={{ left: '66.667%', top: '50%' }} aria-hidden="true">+</span>
+            <span className="svch-mark" style={{ left: '50%', top: '100%' }} aria-hidden="true">+</span>
+          </div>
+        </div>
+      </Reveal>
+    </section>);
+
+}
+
+/* ── Desktop alternative 13: column accordion ──────────────
+   Horizontal accordion in 01's editorial language: five columns
+   SIDE BY SIDE separated by vertical hairlines (no boxes). The open
+   column widens and its description + tags unfold under the title;
+   the others stay as narrow title columns. */
+function ServicesColumns() {
+  const [on, setOn] = useState(0);
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <Reveal variant="fade">
+        <div className="svcz-row">
+          {SERVICES_DATA.map((svc, i) => {
+            const isOn = on === i;
+            return (
+              <button key={i} className={`svcz-col${isOn ? ' is-on' : ''}`} style={{ cursor: 'none' }}
+                onMouseEnter={() => setOn(i)} onClick={() => setOn(i)}
+                aria-expanded={isOn}>
+                <div className="svcz-head">
+                  <h3 className="svcz-title">{svc.title}</h3>
+                  <span className="svcz-plus" aria-hidden="true">+</span>
+                </div>
+                <div className="svcz-body">
+                  <p className="svc-desc svcz-desc">{svc.desc}</p>
+                  <div className="svc-tags svcz-tags">
+                    {svc.tags.map((t) => <span key={t} className="svc-tag">{t}</span>)}
+                  </div>
+                </div>
+              </button>);
+          })}
+        </div>
+      </Reveal>
+    </section>);
+
+}
+
+/* ── Desktop alternative 12: index accordion ───────────────
+   01's editorial index turned into an accordion: hairline rows with
+   number + title; the open row reveals its description SIDE BY SIDE
+   with the title in the right column. One open at a time. */
+function ServicesIndexAcc() {
+  const [open, setOpen] = useState(0);
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcy-wrap">
+        {SERVICES_DATA.map((svc, i) => {
+          const isOpen = open === i;
+          return (
+            <Reveal key={i} variant="fade" delay={0.05 * i}>
+              <article className={`svcy-row${isOpen ? ' is-open' : ''}`}>
+                <button className="svcy-grid" style={{ cursor: 'none' }}
+                  aria-expanded={isOpen}
+                  onClick={() => setOpen(isOpen ? null : i)}>
+                  <span className="svcy-num">{svc.num}</span>
+                  <div className="svcy-main">
+                    <h3 className="svcy-title">{svc.title}</h3>
+                    {isOpen &&
+                    <div className="svc-tags svcy-tags">
+                        {svc.tags.map((t) => <span key={t} className="svc-tag">{t}</span>)}
+                      </div>
+                    }
+                  </div>
+                  {isOpen ?
+                  <p className="svc-desc svcy-desc">{svc.desc}</p> :
+                  <span className="svcy-spacer" aria-hidden="true"></span>
+                  }
+                  <span className="svcy-plus" aria-hidden="true">+</span>
+                </button>
+              </article>
+            </Reveal>);
+        })}
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 11: frames ─────────────────────
+   Built from scratch on the expanding-strip idea: five separate
+   hairline-framed panels with breathing room between them. Titles
+   are horizontal and legible from the start; the open frame widens,
+   warms its border and reveals the description at the bottom.
+   The whole strip is vertically centered between the "What We Do"
+   header and the next section. */
+function ServicesFrames() {
+  const [on, setOn] = useState(0);
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcv-stage">
+        <Reveal variant="fade" style={{ width: '100%' }}>
+          <div className="svcv-strip">
+            {SERVICES_DATA.map((svc, i) => {
+              const isOn = on === i;
+              return (
+                <button key={i} className={`svcv-panel${isOn ? ' is-on' : ''}`} style={{ cursor: 'none' }}
+                  onMouseEnter={() => setOn(i)} onClick={() => setOn(i)}
+                  aria-expanded={isOn}>
+                  <h3 className="svcv-title">{svc.title}</h3>
+                  <div className="svcv-body">
+                    <p className="svc-desc svcv-desc">{svc.desc}</p>
+                    <span className="svcv-tagline">{svc.tags.join(' · ')}</span>
+                  </div>
+                </button>);
+            })}
+          </div>
+        </Reveal>
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 10: rack focus ───────────────────
+   Expanding panels with a depth-of-field twist: collapsed frames
+   sit softly out of focus (blurred, dimmed) like background bokeh;
+   the open frame racks into focus, its title bottom-left and the
+   description landing beside it — everything bottom-aligned, so
+   texts can never collide. */
+function ServicesFocus() {
+  const [on, setOn] = useState(0);
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <Reveal variant="fade">
+        <div className="svcf-row">
+          {SERVICES_DATA.map((svc, i) => {
+            const isOn = on === i;
+            return (
+              <button key={i} className={`svcf-panel${isOn ? ' is-on' : ''}`} style={{ cursor: 'none' }}
+                onMouseEnter={() => setOn(i)} onClick={() => setOn(i)}
+                aria-expanded={isOn}>
+                <span className="svcf-tagline">{svc.tags.join(' · ')}</span>
+                <div className="svcf-foot">
+                  <h3 className="svcf-title">{svc.title}</h3>
+                  <p className="svc-desc svcf-desc">{svc.desc}</p>
+                </div>
+              </button>);
+          })}
+        </div>
+      </Reveal>
+    </section>);
+
+}
+
+/* ── Desktop alternative 09: cinema strip ─────────────────
+   Expanding panels — collapsed frames show the title VERTICALLY;
+   the open frame widens and shows it horizontally with the
+   description + tags. No numbers, no watermark, no underline. */
+function ServicesPanelsX() {
+  const [on, setOn] = useState(0);
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <Reveal variant="fade">
+        <div className="svcs-row">
+          {SERVICES_DATA.map((svc, i) => {
+            const isOn = on === i;
+            return (
+                <button key={i} className={`svcs-panel${isOn ? ' is-on' : ''}`} style={{ cursor: 'none' }}
+                onMouseEnter={() => setOn(i)} onClick={() => setOn(i)}
+                aria-expanded={isOn}>
+                <span className="svcs-vtitle" aria-hidden="true">{svc.title}</span>
+                <div className="svcs-body">
+                  <h3 className="svcs-title">{svc.title}</h3>
+                  <p className="svc-desc svcs-desc">{svc.desc}</p>
+                  <div className="svc-tags svcs-tags">
+                    {svc.tags.map((t) => <span key={t} className="svc-tag">{t}</span>)}
+                  </div>
+                </div>
+              </button>);
+          })}
+        </div>
+      </Reveal>
+    </section>);
+
+}
+
+/* ── Desktop alternative 08: ghost numerals ───────────────
+   Each service rides a massive outlined numeral — rows zigzag
+   left/right, title + description overlap the number. Hovering a
+   row warms the numeral's stroke to orange. */
+function ServicesNumerals() {
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcn-wrap">
+        {SERVICES_DATA.map((svc, i) =>
+        <Reveal key={i} variant="fade" delay={0.05 * i}>
+            <article className={`svcn-row${i % 2 ? ' is-flip' : ''}`}>
+              <span className="svcn-ghost" aria-hidden="true">{svc.num}</span>
+              <div className="svcn-content">
+                <h3 className="svcn-title">{svc.title}</h3>
+                <p className="svc-desc svcn-desc">{svc.desc}</p>
+                <span className="svcn-tagline">{svc.tags.join(' · ')}</span>
+              </div>
+            </article>
+          </Reveal>
+        )}
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 07: expanding panels ──────────────
+   Five tall panels side by side filling the width — like frames on
+   a strip of film. Collapsed panels show a vertical title; hovering
+   one widens it and its description fades in. */
+function ServicesPanels() {
+  const [on, setOn] = useState(0);
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <Reveal variant="fade">
+        <div className="svcp-row">
+          {SERVICES_DATA.map((svc, i) => {
+            const isOn = on === i;
+            return (
+              <button key={i} className={`svcp-panel${isOn ? ' is-on' : ''}`} style={{ cursor: 'none' }}
+                onMouseEnter={() => setOn(i)} onClick={() => setOn(i)}
+                aria-expanded={isOn}>
+                <span className="svcp-num">{svc.num}</span>
+                <span className="svcp-vtitle" aria-hidden="true">{svc.title}</span>
+                <div className="svcp-body">
+                  <h3 className="svcp-title">{svc.title}</h3>
+                  <p className="svc-desc svcp-desc">{svc.desc}</p>
+                  <span className="svcp-tagline">{svc.tags.join(' · ')}</span>
+                </div>
+              </button>);
+          })}
+        </div>
+      </Reveal>
+    </section>);
+
+}
+
+/* ── Desktop alternative 06: film credits ─────────────────
+   End-credits style: each service is a centered block — mono
+   number, title, centered description, tag words as a quiet mono
+   line — separated by short centered hairlines. */
+function ServicesCredits() {
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcc-wrap">
+        {SERVICES_DATA.map((svc, i) =>
+        <Reveal key={i} variant="fade" delay={0.05 * i}>
+            <article className="svcc-block">
+              {i > 0 && <span className="svcc-rule" aria-hidden="true"></span>}
+              <span className="svcc-num">{svc.num}</span>
+              <h3 className="svcc-title">{svc.title}</h3>
+              <p className="svc-desc svcc-desc">{svc.desc}</p>
+              <span className="svcc-tagline">{svc.tags.join(' · ')}</span>
+            </article>
+          </Reveal>
+        )}
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 05: quiet index ──────────────────
+   Same full-width footprint as 04 but restrained: modest titles,
+   description beside them, tags as a quiet mono line on the right.
+   Elegant hairline rows, subtle hover. */
+function ServicesQuiet() {
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcq-wrap">
+        {SERVICES_DATA.map((svc, i) =>
+        <Reveal key={i} variant="fade" delay={0.05 * i}>
+            <article className="svcq-row">
+              <span className="svcq-num">{svc.num}</span>
+              <div className="svcq-main">
+                <h3 className="svcq-title">{svc.title}</h3>
+                <span className="svcq-tagline">{svc.tags.join(' · ')}</span>
+              </div>
+              <p className="svc-desc svcq-desc">{svc.desc}</p>
+            </article>
+          </Reveal>
+        )}
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 04: full-bleed index ──────────────
+   Edge-to-edge rows spanning the whole viewport — oversized titles
+   on the left, description + tags always visible on the right,
+   hairlines running the full page width. */
+function ServicesFullBleed() {
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcb-wrap">
+        {SERVICES_DATA.map((svc, i) =>
+        <Reveal key={i} variant="fade" delay={0.05 * i}>
+            <article className="svcb-row">
+              <span className="svcb-num">{svc.num}</span>
+              <h3 className="svcb-title">{svc.title}</h3>
+              <div className="svcb-side">
+                <p className="svc-desc svcb-desc">{svc.desc}</p>
+                <div className="svc-tags svcb-tags">
+                  {svc.tags.map((t) => <span key={t} className="svc-tag">{t}</span>)}
+                </div>
+              </div>
+            </article>
+          </Reveal>
+        )}
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 03: editorial accordion ────────────
+   Full-width hairline rows — number · big title · plus toggle.
+   One row open at a time; the open row indents its description
+   under the title column. First row open by default. */
+function ServicesAccordionX() {
+  const [open, setOpen] = useState(0);
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svca-wrap">
+        {SERVICES_DATA.map((svc, i) => {
+          const isOpen = open === i;
+          return (
+            <Reveal key={i} variant="fade" delay={0.05 * i}>
+              <article className={`svca-row${isOpen ? ' is-open' : ''}`}>
+                <button className="svca-head" style={{ cursor: 'none' }}
+                  aria-expanded={isOpen}
+                  onClick={() => setOpen(isOpen ? null : i)}>
+                  <span className="svca-num">{svc.num}</span>
+                  <span className="svca-title">{svc.title}</span>
+                  <span className="svca-plus" aria-hidden="true">+</span>
+                </button>
+                {isOpen &&
+                <div className="svca-body">
+                    <div className="svc-tags svca-tags">
+                      {svc.tags.map((t) => <span key={t} className="svc-tag">{t}</span>)}
+                    </div>
+                    <p className="svc-desc svca-desc">{svc.desc}</p>
+                  </div>
+                }
+              </article>
+            </Reveal>);
+        })}
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative 02: card grid ─────────────────────
+   Hairline-framed cards in a 2-column grid (the 5th spans wide).
+   Number top-left, arrow top-right, title · description · tags below.
+   Hover lifts the card onto a faint surface and warms the frame. */
+function ServicesCards() {
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcg-wrap">
+        <div className="svcg-grid">
+          {SERVICES_DATA.map((svc, i) =>
+          <Reveal key={i} variant="fade" delay={0.06 * i} className="svcg-cell">
+              <article className="svcg-card">
+                <div className="svcg-head">
+                  <span className="svcg-num">{svc.num}</span>
+                  <span className="svc-arrow svcg-arrow" aria-hidden="true">⇀</span>
+                </div>
+                <h3 className="svcg-title">{svc.title}</h3>
+                <p className="svc-desc svcg-desc">{svc.desc}</p>
+                <div className="svc-tags svcg-tags">
+                  {svc.tags.map((t) => <span key={t} className="svc-tag">{t}</span>)}
+                </div>
+              </article>
+            </Reveal>
+          )}
+        </div>
+      </div>
+    </section>);
+
+}
+
+/* ── Desktop alternative: editorial index ───────────────────
+   All five services open at once — number · title+tags · description
+   in one rhythmic stack. No hover-hunting; hover only brightens the
+   row hairline and slides the arrow in. */
+function ServicesIndex() {
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="svcx-wrap">
+        {SERVICES_DATA.map((svc, i) =>
+        <Reveal key={i} variant="fade" delay={0.06 * i}>
+            <article className="svcx-row">
+              <span className="svcx-num">{svc.num}</span>
+              <div className="svcx-main">
+                <h3 className="svcx-title">{svc.title}</h3>
+                <div className="svc-tags svcx-tags">
+                  {svc.tags.map((t) => <span key={t} className="svc-tag">{t}</span>)}
+                </div>
+              </div>
+              <p className="svc-desc svcx-desc">{svc.desc}</p>
+              <span className="svc-arrow svcx-arrow" aria-hidden="true">⇀</span>
+            </article>
+          </Reveal>
+        )}
+      </div>
+    </section>);
+
 }
 
 /* ── Wide layout: scroll-driven vertical carousel ───────────
@@ -215,7 +994,7 @@ function ServicesWheel() {
 /* ── Narrow / touch fallback: original accordion ── */
 function ServicesAccordion() {
   const [active, setActive] = useState(0);
-  const [openM, setOpenM] = useState(0);
+  const [openM, setOpenM] = useState(null);
   const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches;
 
   return (
@@ -292,6 +1071,7 @@ function ServiceRow({ svc, active, openM, onEnter, onClick }) {
     <div className={`svc-item${active ? ' on' : ''}`} onMouseEnter={onEnter}>
       <button className="svc-row-grid" onClick={onClick} style={{ cursor: 'none' }} aria-expanded={openM}>
         <span className="svc-title">{svc.title}</span>
+        <span className={`svc-plus${openM ? ' is-open' : ''}`} aria-hidden="true">+</span>
         <span className="svc-arrow" aria-hidden="true">⇀</span>
       </button>
 
@@ -410,8 +1190,8 @@ function Contact() {
               </Reveal>
               <Reveal variant="fade" delay={0.16}>
                 <div className="contact-phones">
-                  <a href="tel:+905362707505">+90 536 270 75 05</a>
-                  <a href="tel:+905071883117">+90 507 188 31 17</a>
+                  <a href="https://wa.me/905362707505" target="_blank" rel="noopener noreferrer">+90 536 270 75 05</a>
+                  <a href="https://wa.me/905071883117" target="_blank" rel="noopener noreferrer">+90 507 188 31 17</a>
                 </div>
               </Reveal>
               <Reveal variant="fade" delay={0.22}>
@@ -582,7 +1362,7 @@ function Footer({ setView, scrollToSection }) {
         <div>
           <span className="footer-col-label">Connect</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start' }}>
-            {[['Vimeo', 'https://vimeo.com/robust'], ['Instagram', 'https://www.instagram.com/robust.film/?hl=tr'], ['LinkedIn', 'https://www.linkedin.com/company/robust-film']].map(([s, url]) =>
+            {[['Vimeo', 'https://vimeo.com/robust'], ['Instagram', 'https://www.instagram.com/robust.film/?hl=tr'], ['LinkedIn', 'https://www.linkedin.com/company/robustfims']].map(([s, url]) =>
             <a key={s} className="footer-link" href={url} target="_blank" rel="noopener noreferrer" style={{ cursor: 'none' }}>{s}</a>
             )}
           </div>

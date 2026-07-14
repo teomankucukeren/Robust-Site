@@ -41,9 +41,9 @@
   const DICT = {
     // Navigation
     'nav.studio':   { EN: 'Studio',       TR: 'Stüdyo' },
-    'nav.works':    { EN: 'Works',        TR: 'İşler' },
+    'nav.works':    { EN: 'Work',         TR: 'İşler' },
     'nav.services': { EN: 'Services',     TR: 'Ne Yapıyoruz' },
-    'nav.contact':  { EN: 'Connect', TR: 'İletişim' },
+    'nav.contact':  { EN: 'Contact', TR: 'İletişim' },
   };
 
   // Look up a key in the current (or given) language, falling back to EN then the key.

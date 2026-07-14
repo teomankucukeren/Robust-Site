@@ -14,11 +14,16 @@ const ALL_WORKS = window.FEATURED_WORKS;
 const ARCHIVE_WORKS = (() => {
   const byId = (id) => ALL_WORKS.find((w) => w.id === id);
   // 32 = Pepsi × Tokyo, 29 = Paradiso, 31 = Işık, 30 = İtalyan
-  const core = ALL_WORKS.filter((w) => ![32, 29, 31, 30].includes(w.id));
+  // Pinned to the very bottom (user request): 28 = SGIA New Terminal,
+  // 27 = Teknopark İstanbul, 26 = Haf Stone, 24 = Çankaya Healthy Streets.
+  const BOTTOM = [28, 27, 26, 24];
+  const pulled = [32, 29, 31, 30, ...BOTTOM];
+  const core = ALL_WORKS.filter((w) => !pulled.includes(w.id));
   const out = [...core];
   out.splice(4, 0, byId(32)); // Pepsi → into the first ten
   out.splice(8, 0, byId(29)); // Paradiso → into the first ten
   out.push(byId(31), byId(30)); // Işık, then İtalyan → end (design tail)
+  out.push(...BOTTOM.map(byId)); // four films pinned to the very bottom
   return out.filter(Boolean);
 })();
 
@@ -72,6 +77,60 @@ function WorksArchive({ setView }) {
   useEffect(() => {
     let raf;
     const hov = hoverRef.current;
+
+    // ── Mobile: there's no cursor, so drive the focus from scroll position.
+    // The row whose centre sits nearest the viewport centre eases up to full
+    // size while rows further away shrink slightly — the touch analogue of the
+    // desktop hover-expand, so the list feels alive as you scroll instead of
+    // sitting flat. ──
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      const mloop = () => {
+        const rows = rowsRef.current;
+        const vh = window.innerHeight || 1;
+        const mid = vh / 2;
+        // Pick the single row whose centre is nearest the viewport centre as the
+        // focus target — the scroll analogue of the desktop hover target. Then run
+        // the exact same expand: it grows taller via padding (pushing neighbours
+        // away, borders stay aligned) and its cover reveals further.
+        let best = -1, bestD = Infinity;
+        for (let i = 0; i < rows.length; i++) {
+          const el = rows[i]; if (!el) continue;
+          const r = el.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > vh) continue;
+          const d = Math.abs((r.top + r.height / 2) - mid);
+          if (d < bestD) { bestD = d; best = i; }
+        }
+        for (let i = 0; i < rows.length; i++) {
+          const el = rows[i];
+          if (!el) continue;
+          const hovTarget = i === best ? 1 : 0;
+          const ch = (hov[i] == null ? 0 : hov[i]) + (hovTarget - (hov[i] || 0)) * 0.12;
+          hov[i] = ch;
+
+          if (ch < 0.001) {
+            if (el.__grown) { el.__grown = false; el.style.paddingTop = ''; el.style.paddingBottom = ''; }
+          } else {
+            el.__grown = true;
+            const grow = (80 * ch).toFixed(2) + 'px';
+            el.style.paddingTop = `calc(var(--vpad) + ${grow})`;
+            el.style.paddingBottom = `calc(var(--vpad) + ${grow})`;
+          }
+
+          const thumb = el.__thumb || (el.__thumb = el.querySelector('.arch-thumb'));
+          if (thumb) {
+            thumb.style.opacity = (0.3 + 0.4 * ch).toFixed(4);
+            thumb.style.width = (60 + 18 * ch).toFixed(2) + '%';
+          }
+
+          const wantFocus = ch > 0.5;
+          if (wantFocus !== el.__foc) { el.__foc = wantFocus; el.classList.toggle('is-focus', wantFocus); }
+        }
+        raf = requestAnimationFrame(mloop);
+      };
+      raf = requestAnimationFrame(mloop);
+      return () => cancelAnimationFrame(raf);
+    }
+
     const loop = () => {
       const rows = rowsRef.current;
       for (let i = 0; i < rows.length; i++) {
@@ -139,7 +198,7 @@ function WorksArchive({ setView }) {
         <Reveal variant="mask" style={{ marginTop: '0' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 'clamp(16px, 2vw, 30px)', flexWrap: 'wrap' }}>
             <h1 className="display-xl" style={{ fontSize: 'clamp(34px, 5.4vw, 86px)' }}>
-              <KineticText text="Works" />
+              <KineticText text="Work" />
             </h1>
           </div>
         </Reveal>
@@ -234,6 +293,9 @@ function WorkRow({ work, index, innerRef, onEnter, onLeave, onClick }) {
           : `linear-gradient(135deg, ${tintCol} 0%, #0a0a0a 100%)`,
         backgroundPosition: work.thumbPos || 'center',
       }}></div>
+
+      {/* category chip laid over the thumbnail (mobile only — see robust.css) */}
+      <span className="arch-cat">{work.cat}</span>
 
       <div className="arch-titlewrap" style={{ position: 'relative', zIndex: 1 }}>
         <h3 className="display-m arch-title" style={{

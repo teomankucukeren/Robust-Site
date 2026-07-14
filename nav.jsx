@@ -45,12 +45,24 @@ function Nav({ view, setView, scrollToSection }) {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    document.documentElement.style.overflow = menuOpen ? 'hidden' : '';
     document.body.classList.toggle('menu-open', menuOpen);
+    if (!menuOpen) return;
+    // Lock background scroll WITHOUT any layout change. Toggling overflow/position
+    // on <html>/<body> reflows the page, and on mobile that reflow (dynamic toolbar
+    // / viewport recompute) shifted the still-visible fixed nav — the logo, lang
+    // switch and burger jumped upward as the menu faded in. A non-passive
+    // touchmove/wheel guard freezes scrolling with zero geometry change instead.
+    const prevent = (e) => {
+      const menu = document.querySelector('.mmenu');
+      // let the menu itself scroll on short viewports where it overflows
+      if (menu && menu.contains(e.target) && menu.scrollHeight > menu.clientHeight) return;
+      e.preventDefault();
+    };
+    window.addEventListener('touchmove', prevent, { passive: false });
+    window.addEventListener('wheel', prevent, { passive: false });
     return () => {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
+      window.removeEventListener('touchmove', prevent, { passive: false });
+      window.removeEventListener('wheel', prevent, { passive: false });
       document.body.classList.remove('menu-open');
     };
   }, [menuOpen]);
@@ -130,7 +142,7 @@ function Nav({ view, setView, scrollToSection }) {
           <div className="mmenu-socials">
             <a className="mmenu-social" href="https://vimeo.com/robust" target="_blank" rel="noopener noreferrer" aria-label="Vimeo" style={{ cursor: 'none' }}><MmVimeo /></a>
             <a className="mmenu-social" href="https://www.instagram.com/robust.film/?hl=tr" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ cursor: 'none' }}><MmInstagram /></a>
-            <a className="mmenu-social" href="https://www.linkedin.com/company/robust-film" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style={{ cursor: 'none' }}><MmLinkedIn /></a>
+            <a className="mmenu-social" href="https://www.linkedin.com/company/robustfims" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style={{ cursor: 'none' }}><MmLinkedIn /></a>
           </div>
           <a className="mmenu-mail" href="mailto:contact@robust.film" style={{ cursor: 'none' }}>contact@robust.film</a>
         </div>

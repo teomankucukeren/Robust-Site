@@ -16,10 +16,18 @@ function Hero({ setView, tw = {} }) {
   }[headlineSize];
 
   const [loaded, setLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width:760px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width:760px)');
+    const on = () => setIsMobile(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
   const [entered, setEntered] = useState(false);
   const [showreel, setShowreel] = useState(false);
   const [linePulse, setLinePulse] = useState(0);
   const contentRef = useRef(null);
+  const socialsRef = useRef(null);
   const h1Ref = useRef(null);
   const WO = window.WorkOverlay;
 
@@ -70,6 +78,21 @@ function Hero({ setView, tw = {} }) {
       const p = Math.min(1, y / (vh * 0.9));
       el.style.transform = `translateY(${y * -0.22}px)`;
       el.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
+      // Mobile only: carry the social icons up with the same parallax so they
+      // don't stay pinned while the headline/CTAs drift away on scroll.
+      const soc = socialsRef.current;
+      if (soc) {
+        if (window.matchMedia('(max-width:760px)').matches) {
+          // drop the entrance transition once scrolling so the fade tracks the
+          // headline/CTAs instantly instead of lagging on its 1.1s ease
+          soc.style.transition = 'none';
+          soc.style.transform = `translateY(${y * -0.22}px)`;
+          soc.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
+        } else {
+          soc.style.transform = '';
+          soc.style.opacity = '';
+        }
+      }
     };
     const onScroll = () => {if (!raf) raf = requestAnimationFrame(update);};
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -143,7 +166,7 @@ function Hero({ setView, tw = {} }) {
               <HeroCta play label="Showreel" onClick={() => setShowreel(true)} />
             </> :
             <>
-              <HeroCta primary label="Explore the Work" onClick={() => setView('works')} />
+              <HeroCta primary noArrow={isMobile} label="Explore the Work" onClick={() => setView('works')} />
               <HeroCta play label="Showreel" onClick={() => setShowreel(true)} />
             </>
           }
@@ -151,12 +174,15 @@ function Hero({ setView, tw = {} }) {
       </div>
 
       {/* Social anchors — right rail, clear orange accent */}
-      <div className="hero-socials" data-line-pulse={linePulse ? (linePulse % 2 ? 'a' : 'b') : undefined}
-        style={{ opacity: socialGlow === 'dim' ? 0.45 : 1, transition: 'opacity 0.4s ease' }}>
+      <div ref={socialsRef} className="hero-socials" data-line-pulse={linePulse ? (linePulse % 2 ? 'a' : 'b') : undefined}
+        style={{
+          opacity: isMobile ? (loaded ? (socialGlow === 'dim' ? 0.45 : 1) : 0) : (socialGlow === 'dim' ? 0.45 : 1),
+          transition: isMobile ? 'opacity 1.1s ease 1.3s' : 'opacity 0.4s ease'
+        }}>
         {[
         { label: 'Vimeo', icon: <IconVimeo />, href: 'https://vimeo.com/robust' },
         { label: 'Instagram', icon: <IconInstagram />, href: 'https://www.instagram.com/robust.film/?hl=tr' },
-        { label: 'LinkedIn', icon: <IconLinkedIn /> }].
+        { label: 'LinkedIn', icon: <IconLinkedIn />, href: 'https://www.linkedin.com/company/robustfims' }].
         map(({ label, icon, href }) =>
         <SocialAnchor key={label} label={label} icon={icon} href={href} onActivate={() => setLinePulse((n) => n + 1)} />
         )}
@@ -164,8 +190,10 @@ function Hero({ setView, tw = {} }) {
 
       {/* Scroll cue */}
       <div className="hero-scrollcue">
-        <span style={{ fontFamily: "'Space Grotesk'", fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase' }}>Scroll</span>
-        <div style={{ width: '1px', height: '36px', background: 'linear-gradient(to bottom, #ffffff, transparent)', animation: 'rb-scroll 2.2s ease-in-out infinite' }}></div>
+        <span className="hero-scrollcue-text" style={{ fontFamily: "'Space Grotesk'", fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase' }}>Scroll</span>
+        <div className="hero-scrollcue-line" style={{ width: '1px', height: '36px', background: 'linear-gradient(to bottom, #ffffff, transparent)', animation: 'rb-scroll 2.2s ease-in-out infinite' }}></div>
+        {/* Mobile-only: a single orange down arrow (replaces the text + line) */}
+        <span className="hero-scrollcue-arrow" aria-hidden="true">⇂</span>
       </div>
 
       {/* Showreel overlay */}
@@ -284,7 +312,7 @@ function HeroCtaSolid({ label, onClick }) {
 }
 
 /* ── Hero CTAs — plain text links (no boxes), animated underline ── */
-function HeroCta({ label, primary, play, onClick }) {
+function HeroCta({ label, primary, play, noArrow, onClick }) {
   const [hov, setHov] = useState(false);
   const magRef = useMagnetic(0.1);
 
@@ -320,7 +348,7 @@ function HeroCta({ label, primary, play, onClick }) {
           transition: 'transform 0.45s cubic-bezier(0.16,1,0.3,1)'
         }}></span>
       </span>
-      {primary &&
+      {primary && !noArrow &&
       <span aria-hidden="true" style={{
         display: 'inline-block', fontSize: '15px', lineHeight: 1,
         transform: hov ? 'translateX(5px)' : 'translateX(0)',

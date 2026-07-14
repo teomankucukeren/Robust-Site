@@ -13,7 +13,8 @@ const HERO_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "showEyebrow": false,
   "eyebrowText": "Independent film & visual studio \u2014 \u0130stanbul",
   "ctaStyle": "links",
-  "socialGlow": "bright"
+  "socialGlow": "bright",
+  "svcLayout": "list"
 }/*EDITMODE-END*/;
 
 function App() {
@@ -123,7 +124,7 @@ function App() {
           <About />
           <Ticker />
           <WorksVitrin setView={setView} />
-          <Services />
+          <Services layout={tw.svcLayout} />
           <Contact />
           <Footer setView={setView} scrollToSection={scrollToSection} />
         </div>
@@ -136,7 +137,7 @@ function App() {
       )}
 
       {booted && view === 'home' && (
-        <TweaksPanel title="Hero Tweaks">
+        <TweaksPanel title="Tweaks">
           <TweakSection label="Headline" />
           <TweakRadio label="Size" value={tw.headlineSize}
             options={['default', 'large', 'huge']}
@@ -159,6 +160,11 @@ function App() {
           <TweakRadio label="Social icons" value={tw.socialGlow}
             options={['bright', 'dim']}
             onChange={(v) => setTweak('socialGlow', v)} />
+
+          <TweakSection label="Services (desktop)" />
+          <TweakRadio label="Layout" value={tw.svcLayout === 'index' ? '01' : tw.svcLayout}
+            options={['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', 'list']}
+            onChange={(v) => setTweak('svcLayout', v)} />
         </TweaksPanel>
       )}
     </>

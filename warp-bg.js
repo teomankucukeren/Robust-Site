@@ -151,8 +151,12 @@
     if (reel) videoBtm = Math.max(0, Math.min(H, reel.getBoundingClientRect().bottom));
     const gridStart = Math.max(0, videoBtm - 300);
     const footerEl  = document.querySelector('.rb-footer');
+    // On mobile the ribbons flow down THROUGH the footer (a CSS gradient on the
+    // footer fades them to black); on wider screens they still stop at the
+    // footer's top edge as before.
+    const flowIntoFooter = window.innerWidth <= 760;
     let footerTop   = H;
-    if (footerEl) footerTop = Math.max(0, Math.min(H, footerEl.getBoundingClientRect().top));
+    if (footerEl && !flowIntoFooter) footerTop = Math.max(0, Math.min(H, footerEl.getBoundingClientRect().top));
 
     ctx.clearRect(0, 0, W, H);
     ctx.save();

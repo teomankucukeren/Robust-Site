@@ -197,9 +197,46 @@ function Ticker() {
     (section || wrap).addEventListener('touchend', onTouchEnd);
     (section || wrap).addEventListener('touchcancel', onTouchEnd);
 
+    // ── mobile swipe — drag the client names horizontally ──
+    function onDragStart(e) {
+      if (!touchMode) return;
+      const t = e.touches[0]; if (!t) return;
+      dragging = true; dragAxis = null; userVel = 0;
+      dragStartX = dragLastX = t.clientX; dragStartY = t.clientY;
+    }
+    function onDragMove(e) {
+      if (!touchMode || !dragging) return;
+      const t = e.touches[0]; if (!t) return;
+      const dx = t.clientX - dragStartX, dy = t.clientY - dragStartY;
+      if (dragAxis === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+        dragAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+      if (dragAxis === 'x') {
+        e.preventDefault();
+        const step = t.clientX - dragLastX;
+        offset += step;
+        userVel = step;
+        dragLastX = t.clientX;
+        if (oneSet > 0) {
+          while (-offset >= oneSet) offset += oneSet;
+          while (offset > 0) offset -= oneSet;
+        }
+      }
+    }
+    function onDragEnd() { dragging = false; dragAxis = null; }
+    if (touchMode) {
+      wrap.addEventListener('touchstart', onDragStart, { passive: true });
+      wrap.addEventListener('touchmove', onDragMove, { passive: false });
+      wrap.addEventListener('touchend', onDragEnd);
+      wrap.addEventListener('touchcancel', onDragEnd);
+    }
+
     // ── marquee state ──
     let offset = 0, oneSet = 0;
     const speed = 34; // px/s
+    // Mobile: a horizontal finger-drag scrubs the marquee; a flick keeps it
+    // gliding (userVel) before the ambient auto-scroll resumes.
+    let dragging = false, dragAxis = null, dragStartX = 0, dragStartY = 0, dragLastX = 0, userVel = 0;
     let last = performance.now();
     let raf = 0;
     let frameCount = 0;
@@ -270,7 +307,7 @@ function Ticker() {
       let ax0 = gutterPx, ay0 = H / 2;
       const tr = status ? status.getBoundingClientRect() : null;
       if (tr && tr.width > 1) {
-        ax0 = tr.left - sr.left + 22;            // the pulsing ::before dot (aligned with the padded readout)
+        ax0 = tr.left - sr.left + 4;             // nudged left so the head clears the TRACKING label
         ay0 = tr.top - sr.top + tr.height / 2;
       } else {
         // mobile / no status readout: the octopus would otherwise anchor to a
@@ -326,6 +363,14 @@ function Ticker() {
       const visible = arr.length;
       let lock = 0;
 
+      // Only the single name the cursor is actually over gets the tracking box
+      // (not every name within the grab radius).
+      let hovered = null;
+      if (mouse.in) {
+        let md = 1e9;
+        for (const o of arr) { if (o.distCur < md) { md = o.distCur; hovered = o; } }
+      }
+
       // the THREE logos nearest the reference are always grabbed (no cursor needed)
       const sorted = [...arr].sort((a, b) => a.distRef - b.distRef);
       const nearest = sorted[0];
@@ -358,8 +403,8 @@ function Ticker() {
         } else if (o.el.style.color) {
           o.el.style.color = ''; o.el.style.textShadow = '';
         }
-        // tracking box around the brand — only when the cursor triggers it
-        if (cursorProx > 0.04) {
+        // tracking box around the brand — only on the name under the cursor
+        if (o === hovered && cursorProx > 0.04) {
           const a = cursorProx;
           ctx.strokeStyle = `rgba(255,69,0,${0.1 + 0.4 * a})`;
           ctx.lineWidth = 1;
@@ -463,8 +508,19 @@ function Ticker() {
       const dt = Math.min((now - last) / 1000, 0.05); last = now;
       if (pausedRef.current) { mouse.in = false; document.body.classList.remove('cursor-octopus'); }
       if (!reduce) {
-        offset -= speed * dt;
-        if (oneSet > 0 && -offset >= oneSet) offset += oneSet;
+        if (dragging) {
+          // finger is scrubbing — offset already set by onDragMove
+        } else if (Math.abs(userVel) > 0.2) {
+          // flick inertia glides, then decays back to ambient auto-scroll
+          offset += userVel;
+          userVel *= 0.94;
+        } else {
+          offset -= speed * dt;
+        }
+        if (oneSet > 0) {
+          while (-offset >= oneSet) offset += oneSet;
+          while (offset > 0) offset -= oneSet;
+        }
       }
       track.style.transform = `translateX(${offset}px)`;
       mouse.infl += ((mouse.in ? 1 : 0) - mouse.infl) * 0.1;
@@ -485,6 +541,10 @@ function Ticker() {
       (section || wrap).removeEventListener('touchmove', onTouch);
       (section || wrap).removeEventListener('touchend', onTouchEnd);
       (section || wrap).removeEventListener('touchcancel', onTouchEnd);
+      wrap.removeEventListener('touchstart', onDragStart);
+      wrap.removeEventListener('touchmove', onDragMove);
+      wrap.removeEventListener('touchend', onDragEnd);
+      wrap.removeEventListener('touchcancel', onDragEnd);
     };
   }, []);
 
@@ -492,7 +552,7 @@ function Ticker() {
     <section id="clients" style={{ position: 'relative', marginTop: '-140px', paddingTop: 'clamp(70px, 11vh, 150px)', paddingBottom: 'clamp(12px, 2vh, 28px)' }}>
       <div className="gutter shell" style={{ paddingBottom: 'clamp(26px, 3.4vh, 40px)' }}>
         <div className="clients-head" style={{ paddingBottom: 0, justifyContent: 'flex-start', alignItems: 'center', gap: '24px' }}>
-          <span ref={statusRef} className="track-status" style={{ opacity: 0 }}></span>
+          <span ref={statusRef} className="track-status" style={{ opacity: 1 }}></span>
         </div>
       </div>
 
@@ -579,7 +639,15 @@ function Ticker() {
           year: overlay.year,
           vimeoId: overlay.vimeoId
         };
-        return <WO work={work} onClose={() => setOverlay(null)} />;
+        // Portal to <body> so the fixed overlay escapes #clients' mobile
+        // `transform: translateX(15px)` — a transformed ancestor otherwise
+        // becomes the containing block for position:fixed, shifting/clipping
+        // the overlay (the "visual break" on open). No onChange is passed, so
+        // no prev/next arrows show — matching the requested behaviour.
+        return ReactDOM.createPortal(
+          <WO work={work} onClose={() => setOverlay(null)} />,
+          document.body
+        );
       })()}
     </section>);
 
