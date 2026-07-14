@@ -3560,7 +3560,7 @@ textarea.cf-input { min-height: 76px; }
   #services .svc-arrow { display: none; }
   #services .svc-plus { display: block; }
   /* headings stay white and static on tap — the enlarge/shift is hover-only */
-  #services .svc-title { color: var(--white); }
+  #services .svc-title { color: var(--white); font-weight: 600; }
   #services .svc-item.on .svc-title { transform: none; }
 
   /* pull everything below the "What We Do" heading up 30px (was 36px gap) */
