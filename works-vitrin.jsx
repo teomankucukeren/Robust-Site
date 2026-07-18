@@ -61,13 +61,6 @@ const FEATURED_WORKS = [
   cover: 'https://i.vimeocdn.com/video/2158755241-35cbe1f822fc4e5c0b3e06d9d993b413f0f8841c74487e8940f2b31116e30107-d_1280x720?region=us'
 },
 {
-  id: 9, title: 'Dandini', client: '40GECE', type: 'Music Video', year: '2020',
-  cat: 'PRODUCTION', production: 'Robust', director: 'Sinan Akpınar & Anıl Basat',
-  desc: 'Official music video for 40gece’s Dandini — a dark, atmospheric visual language and a cinematic performance-driven mood.',
-  color: '#0c0010', vimeoId: '1196690838',
-  cover: 'https://i.vimeocdn.com/video/2162891273-451066eca7b88087b53c442a6b937eabf9ea91ba70f294817d347c557c61cb17-d_1280x720?region=us'
-},
-{
   id: 10, title: 'Wastetopia', client: 'PINAR AKKURT', type: 'Exhibition Video', year: '2023',
   cat: 'PRODUCTION', production: 'Robust', role: 'Production',
   desc: 'Exhibition video for Wastetopia / Atıklar Diyarı, part of Pınar Akkurt’s solo show “Şeyler / Things” at Vision Art Platform.',
@@ -166,18 +159,11 @@ const FEATURED_WORKS = [
   cover: 'https://i.vimeocdn.com/video/2163906003-6bae890041d851adc3880a18de9eaa63f14fe5ee8c442fd64c432f39f352acd3-d_1280x720?region=us'
 },
 {
-  id: 24, title: 'Çankaya Healthy Streets', client: 'ARUP', type: 'Architectural Film', year: '2021',
-  cat: 'POST-PRODUCTION', role: 'Editing & Motion Graphics · 3D: Allza',
-  desc: 'An architectural presentation film for the Çankaya Healthy Streets Project (Çankaya Municipality) — a pedestrian-friendly urban design approach told through 3D renders, animated information graphics and editorial storytelling.',
-  color: '#020a10', vimeoId: '1193276129',
-  cover: 'https://i.vimeocdn.com/video/2158714642-f6b45411db00f38fb668fd43f206d78de898f4a22fd7cbc8bab820893e61c30c-d_1280x720?region=us'
-},
-{
-  id: 25, title: 'Optimus: Smart Living Systems', client: 'OPTIMUS', type: 'Product Film', year: '2025',
-  cat: 'ANIMATION', role: 'Animation — Sinan Akpınar',
-  desc: 'A product film for Optimus’ modular line of smart control units and their integration into contemporary interiors — clean cinematic close-ups, textured architectural surfaces and a premium visual language.',
-  color: '#0f0800', vimeoId: '1197211264',
-  cover: 'https://i.vimeocdn.com/video/2163492252-246af1077401859a6c7d873645fb99070564bd8b70fd2ba193d41e21ea30f19b-d_1280x720?region=us'
+  id: 9, title: 'Dandini', client: '40GECE', type: 'Music Video', year: '2020',
+  cat: 'PRODUCTION', production: 'Robust', director: 'Sinan Akpınar & Anıl Basat',
+  desc: 'Official music video for 40gece’s Dandini — a dark, atmospheric visual language and a cinematic performance-driven mood.',
+  color: '#0c0010', vimeoId: '1196690838',
+  cover: 'https://i.vimeocdn.com/video/2162891273-451066eca7b88087b53c442a6b937eabf9ea91ba70f294817d347c557c61cb17-d_1280x720?region=us'
 },
 {
   id: 26, title: 'Haf Stone: Surfaces of Luxury', client: 'HAF STONE', type: '3D Animation', year: '2023',
@@ -185,13 +171,6 @@ const FEATURED_WORKS = [
   desc: 'A 3D animation film for Haf Stone showcasing marble and natural-stone surfaces across luxury interiors, offices, hotels and super yachts.',
   color: '#00100a', vimeoId: '1193079763',
   cover: 'https://i.vimeocdn.com/video/2158475613-b052e2fc26a0b54b8e46601fdbe34f8f7439ad7f9a8d8c8cc303a0b1d235c96d-d_1280x720?region=us'
-},
-{
-  id: 27, title: 'Teknopark İstanbul', client: 'ARUP', type: 'Masterplan Animation', year: '—',
-  cat: 'POST-PRODUCTION', role: 'Editing & Motion Graphics · 3D: Allza',
-  desc: 'An architectural masterplan animation for Teknopark İstanbul — the campus development roadmap, future growth phases and sustainability-driven planning presented through 3D visualisations, animated infographics and editorial storytelling.',
-  color: '#06000a', vimeoId: '1193282741',
-  cover: 'https://i.vimeocdn.com/video/2158718330-757be5e245c6d9c19bade12739b54a8d4028cb93a263996d33c2557df732cd3d-d_1280x720?region=us'
 },
 {
   id: 28, title: 'SGIA: New Terminal Competition', client: 'ARUP', type: 'Competition Film', year: '2019',
@@ -313,10 +292,13 @@ const FEATURED_WORKS = [
 // The homepage funnel highlights a curated set — the "Selected Works" — chosen
 // explicitly by id (order preserved). The full catalogue (FEATURED_WORKS) is
 // reserved for the Works archive.
-const SELECTED_IDS = [1, 32, 3, 4, 5, 6, 7, 8, 29, 2];
-const SELECTED_WORKS = SELECTED_IDS
-  .map((id) => FEATURED_WORKS.find((w) => w.id === id))
-  .filter(Boolean);
+// Mobile drops ids 7 (Surface of Taste) & 2 (Patterns of Possibilities);
+// tablet + desktop keep the full curated set.
+const SELECTED_IDS = [1, 32, 3, 4, 5, 6, 8, 29];
+const SELECTED_IDS_FULL = [1, 32, 3, 4, 5, 6, 7, 8, 29, 2];
+const pickWorks = (ids) => ids.map((id) => FEATURED_WORKS.find((w) => w.id === id)).filter(Boolean);
+const SELECTED_WORKS = pickWorks(SELECTED_IDS);
+const SELECTED_WORKS_FULL = pickWorks(SELECTED_IDS_FULL);
 
 // Match the mobile breakpoint used across the CSS. On phones the scroll-driven
 // 3D ring collapses into a cramped, scroll-hijacking sliver — so below this
@@ -336,22 +318,22 @@ function useIsMobile(bp = 760) {
 }
 
 function WorksVitrin({ setView }) {
-  const [overlay, setOverlay] = useState(null);
   const isMobile = useIsMobile(760);
   // Tablet band (761–960px): flat horizontal carousel instead of the 3D funnel.
   const isTablet = useIsTablet();
 
+  // Highlights projects open over Home → Back returns to the homepage.
+  const openWork = (w) => window.RBRouter.openProject(w, { base: 'home' });
+
   let scene;
-  if (isMobile) scene = <MobileWorks works={SELECTED_WORKS} onOpen={setOverlay} setView={setView} />;
-  else if (isTablet) scene = <TabletWorks works={SELECTED_WORKS} onOpen={setOverlay} setView={setView} />;
-  else scene = <WorksFunnel works={SELECTED_WORKS} onOpen={setOverlay} setView={setView} />;
+  if (isMobile) scene = <MobileWorks works={SELECTED_WORKS} onOpen={openWork} setView={setView} />;
+  else if (isTablet) scene = <TabletWorks works={SELECTED_WORKS_FULL} onOpen={openWork} setView={setView} />;
+  else scene = <WorksFunnel works={SELECTED_WORKS_FULL} onOpen={openWork} setView={setView} />;
 
   return (
     <section id="works-vitrin">
       {/* Desktop: rotating 3D funnel. Tablet: horizontal carousel. Mobile: vertical stack. */}
       {scene}
-
-      {overlay && <WorkOverlay work={overlay} onClose={() => setOverlay(null)} onChange={setOverlay} />}
     </section>);
 
 }
@@ -713,7 +695,9 @@ function WorksFunnel({ works, onOpen, setView }) {
       if (!scene || !card) return;
       const cw = card.offsetWidth || 600;
       const R = cw * 0.98;
-      const persp = 1400;
+      // Perspective scales with the viewport (matches the CSS min(60.55vw,1400px))
+      // so the ring's foreshortening ratio stays constant across desktop sizes.
+      const persp = Math.min(1400, window.innerWidth * 0.6055);
       const off = Math.min(80, Math.max(36, 0.035 * window.innerWidth));
       const sRect = scene.getBoundingClientRect();
       // perspective-origin now sits on the ring axis (scene centre − off), so the
@@ -730,9 +714,9 @@ function WorksFunnel({ works, onOpen, setView }) {
       const guideX = probe.getBoundingClientRect().width;
       probe.remove();
       if (!guideX) return;
-      // Match the desktop .fn-scene translateX(200px) so the ring shifts rigidly
-      // with the scene instead of the calibration squeezing it back to the guide.
-      const sceneShift = window.innerWidth > 960 ? 200 : 0;
+      // Match the desktop .fn-scene translateX(min(8.65vw,200px)) so the ring
+      // shifts rigidly with the (now viewport-proportional) scene.
+      const sceneShift = window.innerWidth > 960 ? Math.min(200, window.innerWidth * 0.0865) : 0;
       const rightGuide = window.innerWidth - guideX + sceneShift;
 
       // Furthest-right screen edge over a full rotation, for a given squeeze.
@@ -1581,4 +1565,4 @@ function DesignShowcase({ work }) {
     </a>);
 }
 
-Object.assign(window, { WorksVitrin, WorkOverlay, FEATURED_WORKS });
+Object.assign(window, { WorksVitrin, WorkOverlay, FEATURED_WORKS, SELECTED_WORKS });

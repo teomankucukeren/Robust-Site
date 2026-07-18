@@ -165,7 +165,12 @@ body[data-view="works"] #rb-warp { display: none; }
    which loses the font's own kerning — the W/o pair in particular reads
    with a much bigger gap than o/r or r/k. Nudge just that pair in, in em
    so it scales with the fluid font-size at every breakpoint. */
-.display-xl .kchar:nth-child(2) { margin-left: -12px; }
+.display-xl .kchar:nth-child(2) { margin-left: -0.14em; }
+/* "What We Do" — the per-letter split loses kerning, leaving too big a gap
+   between the "W" and "E" of "We". Pull the "E" (and everything after it,
+   which follows inline) left. In em so it scales with the fluid font-size and
+   the W/E never overlap at small sizes. -0.12em ≈ 8px at the desktop size. */
+#services h2.display-l .kword:nth-of-type(2) .kchar:nth-child(2) { margin-left: -0.12em; }
 .display-l {
   font-family: var(--f-display);
   font-weight: 800;
@@ -277,9 +282,36 @@ body[data-view="works"] #rb-warp { display: none; }
   .hero-h1 { white-space: normal; }
 }
 
+/* "Explore the Work / Showreel" treatment (desktop): white labels, orange
+   accents, a thin divider line between them, and a circular play badge —
+   sized up slightly from the base links treatment. */
+#hero .hero-cta { font-size: 15px !important; letter-spacing: 0.22em !important; gap: 14px !important; }
+#hero .hero-cta-play { color: #ffffff !important; }
+/* "Explore the Work" reads orange on every breakpoint */
+#hero .hero-cta-primary { color: var(--orange) !important; }
+#hero .hero-cta-primary:hover, #hero .hero-cta-play:hover { color: var(--orange) !important; }
+#hero .hero-cta-arrow { color: var(--orange); font-size: 16px !important; }
+#hero .hero-cta-divider {
+  display: inline-block; width: 1px; height: 26px;
+  background: rgba(255, 255, 255, 0.22);
+}
+#hero .hero-cta-playbadge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid var(--orange); color: var(--orange);
+  flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+  #hero .hero-cta-divider, #hero .hero-cta-playbadge { display: none !important; }
+  #hero .hero-cta { font-size: 13px !important; letter-spacing: 0.2em !important; }
+  /* swap order: "Explore the Work" leads, "Showreel" follows */
+  #hero .hero-actions .hero-cta-primary { order: -1; }
+}
+
 /* Tablet hero tweaks: lift the CTAs, nudge the social rail left a touch. */
 @media (min-width: 761px) and (max-width: 960px) {
-  #hero .hero-actions { transform: translateY(-30px) !important; }
+  #hero .hero-actions { transform: translateY(-30px) !important; gap: 26px !important; }
   .hero-socials { right: calc(clamp(12px, 2.2vw, 34px) + 14px) !important; }
 
   /* Service rows: pull the arrow in close beside the title instead of
@@ -470,6 +502,10 @@ body[data-view="works"] #rb-warp { display: none; }
   align-items: center;
   gap: 10px;
   opacity: 0.35;
+}
+/* Laptop / desktop: sit the scroll cue lower so it doesn't crowd the hero copy */
+@media (min-width: 961px) {
+  .hero-scrollcue { bottom: 22px; }
 }
 /* Mobile-only orange arrow lives inside the cue; hidden on desktop */
 .hero-scrollcue-arrow { display: none; }
@@ -860,7 +896,9 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
     grid-template-rows: auto auto;
     align-items: start;
     align-content: start;
-    padding-top: 50px;
+    /* Highlights heading → nearest thumbnail gap: matched to the visible
+       "What We Do" → "Video Production" text gap (~88px) in Services. */
+    padding-top: 96px;
     gap: 28px;
   }
   .fn-scene {
@@ -890,13 +928,14 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
     overflow: visible;
     padding-bottom: 0;
   }
-  #services { margin-top: 0 !important; padding-top: 40px !important; }
+  #services { margin-top: 0 !important; padding-top: 71px !important; }
   /* Tighten "What We Do" heading → service list (was ~89px). */
   #services .gutter.shell { padding-bottom: 24px !important; }
   #services .svc-split { margin-top: 24px !important; }
-  /* Contact reserved ~143px above its heading (margin 83 + padding 60) —
-     bring it in line with the works→services rhythm (~90px). */
-  .contact-sec { margin-top: 14px !important; padding-top: 32px !important; }
+  /* Match the works→services rhythm: the gap from the last service to the
+     "04 / Got something in mind?" heading equals What We Do → first service
+     (~96px). margin 14 + padding 81 ≈ 95 → measured gap ≈ 96px. */
+  .contact-sec { margin-top: 14px !important; padding-top: 81px !important; }
   /* Contact 04 — mirror the phone's ordering/rhythm: status tucked under the
      heading; mail · phones · address grouped together; a clear gap; then the
      Project Brief form. (Address is pulled up into the group like the phone.) */
@@ -1011,10 +1050,10 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
 
 .svc-title {
   font-family: var(--f-display);
-  font-weight: 400;
-  font-size: clamp(18px, 1.75vw, 28px);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  font-size: clamp(19px, 1.9vw, 32px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
   display: block;
   color: #5e5e5e;
   transition: color 0.35s ease, transform 0.5s var(--ease);
@@ -1049,7 +1088,37 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
   justify-self: end;
   transition: transform 0.4s var(--ease);
 }
-.svc-plus.is-open { transform: rotate(45deg); }
+.svc-plus.is-open { transform: none; }
+
+/* ════════════════════════════════════════════════════════════
+   DESKTOP proportional scaling — Highlights funnel + What We Do
+   ────────────────────────────────────────────────────────────
+   These two sections were tuned at the studio's ~2312px 4K width using
+   FIXED offsets (±200px), a capped 1020px card and a fixed 1400px
+   perspective. Below ~1871px --align-x collapses to its small fixed branch,
+   so `align-x − 200` went negative (titles + funnel copy clipped off the
+   LEFT) while the 56vw card grew proportionally too big and the ring cropped
+   off the RIGHT. Re-expressing every fixed value as a viewport fraction of
+   the 2312px reference — capped with min() at the 4K value so ≥2312 is
+   byte-identical — preserves the exact 4K composition and scales it DOWN
+   proportionally on every smaller desktop. Interaction/sticky/scroll intact.
+     200px → 8.65vw · 208px → 9vw · 1020px → 44.1vw · 1400px → 60.55vw
+   Scoped to ≥961px: tablet (≤960) + mobile (≤760) keep their own layouts. */
+@media (min-width: 961px) {
+  /* Card: 56vw made it a bigger share of the viewport on small screens than
+     on 4K (where it capped at 1020 ≈ 44vw). 44.1vw holds that 4K proportion. */
+  .fn-card { width: min(44.1vw, 1020px); }
+  /* Scene nudge + perspective both scale with the viewport, so the ring's
+     foreshortening ratio (persp ÷ radius) stays constant = a true zoom. */
+  .fn-scene { transform: translateX(min(8.65vw, 200px)); perspective: min(60.55vw, 1400px); }
+  /* Project-info copy: land its LEFT edge on the SAME responsive column as the
+     contact email — max(gutter, align-x − 200). The email (.ct-block, line ~2900)
+     uses exactly this: it rests at the gutter on small/normal desktops, then
+     tracks align-x − 200 once the screen is wide enough. Natural left is
+     --gutter, so the shift is that column minus gutter, floored at 0 (never
+     negative → never clips off-screen). Funnel cards untouched. */
+  .fn-text { transform: translateX(max(0px, calc(var(--align-x) - 200px - var(--gutter)))); }
+}
 
 /* ── Vertical rolodex (wide / scroll-driven) ───────────────── */
 .svc-track { position: relative; }
@@ -1230,6 +1299,100 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
 @media (max-width: 900px) {
   .svc-split { grid-template-columns: 1fr; gap: 0; }
   .svc-panel { display: none; }
+}
+
+/* ── Split Directory (Concept C) — tablet + desktop default ── */
+.scc-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 1fr);
+  gap: clamp(40px, 5vw, 72px);
+  align-items: start;
+}
+#services .scc-split { padding-left: var(--align-x); padding-right: var(--align-x); }
+.scc-rail { display: flex; flex-direction: column; transform: translateX(-200px); }
+.scc-item {
+  appearance: none; background: none; border: 0;
+  border-bottom: 1px solid var(--hairline);
+  text-align: left; width: 100%;
+  padding: clamp(18px, 2.2vh, 26px) 0;
+  cursor: none;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+}
+.scc-item:first-child { border-top: 1px solid var(--hairline); }
+.scc-t {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(21px, 2.05vw, 32px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  transition: color 0.3s ease, transform 0.5s var(--ease);
+  display: flex; align-items: baseline; gap: 20px;
+  text-wrap: balance;
+}
+.scc-n {
+  font-family: var(--f-mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--gray-5);
+  transition: color 0.3s ease;
+}
+.scc-item.on .scc-t { color: var(--orange); transform: translateX(10px); }
+.scc-item.on .scc-n { color: var(--orange); }
+.scc-arrow {
+  font-family: var(--f-text); font-weight: 300;
+  font-size: clamp(22px, 2vw, 32px); line-height: 1;
+  color: var(--orange); flex-shrink: 0; align-self: center;
+  opacity: 0; transform: translateX(-10px);
+  transition: opacity 0.3s ease, transform 0.5s var(--ease);
+}
+.scc-item.on .scc-arrow { opacity: 1; transform: translateX(0); }
+.scc-panel {
+  border-left: 1px solid rgba(var(--orange-rgb), 0.55);
+  padding: clamp(18px, 2.2vw, 28px) 0 clamp(18px, 2.2vw, 28px) clamp(28px, 3.2vw, 52px);
+  position: sticky; top: clamp(40px, 12vh, 140px); align-self: start;
+}
+.scc-panel-inner { transition: opacity 0.5s ease; }
+.scc-panel-inner.is-out { opacity: 0.12; }
+.scc-plabel {
+  font-family: var(--f-mono);
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 22px;
+}
+.scc-desc {
+  font-family: var(--f-text);
+  font-weight: 300;
+  font-size: clamp(16px, 1.15vw, 18px);
+  line-height: 1.6;
+  color: var(--gray-2);
+  text-wrap: pretty;
+}
+.scc-plabel-tags { color: var(--orange); }
+.scc-plabel-sep { opacity: 0.5; }
+.scc-ptags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.scc-ptags span {
+  font-family: var(--f-mono);
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gray-3);
+  border: 1px solid var(--hairline); border-radius: 100px;
+  padding: 8px 15px;
+}
+/* Tablet: reset the desktop translate/align, keep two columns but tighter */
+@media (max-width: 960px) {
+  .scc-rail { transform: none; }
+  #services .scc-split { padding-left: var(--gutter); padding-right: var(--gutter); }
+}
+/* Desktop (≥961px): seat the five service headings on the SAME responsive
+   column as the contact email — max(gutter, align-x − 200). The rail's natural
+   left is align-x (via .scc-split padding-left), so shift left to that column.
+   This restores the intended email-aligned position but adds the gutter floor
+   the original fixed −200px lacked, so titles never clip off the left. */
+@media (min-width: 961px) {
+  .scc-rail { transform: translateX(calc(max(var(--gutter), var(--align-x) - 200px) - var(--align-x))); }
+}
+@media (min-width: 761px) and (max-width: 960px) {
+  .scc-split { grid-template-columns: 1fr minmax(240px, 300px); gap: clamp(28px, 3.5vw, 44px); }
+  .scc-t { font-size: clamp(19px, 2.7vw, 26px); }
 }
 
 /* ── Services — editorial index (desktop alternative) ───────
@@ -2834,6 +2997,14 @@ textarea.cf-input { min-height: 76px; }
   transform-origin: left;
   transition: transform 0.6s var(--ease);
 }
+/* All versions: keep a faded orange baseline under every field so the form
+   never looks empty; the bright .cf-line draws over it when focused. */
+.cf-inputwrap::before {
+  content: ''; position: absolute; left: 0; bottom: -1px;
+  width: 100%; height: 1px;
+  background: rgba(var(--orange-rgb), 0.28);
+  pointer-events: none;
+}
 .cf-foot {
   margin-top: clamp(22px, 2.6vw, 32px);
   position: relative;
@@ -3147,8 +3318,17 @@ textarea.cf-input { min-height: 76px; }
 /* ── Footer ───────────────────────────────────────────────── */
 
 .rb-footer {
-  border-top: 1px solid var(--hairline);
+  border-top: none;
   padding-top: clamp(32px, 4vh, 52px);
+  /* Ribbons continue down from the section above (warp-bg.js draws through the
+     footer) and this gradient fades them to solid black toward the bottom bar —
+     same dusk-into-black treatment as mobile. */
+  background: linear-gradient(to bottom,
+    rgba(5, 5, 5, 0)    0%,
+    rgba(5, 5, 5, 0)    20%,
+    rgba(5, 5, 5, 0.5)  56%,
+    rgba(5, 5, 5, 0.9)  80%,
+    var(--bg)           94%);
 }
 .footer-grid {
   display: grid;
@@ -3198,6 +3378,15 @@ textarea.cf-input { min-height: 76px; }
   font-weight: 700;
   color: var(--gray-4);
 }
+/* Sign-off middle line — shown on tablet + desktop, hidden on phone */
+.footer-rights {
+  font-family: var(--f-text);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  color: var(--gray-4);
+}
+@media (max-width: 760px) { .footer-rights { display: none; } }
 @media (max-width: 1000px) {
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid > :first-child { grid-column: 1 / -1; }
@@ -3303,6 +3492,7 @@ textarea.cf-input { min-height: 76px; }
   transform: translateY(-0.5em);
 }
 .mm-label { display: inline-block; }
+.mm-tuck { margin-left: -0.12em; }
 .mmenu-foot {
   margin-top: 40px;
   border-top: 1px solid rgba(255, 255, 255, 0.14);
@@ -3524,7 +3714,7 @@ textarea.cf-input { min-height: 76px; }
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
     opacity: 1;
   }
   /* Mobile cue = a straight orange vertical line dropping downward */
@@ -3560,8 +3750,9 @@ textarea.cf-input { min-height: 76px; }
   #services .svc-arrow { display: none; }
   #services .svc-plus { display: block; }
   /* headings stay white and static on tap — the enlarge/shift is hover-only */
-  #services .svc-title { color: var(--white); font-weight: 600; }
-  #services .svc-item.on .svc-title { transform: none; }
+  #services .svc-title { color: var(--white); font-weight: 600; font-size: clamp(18px, 1.75vw, 28px); line-height: 1.15; letter-spacing: -0.015em; }
+  /* selected (tapped) row turns orange on mobile */
+  #services .svc-item.on .svc-title { transform: none; color: var(--orange); }
 
   /* pull everything below the "What We Do" heading up 30px (was 36px gap) */
   #services .svc-split { margin-top: 6px !important; }
@@ -3836,6 +4027,12 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   }
   /* hint that the names can be swiped */
   .vt-wrap { touch-action: pan-y; cursor: grab; }
+  /* The block is nudged +15px right (translateX above), which pushes the RIGHT
+     fade's solid black ~15px off-screen so names fade out subtly there. The LEFT
+     fade sat fully on-screen and went full black too early. Mirror the right's
+     VISIBLE profile — peak ~0.75 black fading out over the same span — so both
+     edges read identically. (.vt-wrap clips, so we soften rather than offset.) */
+  .vt-fade-left { background: linear-gradient(to right, rgba(5,5,5,0.75) 0%, transparent 75%) !important; }
 }
 @media (max-width: 480px) {
   .track-status { font-size: 8px; letter-spacing: 0.16em; padding-left: 14px; }

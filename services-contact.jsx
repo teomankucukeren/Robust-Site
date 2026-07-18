@@ -48,6 +48,15 @@ function Services({ layout = '01' }) {
     mq.addEventListener('change', fn);
     return () => mq.removeEventListener('change', fn);
   }, []);
+  // Phones (<761px) keep the original compact accordion; tablet + desktop get
+  // the Split Directory (Concept C).
+  const [phone, setPhone] = useState(() => window.matchMedia('(max-width: 760px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 760px)');
+    const fn = (e) => setPhone(e.matches);
+    mq.addEventListener('change', fn);
+    return () => mq.removeEventListener('change', fn);
+  }, []);
   const mode = layout === 'index' ? '01' : layout; // legacy stored value
   if (mode === '01' && wide) return <ServicesIndex />;
   if (mode === '02' && wide) return <ServicesCards />;
@@ -66,6 +75,8 @@ function Services({ layout = '01' }) {
   if (mode === '15' && wide) return <ServicesSpotlight />;
   if (mode === '16' && wide) return <ServicesShowcase />;
   if (mode === '17' && wide) return <ServicesCallSheet />;
+  // Default ('list'): Split Directory on tablet + desktop, accordion on phones.
+  if (!phone) return <ServicesSplitC />;
   return <ServicesAccordion />;
 }
 
@@ -991,6 +1002,69 @@ function ServicesWheel() {
 
 }
 
+/* ── Split Directory (Concept C) — tablet + desktop default ──────────
+   Compact numbered list of the five services on the left; hovering a
+   row swaps a live, crossfading description panel on the right. Reuses
+   the page's --align-x column + translateX so it lines up with the
+   funnel/Highlights above. Phones fall back to ServicesAccordion. */
+function SccPanel({ svc }) {
+  const [shown, setShown] = useState(svc);
+  const [vis, setVis] = useState(true);
+  useEffect(() => {
+    if (svc === shown) return;
+    setVis(false);
+    const t = setTimeout(() => { setShown(svc); setVis(true); }, 180);
+    return () => clearTimeout(t);
+  }, [svc, shown]);
+  return (
+    <aside className="scc-panel" aria-live="polite">
+      <div className={`scc-panel-inner${vis ? '' : ' is-out'}`}>
+        <div className="scc-plabel scc-plabel-tags">
+          {shown.tags.map((t, i) => <span key={t}>{t}{i < shown.tags.length - 1 ? <span className="scc-plabel-sep"> · </span> : null}</span>)}
+        </div>
+        <p className="scc-desc">{shown.desc}</p>
+      </div>
+    </aside>);
+
+}
+
+function ServicesSplitC() {
+  const [active, setActive] = useState(0);
+  const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches;
+  return (
+    <section id="services" style={{ marginTop: 'clamp(-150px, -12vh, -50px)', paddingTop: 'clamp(40px, 6vh, 84px)' }}>
+      <div className="gutter shell" style={{ paddingBottom: 'clamp(36px, 4.5vh, 56px)' }}>
+        <div>
+          <Reveal variant="fade">
+            <span className="eyebrow">03</span>
+          </Reveal>
+          <Reveal variant="mask" delay={0.12} style={{ marginTop: '14px' }}>
+            <h2 className="display-l"><KineticText text="What We Do" /></h2>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="gutter scc-split" style={{ marginTop: 'clamp(52px, 6vh, 82px)' }}>
+        <div className="scc-rail">
+          {SERVICES_DATA.map((svc, i) =>
+          <button
+            key={i}
+            className={`scc-item${active === i ? ' on' : ''}`}
+            style={{ cursor: 'none' }}
+            aria-pressed={active === i}
+            onMouseEnter={() => canHover && setActive(i)}
+            onClick={() => setActive(i)}>
+            <span className="scc-t">{svc.title}</span>
+            <span className="scc-arrow" aria-hidden="true">⇀</span>
+          </button>
+          )}
+        </div>
+        <SccPanel svc={SERVICES_DATA[active]} />
+      </div>
+    </section>);
+
+}
+
 /* ── Narrow / touch fallback: original accordion ── */
 function ServicesAccordion() {
   const [active, setActive] = useState(0);
@@ -1071,7 +1145,7 @@ function ServiceRow({ svc, active, openM, onEnter, onClick }) {
     <div className={`svc-item${active ? ' on' : ''}`} onMouseEnter={onEnter}>
       <button className="svc-row-grid" onClick={onClick} style={{ cursor: 'none' }} aria-expanded={openM}>
         <span className="svc-title">{svc.title}</span>
-        <span className={`svc-plus${openM ? ' is-open' : ''}`} aria-hidden="true">+</span>
+        <span className={`svc-plus${openM ? ' is-open' : ''}`} aria-hidden="true">{openM ? '−' : '+'}</span>
         <span className="svc-arrow" aria-hidden="true">⇀</span>
       </button>
 
@@ -1114,7 +1188,7 @@ function Contact() {
     if (!form.name.trim()) errs.name = 'Please add your name.';
     if (!form.email.trim()) errs.email = 'Please add your email address.';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) errs.email = 'That doesn’t look like a valid email — check the format.';
-    if (!form.message.trim()) errs.message = 'Tell us a little about the project.';
+    if (!form.message.trim()) errs.message = 'Tell us what’s on your mind.';
     return errs;
   };
 
@@ -1202,12 +1276,12 @@ function Contact() {
 
             <div className="ct-col" style={{ padding: "0px", transform: "translateY(-5px)" }}>
               <Reveal variant="fade" delay={0.1}>
-                <span className="ct-label">Project Brief</span>
+                <span className="ct-label">Contact Us</span>
               </Reveal>
               <form className="contact-form" onSubmit={handleSubmit} noValidate>
                 <CField index="01" label="Name" value={form.name} onChange={(v) => update('name', v)} placeholder="Your name" error={errors.name} />
                 <CField index="02" label="Email" type="email" value={form.email} onChange={(v) => update('email', v)} placeholder="you@studio.com" error={errors.email} />
-                <CField index="03" label="Message" value={form.message} onChange={(v) => update('message', v)} placeholder="Tell us about your project" multiline error={errors.message} />
+                <CField index="03" label="Message" value={form.message} onChange={(v) => update('message', v)} placeholder="Tell us what’s on your mind" multiline error={errors.message} />
                 {/* Honeypot — hidden from humans; traps bots */}
                 <input type="text" name="_gotcha" tabIndex="-1" autoComplete="off" aria-hidden="true"
                   style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }} />
@@ -1371,6 +1445,7 @@ function Footer({ setView, scrollToSection }) {
 
       <div className="footer-bottom">
         <span className="footer-fine">© 2026 Robust</span>
+        <span className="footer-rights">All Rights Reserved</span>
         <BackToTop />
       </div>
     </footer>);

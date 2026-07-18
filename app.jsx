@@ -18,11 +18,24 @@ const HERO_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 }/*EDITMODE-END*/;
 
 function App() {
-  const [view, setView] = useState('home');
+  const route = window.RBRouter.useRoute();
   const [booted, setBooted] = useState(false);
   const [tw, setTweak] = useTweaks(HERO_TWEAK_DEFAULTS);
   // Within the Works section: 'sphere' (the 3D vault) or 'simple' (flat list).
   const [worksMode, setWorksMode] = useState('simple');
+
+  // The base page rendered UNDER any project/showreel overlay. A project opened
+  // from the archive sits over the Work page; everything else sits over Home.
+  const baseView = (route.name === 'works' ||
+    (route.name === 'project' && route.base === 'works')) ? 'works' : 'home';
+  const showHome = baseView === 'home';
+  const showWorks = baseView === 'works';
+
+  // setView bridge — nav/hero/footer still call setView('home'|'works').
+  const setView = useCallback((v) => {
+    if (v === 'works') window.RBRouter.openWorks();
+    else window.RBRouter.goHome();
+  }, []);
 
   // Jump instantly to a section ID (home-view only).
   // Smooth-scrolling through the Works funnel triggers its 3D rotation
@@ -46,12 +59,14 @@ function App() {
     if (booted) document.body.dataset.booted = 'true';
   }, [booted]);
 
-  // Jump to top on view change; always return to the sphere when leaving Works
+  // Jump to top when the base page changes; always return to the sphere when
+  // leaving Works. Opening an overlay does not change baseView, so Home keeps
+  // its scroll position behind the overlay (and restores it on close).
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
-    document.body.dataset.view = view;
-    if (view !== 'works') setWorksMode('simple');
-  }, [view]);
+    document.body.dataset.view = baseView;
+    if (baseView !== 'works') setWorksMode('simple');
+  }, [baseView]);
 
   return (
     <>
@@ -115,11 +130,11 @@ function App() {
       <AsciiLoader onReveal={() => setBooted(true)} />
 
       {booted && <ScrollProgress />}
-      {booted && <SideNav view={view} setView={setView} />}
+      {booted && <SideNav view={baseView} setView={setView} />}
 
-      {booted && view === 'home' && (
+      {booted && showHome && (
         <div className="rb-page-enter" data-screen-label="Home">
-          <Nav view={view} setView={setView} scrollToSection={scrollToSection} />
+          <Nav view={baseView} setView={setView} scrollToSection={scrollToSection} />
           <Hero setView={setView} tw={tw} />
           <About />
           <Ticker />
@@ -130,13 +145,62 @@ function App() {
         </div>
       )}
 
-      {booted && view === 'works' && (
+      {booted && showWorks && (
         <div className="rb-page-enter" data-screen-label="Works Archive">
           <WorksArchive setView={setView} />
         </div>
       )}
 
-      {booted && view === 'home' && (
+      {/* Project overlay — driven by the route, rendered above the base page. */}
+      {booted && route.name === 'project' && (() => {
+        const WO = window.WorkOverlay;
+        if (!WO || !route.work) return null;
+        const list = route.noNav ? null
+          : (route.base === 'works'
+              ? (window.__rbArchiveList || window.ARCHIVE_WORKS)
+              : window.SELECTED_WORKS);
+        return (
+          <WO
+            key={route.work.id || route.slug || route.work.vimeoId}
+            work={route.work}
+            list={list}
+            onChange={route.noNav ? undefined : (w) => window.RBRouter.changeProject(w)}
+            onClose={() => window.RBRouter.back()}
+          />
+        );
+      })()}
+
+      {/* Studio showreel overlay. */}
+      {booted && route.name === 'showreel' && (() => {
+        const WO = window.WorkOverlay;
+        if (!WO) return null;
+        return (
+          <WO
+            work={route.work || window.RBRouter.SHOWREEL}
+            big
+            links={[
+              { label: 'Selected Works', onClick: () => {
+                  window.RBRouter.back();
+                  setTimeout(() => {
+                    const el = document.getElementById('works-vitrin');
+                    if (el) {
+                      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+                      window.scrollTo({ top, behavior: 'instant' });
+                      window.__rbFunnelSnapUntil = performance.now() + 300;
+                    }
+                  }, 440);
+                } },
+              { label: 'Archive', onClick: () => {
+                  window.RBRouter.back();
+                  setTimeout(() => window.RBRouter.openWorks(), 460);
+                } },
+            ]}
+            onClose={() => window.RBRouter.back()}
+          />
+        );
+      })()}
+
+      {booted && route.name === 'home' && (
         <TweaksPanel title="Tweaks">
           <TweakSection label="Headline" />
           <TweakRadio label="Size" value={tw.headlineSize}
@@ -172,4 +236,5 @@ function App() {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+window.RBRouter.init();
 root.render(<App />);

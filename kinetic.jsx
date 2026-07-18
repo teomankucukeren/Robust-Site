@@ -232,7 +232,7 @@ function SideNav({ view, setView }) {
   HOME_SECTIONS.map((s) => ({ key: s.id, label: s.label, active: active === s.id, onClick: () => go(s.id) })) :
   [
   { key: 'archive', label: 'Archive', active: true, onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-  { key: 'home', label: 'Home', active: false, onClick: () => setView('home') }];
+  { key: 'home', label: 'Home', active: false, onClick: () => window.RBRouter.back() }];
 
   // Every cell shows one of the boot loader's glyphs ( - = + ), scattered at
   // random. The mix is fixed per view so it doesn't reshuffle on every scroll;

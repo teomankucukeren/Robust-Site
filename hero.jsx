@@ -24,12 +24,10 @@ function Hero({ setView, tw = {} }) {
     return () => mq.removeEventListener('change', on);
   }, []);
   const [entered, setEntered] = useState(false);
-  const [showreel, setShowreel] = useState(false);
   const [linePulse, setLinePulse] = useState(0);
   const contentRef = useRef(null);
   const socialsRef = useRef(null);
   const h1Ref = useRef(null);
-  const WO = window.WorkOverlay;
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -149,7 +147,7 @@ function Hero({ setView, tw = {} }) {
           }}>{eyebrowText}</div>
         }
 
-        <h1 ref={h1Ref} className="hero-h1" style={{ margin: '0 0 clamp(40px, 5vh, 64px)', ...H1_SIZE, fontSize: 'clamp(30px, 4.4vw, 76px)' }}>
+        <h1 ref={h1Ref} className="hero-h1" style={{ margin: '0 0 clamp(40px, 5vh, 64px)', ...H1_SIZE, fontSize: 'clamp(30px, 3.9vw, 76px)' }}>
           <span className={lineCls}>
             <HeadlineTyper prefix="We shape ideas into " words={['stories', 'motion', 'visuals']} />
           </span>
@@ -163,11 +161,12 @@ function Hero({ setView, tw = {} }) {
           {ctaStyle === 'solid' ?
             <>
               <HeroCtaSolid label="Explore the Work" onClick={() => setView('works')} />
-              <HeroCta play label="Showreel" onClick={() => setShowreel(true)} />
+              <HeroCta play label="Showreel" onClick={() => window.RBRouter.openShowreel()} />
             </> :
             <>
-              <HeroCta primary noArrow={isMobile} label="Explore the Work" onClick={() => setView('works')} />
-              <HeroCta play label="Showreel" onClick={() => setShowreel(true)} />
+              <HeroCta label="Showreel" onClick={() => window.RBRouter.openShowreel()} />
+              <span className="hero-cta-divider" aria-hidden="true"></span>
+              <HeroCta primary label="Explore the Work" onClick={() => setView('works')} />
             </>
           }
         </div>
@@ -195,28 +194,6 @@ function Hero({ setView, tw = {} }) {
         {/* Mobile-only: a single orange down arrow (replaces the text + line) */}
         <span className="hero-scrollcue-arrow" aria-hidden="true">⇂</span>
       </div>
-
-      {/* Showreel overlay */}
-      {showreel && WO &&
-      <WO
-        work={{ title: 'Showreel', client: 'Robust', type: 'Studio Reel', year: '2019', vimeoId: '374179028' }}
-        big
-        links={[
-          { label: 'Selected Works', onClick: () => {
-              setShowreel(false);
-              setTimeout(() => {
-                const el = document.getElementById('works-vitrin');
-                if (el) {
-                  const top = el.getBoundingClientRect().top + window.scrollY - 80;
-                  window.scrollTo({ top, behavior: 'instant' });
-                  window.__rbFunnelSnapUntil = performance.now() + 300;
-                }
-              }, 420);
-            } },
-          { label: 'Archive', onClick: () => { setShowreel(false); setTimeout(() => setView('works'), 420); } }
-        ]}
-        onClose={() => setShowreel(false)} />
-      }
     </section>);
 
 }
@@ -318,6 +295,7 @@ function HeroCta({ label, primary, play, noArrow, onClick }) {
 
   return (
     <button ref={magRef} onClick={onClick}
+    className={'hero-cta' + (play ? ' hero-cta-play' : '') + (primary ? ' hero-cta-primary' : '')}
     onMouseEnter={() => setHov(true)}
     onMouseLeave={() => setHov(false)}
     style={{
@@ -337,6 +315,11 @@ function HeroCta({ label, primary, play, noArrow, onClick }) {
       color: primary ? 'var(--orange)' : hov ? 'var(--orange)' : '#ffffff',
       transition: 'color 0.35s ease'
     }}>
+      {play &&
+      <span className="hero-cta-playbadge" aria-hidden="true">
+        <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor"><path d="M0 0L10 6L0 12V0Z"></path></svg>
+      </span>
+      }
       <span style={{ position: 'relative', display: 'inline-block' }}>
         {label}
         <span style={{
@@ -349,7 +332,7 @@ function HeroCta({ label, primary, play, noArrow, onClick }) {
         }}></span>
       </span>
       {primary && !noArrow &&
-      <span aria-hidden="true" style={{
+      <span className="hero-cta-arrow" aria-hidden="true" style={{
         display: 'inline-block', fontSize: '15px', lineHeight: 1,
         transform: hov ? 'translateX(5px)' : 'translateX(0)',
         transition: 'transform 0.45s cubic-bezier(0.16,1,0.3,1)'

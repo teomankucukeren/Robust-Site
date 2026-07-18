@@ -126,7 +126,9 @@ function Nav({ view, setView, scrollToSection }) {
         <button className="mmenu-close" onClick={() => setMenuOpen(false)} aria-label="Kapat" style={{ cursor: 'none' }}>✕</button>
         <div className="mmenu-lang-top"><LangSwitch /></div>
         <nav className="mmenu-list">
-          {NAV_ITEMS.map((item, i) => (
+          {NAV_ITEMS.map((item, i) => {
+            const label = rbT(item.key, lang);
+            return (
             <button
               key={item.id}
               className="mmenu-link"
@@ -134,9 +136,13 @@ function Nav({ view, setView, scrollToSection }) {
               onClick={() => handleNavClick(item.id)}
             >
               <span className="mm-num">{String(i + 1).padStart(2, '0')}</span>
-              <span className="mm-label">{rbT(item.key, lang)}</span>
+              <span className="mm-label">
+                {item.id === 'Works'
+                  ? <>{label.charAt(0)}<span className="mm-tuck">{label.slice(1)}</span></>
+                  : label}
+              </span>
             </button>
-          ))}
+          );})}
         </nav>
         <div className="mmenu-foot">
           <div className="mmenu-socials">

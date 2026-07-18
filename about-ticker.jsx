@@ -58,19 +58,19 @@ function About() {
    clients with no matching film in the catalogue are not clickable. ── */
 const CLIENTS = [
 { name: 'KALE', project: 'Stone Horizons Vegas', type: '3D Product Film', year: '2026', vimeoId: '1193087002' },
-{ name: 'BRİSA', project: 'Altın Yaka', type: 'Corporate Film', year: '2025', vimeoId: '1195418367' },
-{ name: 'T-ONE', project: '23 Nisan Bayram Filmi', type: 'Commercial Film', year: '2026', vimeoId: '1193081066' },
-{ name: 'DOĞANAY', project: 'Doğanay Kvass', type: 'Digital Billboard Film', year: '2026', vimeoId: '1193325072' },
-{ name: 'LOGOSKY' },
-{ name: 'İGA', project: 'Digital Journey', type: 'Brand Film', year: '2023', vimeoId: '1193312374' },
 { name: 'TURKİSHBANK' },
-{ name: 'ARUP', project: 'SGIA: New Terminal Competition', type: 'Competition Film', year: '2019', vimeoId: '374188204' },
-{ name: 'SIGMA', project: 'Sigma DAF', type: 'Corporate Film', year: '2021', vimeoId: '1193297807' },
-{ name: 'TEKNOPARK İSTANBUL', project: 'Teknopark İstanbul', type: 'Masterplan Animation', year: '—', vimeoId: '1193282741' },
+{ name: 'T-ONE', project: '23 Nisan Bayram Filmi', type: 'Commercial Film', year: '2026', vimeoId: '1193081066' },
+{ name: 'İGA', project: 'Digital Journey', type: 'Brand Film', year: '2023', vimeoId: '1193312374' },
 { name: 'İTALYA BÜYÜKELÇİLİĞİ', project: 'Çağdaş Sanata Yeni Bakış Açıları', type: 'Panel Film', year: '2024', vimeoId: '1193292941' },
+{ name: 'ARUP', project: 'SGIA: New Terminal Competition', type: 'Competition Film', year: '2019', vimeoId: '374188204' },
+{ name: 'DOĞANAY', project: 'Doğanay Kvass', type: 'Digital Billboard Film', year: '2026', vimeoId: '1193325072' },
 { name: 'MAURER', project: 'Maurer: 1915 Çanakkale Bridge', type: 'Corporate Film', year: '2021', vimeoId: '1193286757' },
-{ name: 'ÇANKAYA BELEDİYESİ', project: 'Çankaya Healthy Streets', type: 'Architectural Film', year: '2021', vimeoId: '1193276129' },
-{ name: 'HASSA' }];
+{ name: 'SIGMA', project: 'Sigma DAF', type: 'Corporate Film', year: '2021', vimeoId: '1193297807' },
+{ name: 'HASSA' },
+{ name: 'LOGOSKY' },
+{ name: 'beIN' },
+{ name: 'BRİSA', project: 'Altın Yaka', type: 'Corporate Film', year: '2025', vimeoId: '1195418367' },
+{ name: 'TEKNOPARK İSTANBUL' }];
 
 
 /* ── Clients — AI vision / object-tracking marquee ──────────────
@@ -81,19 +81,32 @@ const CLIENTS = [
    connection lines + live distance values are drawn, and the dot grid
    is gently displaced. Restrained, cinematic — not gaming/cyberpunk. */
 function Ticker() {
-  const [overlay, setOverlay] = useState(null);
+  const route = window.RBRouter.useRoute();
   const wrapRef = useRef(null);
   const trackRef = useRef(null);
   const canvasRef = useRef(null);
   const statusRef = useRef(null);
   const pausedRef = useRef(false);
   const items = [...CLIENTS, ...CLIENTS, ...CLIENTS];
-  const WO = window.WorkOverlay;
 
-  // While the film overlay is open the section gets no mouseleave (the overlay
+  // Resolve a client's film to the canonical catalogue entry (matching credits),
+  // then open it as a route-driven overlay. Opened from Home, no prev/next.
+  const openClientFilm = (client) => {
+    const catalogue = window.FEATURED_WORKS || [];
+    const full = catalogue.find((w) => String(w.vimeoId) === String(client.vimeoId));
+    const work = full || {
+      title: client.project, client: client.name,
+      type: client.type, year: client.year, vimeoId: client.vimeoId,
+    };
+    window.RBRouter.openProject(work, { base: 'home', noNav: true });
+  };
+
+  // While a film overlay is open the section gets no mouseleave (the overlay
   // mounts under a stationary cursor), so pause tracking and let the loop clear
   // any frozen highlight off the clicked brand.
-  useEffect(() => { pausedRef.current = !!overlay; }, [overlay]);
+  useEffect(() => {
+    pausedRef.current = (route.name === 'project' || route.name === 'showreel');
+  }, [route]);
 
   useEffect(() => {
     const wrap = wrapRef.current,
@@ -233,7 +246,10 @@ function Ticker() {
 
     // ── marquee state ──
     let offset = 0, oneSet = 0;
-    const speed = 34; // px/s
+    // Ambient marquee speed: fast by default, easing down while the pointer is
+    // over the band (hover) or a finger is held on it. mouse.infl ramps 0→1.
+    const SPEED_FAST = 72; // px/s — default
+    const SPEED_SLOW = 18; // px/s — while hovered / held
     // Mobile: a horizontal finger-drag scrubs the marquee; a flick keeps it
     // gliding (userVel) before the ambient auto-scroll resumes.
     let dragging = false, dragAxis = null, dragStartX = 0, dragStartY = 0, dragLastX = 0, userVel = 0;
@@ -515,7 +531,7 @@ function Ticker() {
           offset += userVel;
           userVel *= 0.94;
         } else {
-          offset -= speed * dt;
+          offset -= (SPEED_FAST - (SPEED_FAST - SPEED_SLOW) * mouse.infl) * dt;
         }
         if (oneSet > 0) {
           while (-offset >= oneSet) offset += oneSet;
@@ -585,7 +601,7 @@ function Ticker() {
                   className={hasFilm ? 'ticker-brand' : 'ticker-brand is-static'}
                   data-oid={oid}
                   data-conf={conf}
-                  onClick={hasFilm ? () => setOverlay(client) : undefined}
+                  onClick={hasFilm ? () => openClientFilm(client) : undefined}
                   disabled={!hasFilm}
                   title={hasFilm ? `${client.project} — ${client.type}` : client.name}
                   style={{ cursor: 'none', pointerEvents: hasFilm ? 'auto' : 'none' }}>
@@ -607,7 +623,7 @@ function Ticker() {
         </div>
 
         {['left', 'right'].map((side) =>
-        <div key={side} style={{
+        <div key={side} className={'vt-fade vt-fade-' + side} style={{
           position: 'absolute',
           [side]: 0, top: 0, bottom: 0,
           width: 'clamp(60px, 10vw, 150px)',
@@ -624,31 +640,6 @@ function Ticker() {
         ref={canvasRef}
         aria-hidden="true"
         style={{ position: 'absolute', inset: 0, zIndex: 6, pointerEvents: 'none' }}></canvas>
-
-      {overlay && WO && (() => {
-        // Look the client's film up in the canonical catalogue by Vimeo id so the
-        // overlay shows the SAME credits (production, director, role, DoP, …) as
-        // the archive and Selected Works. Fall back to the ticker's own fields
-        // only if no catalogue match exists.
-        const catalogue = window.FEATURED_WORKS || [];
-        const full = catalogue.find((w) => String(w.vimeoId) === String(overlay.vimeoId));
-        const work = full || {
-          title: overlay.project,
-          client: overlay.name,
-          type: overlay.type,
-          year: overlay.year,
-          vimeoId: overlay.vimeoId
-        };
-        // Portal to <body> so the fixed overlay escapes #clients' mobile
-        // `transform: translateX(15px)` — a transformed ancestor otherwise
-        // becomes the containing block for position:fixed, shifting/clipping
-        // the overlay (the "visual break" on open). No onChange is passed, so
-        // no prev/next arrows show — matching the requested behaviour.
-        return ReactDOM.createPortal(
-          <WO work={work} onClose={() => setOverlay(null)} />,
-          document.body
-        );
-      })()}
     </section>);
 
 }

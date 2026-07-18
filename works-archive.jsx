@@ -15,15 +15,16 @@ const ARCHIVE_WORKS = (() => {
   const byId = (id) => ALL_WORKS.find((w) => w.id === id);
   // 32 = Pepsi × Tokyo, 29 = Paradiso, 31 = Işık, 30 = İtalyan
   // Pinned to the very bottom (user request): 28 = SGIA New Terminal,
-  // 27 = Teknopark İstanbul, 26 = Haf Stone, 24 = Çankaya Healthy Streets.
-  const BOTTOM = [28, 27, 26, 24];
+  // 26 = Haf Stone, 24 = Çankaya Healthy Streets.
+  const BOTTOM = [28, 26];
   const pulled = [32, 29, 31, 30, ...BOTTOM];
   const core = ALL_WORKS.filter((w) => !pulled.includes(w.id));
   const out = [...core];
   out.splice(4, 0, byId(32)); // Pepsi → into the first ten
   out.splice(8, 0, byId(29)); // Paradiso → into the first ten
-  out.push(byId(31), byId(30)); // Işık, then İtalyan → end (design tail)
-  out.push(...BOTTOM.map(byId)); // four films pinned to the very bottom
+  const mi = out.findIndex((w) => w && w.id === 19); // 19 = Maurer
+  out.splice(mi, 0, byId(31), byId(30)); // Işık, then İtalyan → directly above Maurer
+  out.push(...BOTTOM.map(byId)); // pinned to the very bottom
   return out.filter(Boolean);
 })();
 
@@ -44,9 +45,11 @@ const CARD_COLORS = {
 
 function WorksArchive({ setView }) {
   const [activeCat, setActiveCat] = useState('ALL');
-  const [overlay, setOverlay]     = useState(null);
   const [filterKey, setFilterKey] = useState(0); // bump to retrigger entrance + rebuild focus refs
   const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches;
+
+  // Archive projects open over the Work page → Back returns here.
+  const openWork = (w) => window.RBRouter.openProject(w, { base: 'works' });
 
   const rowsRef  = useRef([]);   // live row elements, in render order
   const focusRef = useRef([]);   // eased focus value per row (0→1)
@@ -56,6 +59,10 @@ function WorksArchive({ setView }) {
   const filtered = activeCat === 'ALL'
     ? ARCHIVE_WORKS
     : ARCHIVE_WORKS.filter(w => w.cat === activeCat);
+
+  // Publish the current (filtered) list so the route-driven overlay can offer
+  // prev/next navigation scoped to whatever the visitor is browsing.
+  useEffect(() => { window.__rbArchiveList = filtered; }, [filtered]);
 
   const handleCat = (cat) => {
     if (cat === activeCat) return;
@@ -88,23 +95,39 @@ function WorksArchive({ setView }) {
         const rows = rowsRef.current;
         const vh = window.innerHeight || 1;
         const mid = vh / 2;
-        // Pick the single row whose centre is nearest the viewport centre as the
-        // focus target — the scroll analogue of the desktop hover target. Then run
-        // the exact same expand: it grows taller via padding (pushing neighbours
-        // away, borders stay aligned) and its cover reveals further.
-        let best = -1, bestD = Infinity;
-        for (let i = 0; i < rows.length; i++) {
-          const el = rows[i]; if (!el) continue;
-          const r = el.getBoundingClientRect();
-          if (r.bottom < 0 || r.top > vh) continue;
-          const d = Math.abs((r.top + r.height / 2) - mid);
-          if (d < bestD) { bestD = d; best = i; }
-        }
+
+        // Whichever row is physically LAST in the list — found by DOM position, so
+        // it always tracks the real last project even after some are removed. At
+        // the end of the page that row can never reach the viewport centre, so we
+        // ease it to full presence as the scroll bottoms out.
+        let lastIdx = -1;
+        for (let i = rows.length - 1; i >= 0; i--) { if (rows[i]) { lastIdx = i; break; } }
+        const maxScroll = document.documentElement.scrollHeight - vh;
+        const endZone = vh * 0.6;
+        const bottomBlend = maxScroll <= 0 ? 1
+          : Math.max(0, Math.min(1, (window.scrollY - (maxScroll - endZone)) / endZone));
+
         for (let i = 0; i < rows.length; i++) {
           const el = rows[i];
           if (!el) continue;
-          const hovTarget = i === best ? 1 : 0;
-          const ch = (hov[i] == null ? 0 : hov[i]) + (hovTarget - (hov[i] || 0)) * 0.12;
+          const r = el.getBoundingClientRect();
+
+          // Continuous focus: a smooth bump that peaks (1) exactly when the row's
+          // centre crosses the viewport centre and fades over ~half a viewport on
+          // either side. Because growth is a proportional function of scroll
+          // position — not a single "nearest" pick that snaps between rows — every
+          // row rises and falls smoothly as it passes and nothing is ever skipped,
+          // even on a fast flick.
+          let hovTarget = 0;
+          if (r.bottom > 0 && r.top < vh) {
+            const off = (r.top + r.height / 2) - mid;
+            const near = Math.max(0, 1 - Math.abs(off) / (vh * 0.55));
+            hovTarget = near * near * (3 - 2 * near);
+          }
+          // Bottom of the list: bring the true last row up to full presence.
+          if (i === lastIdx) hovTarget = Math.max(hovTarget, bottomBlend);
+
+          const ch = (hov[i] == null ? 0 : hov[i]) + (hovTarget - (hov[i] || 0)) * 0.1;
           hov[i] = ch;
 
           if (ch < 0.001) {
@@ -177,11 +200,11 @@ function WorksArchive({ setView }) {
         WebkitBackdropFilter: 'blur(24px)',
         borderBottom: '1px solid rgba(255,255,255,0.04)',
       }}>
-        <span onClick={() => setView('home')} style={{ display: 'inline-flex', cursor: 'none' }} aria-label="Home">
+        <span onClick={() => window.RBRouter.back()} style={{ display: 'inline-flex', cursor: 'none' }} aria-label="Home">
           <LogoMark size={17} color="#ffffff" />
         </span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(16px, 2.4vw, 34px)' }}>
-          <CloseBtn onClick={() => setView('home')} />
+          <CloseBtn onClick={() => window.RBRouter.back()} />
         </div>
       </div>
 
@@ -219,7 +242,7 @@ function WorksArchive({ setView }) {
 
       {/* ── Works list — DESIGN filter shows a staggered masonry; others use rows ── */}
       {activeCat === 'DESIGN' ? (
-        <DesignMasonry key={filterKey} works={filtered} onOpen={setOverlay} />
+        <DesignMasonry key={filterKey} works={filtered} onOpen={openWork} />
       ) : (
         <div key={filterKey} className="arch-list">
           {filtered.map((work, i) => (
@@ -230,16 +253,11 @@ function WorksArchive({ setView }) {
               innerRef={(el) => { rowsRef.current[i] = el; }}
               onEnter={(el) => { if (canHover) hovRef.current = el; }}
               onLeave={() => { if (canHover) hovRef.current = null; }}
-              onClick={() => setOverlay(work)}
+              onClick={() => openWork(work)}
             />
           ))}
         </div>
       )}
-
-      {overlay && (() => {
-        const WO = window.WorkOverlay;
-        return <WO work={overlay} onClose={() => setOverlay(null)} onChange={setOverlay} list={filtered} />;
-      })()}
     </div>
   );
 }
@@ -470,4 +488,4 @@ function DesignMasonry({ works, onOpen }) {
   );
 }
 
-Object.assign(window, { WorksArchive });
+Object.assign(window, { WorksArchive, ARCHIVE_WORKS });
