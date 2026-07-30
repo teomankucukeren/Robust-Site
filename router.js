@@ -22,7 +22,7 @@
 // homepage, exactly as if the project had been opened from Highlights.
 (function () {
   const SHOWREEL = {
-    title: 'Showreel', client: 'Robust', type: 'Studio Reel',
+    title: 'Showreel', client: 'Robust', type: 'Studio Reel', typeTR: 'Stüdyo Reeli',
     year: '2019', vimeoId: '374179028', __showreel: true,
   };
 

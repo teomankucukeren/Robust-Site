@@ -1,73 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Bu sayfanın dili ve diğer dilin adresi — i18n.js bunları okur. -->
+  <meta name="rb-lang" content="TR" />
+  <meta name="rb-lang-alt" content="en/" />
+  <meta name="rb-title-alt" content="Robust Film" />
+
+  <!-- İlk ziyarette dil algılama. Tarayıcı dili Türkçe değilse İngilizce sürüme
+       geçer. Kullanıcı sağ üstten elle dil seçtiyse bir daha asla karışmaz.
+       Derin link (#/project/...) korunur; replace() kullanıldığı için geri
+       tuşu döngüye girmez. -->
+  <script>
+    (function () {
+      try {
+        // Yalnızca gerçek alan adında çalışır. Yerel/önizleme sunucularında
+        // bilinmeyen yollar kök dosyaya düşürüldüğü için yönlendirme oradaki
+        // testleri kilitliyordu; yayında böyle bir davranış yok.
+        if (!/(^|\.)robust\.film$/i.test(location.hostname)) return;
+        if (localStorage.getItem('rb-lang-choice')) return;
+        // Tek seferlik güvenlik kilidi: bu sekmede yönlendirme bir kez yapılır.
+        // Sunucu bilinmeyen bir yolu bu dosyaya düşürse bile döngü oluşmaz.
+        if (sessionStorage.getItem('rb-lang-redirected')) return;
+        sessionStorage.setItem('rb-lang-redirected', '1');
+        // Sadece BİRİNCİL dile bakılır. Listenin gerisinde Türkçe bulunması
+        // (çoğu tarayıcı birkaç dil bildirir) ana dili İngilizce olan bir
+        // ziyaretçiyi Türkçe sayfada bırakırdı.
+        var primary = String((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+        if (primary.indexOf('tr') === 0) return;
+        window.location.replace('en/' + window.location.hash);
+      } catch (e) {}
+    })();
+  </script>
 
   <!-- ─────────────────────────────────────────────────────────────
        SEO — Primary meta
        NOT: Kanonik alan adı https://www.robust.film varsayıldı.
        Farklıysa aşağıdaki tüm URL'leri kendi alan adınla değiştir.
   ────────────────────────────────────────────────────────────── -->
-  <title>Robust — Film & Visual Studio in Istanbul</title>
-  <meta name="description" content="Robust is a film and visual studio based in Istanbul. We shape ideas into stories, motion and visuals — commercials, music videos, branded content and post-production." />
+  <title>Robust Film</title>
+  <meta name="description" content="Fikirleri sinematik hikâyelere dönüştürüyoruz. Robust; İstanbul'da reklam ve marka içerikleri üreten yaratıcı prodüksiyon stüdyosu." />
   <meta name="keywords" content="Robust, film studio Istanbul, prodüksiyon, video prodüksiyon, reklam filmi, müzik videosu, yönetmen, post prodüksiyon, motion design, İstanbul film şirketi, creative studio" />
   <meta name="author" content="Robust" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#050505" />
   <link rel="canonical" href="https://www.robust.film/" />
 
   <!-- Language alternates (site is bilingual EN/TR) -->
   <link rel="alternate" hreflang="tr" href="https://www.robust.film/" />
-  <link rel="alternate" hreflang="en" href="https://www.robust.film/" />
-  <link rel="alternate" hreflang="x-default" href="https://www.robust.film/" />
+  <link rel="alternate" hreflang="en" href="https://www.robust.film/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.robust.film/en/" />
 
   <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Robust" />
-  <meta property="og:title" content="Robust — Independent Film & Visual Studio in Istanbul" />
-  <meta property="og:description" content="We shape ideas into stories, motion and visuals. Independent film & visual studio based in Istanbul." />
+  <meta property="og:title" content="Robust Film" />
+  <meta property="og:description" content="Fikirleri sinematik hikâyelere dönüştürüyoruz. Robust; İstanbul'da reklam ve marka içerikleri üreten yaratıcı prodüksiyon stüdyosu." />
   <meta property="og:url" content="https://www.robust.film/" />
   <meta property="og:locale" content="tr_TR" />
   <meta property="og:locale:alternate" content="en_US" />
-  <!-- TODO: 1200×630 kapak görselini yükleyip yolunu güncelle -->
-  <meta property="og:image" content="https://www.robust.film/og-cover.jpg" />
+  <meta property="og:image" content="https://www.robust.film/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Robust — film & visual studio Istanbul" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Robust — İstanbul film ve görsel prodüksiyon stüdyosu" />
 
   <!-- Twitter / X card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Robust — Independent Film & Visual Studio in Istanbul" />
-  <meta name="twitter:description" content="We shape ideas into stories, motion and visuals. Independent film & visual studio based in Istanbul." />
-  <meta name="twitter:image" content="https://www.robust.film/og-cover.jpg" />
+  <meta name="twitter:title" content="Robust Film" />
+  <meta name="twitter:description" content="Fikirleri sinematik hikâyelere dönüştürüyoruz. Robust; İstanbul'da reklam ve marka içerikleri üreten yaratıcı prodüksiyon stüdyosu." />
+  <meta name="twitter:image" content="https://www.robust.film/og-cover.png" />
 
   <!-- Structured data — Organization / LocalBusiness (Google Knowledge Panel) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    "name": "Robust",
-    "description": "Independent film and visual studio based in Istanbul. Commercials, music videos, branded content, motion and post-production.",
-    "url": "https://www.robust.film/",
-    "email": "contact@robust.film",
-    "image": "https://www.robust.film/og-cover.jpg",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "İstanbul",
-      "addressCountry": "TR"
-    },
-    "areaServed": "Worldwide",
-    "sameAs": [
-      "https://www.instagram.com/robust.film/",
-      "https://vimeo.com/robust",
-      "https://www.linkedin.com/company/robustfims"
+    "@graph": [
+      {
+        "@type": [
+          "Organization",
+          "ProfessionalService"
+        ],
+        "@id": "https://www.robust.film/#studio",
+        "name": "Robust Film",
+        "alternateName": "Robust",
+        "url": "https://www.robust.film/",
+        "description": "İstanbul merkezli bağımsız film ve görsel prodüksiyon stüdyosu. Marka filmi, reklam, dijital kampanya, animasyon, motion tasarım ve post prodüksiyon.",
+        "email": "contact@robust.film",
+        "image": "https://www.robust.film/og-cover.png",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.robust.film/logo.svg",
+          "caption": "Robust Film"
+        },
+        "foundingDate": "2019",
+        "telephone": "+90 536 270 75 05",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Esentepe, Tevfik Erdönmez Paşa Sokak No:2/1 D:6",
+          "addressLocality": "Şişli",
+          "addressRegion": "İstanbul",
+          "postalCode": "34394",
+          "addressCountry": "TR"
+        },
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "contactType": "sales",
+            "telephone": "+90 536 270 75 05",
+            "email": "contact@robust.film",
+            "availableLanguage": ["tr", "en"]
+          },
+          {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "telephone": "+90 507 188 31 17",
+            "availableLanguage": ["tr", "en"]
+          }
+        ],
+        "areaServed": [
+          {
+            "@type": "Country",
+            "name": "Türkiye"
+          },
+          {
+            "@type": "Place",
+            "name": "Worldwide"
+          }
+        ],
+        "knowsLanguage": [
+          "tr",
+          "en"
+        ],
+        "serviceType": [
+          "Film production",
+          "Commercial production",
+          "Branded content",
+          "Animation",
+          "Motion design",
+          "Post-production",
+          "Creative direction"
+        ],
+        "sameAs": [
+          "https://www.instagram.com/robust.film/",
+          "https://vimeo.com/robust",
+          "https://www.linkedin.com/company/robustfims"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.robust.film/#website",
+        "url": "https://www.robust.film/",
+        "name": "Robust Film",
+        "inLanguage": [
+          "tr-TR",
+          "en-US"
+        ],
+        "publisher": {
+          "@id": "https://www.robust.film/#studio"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.robust.film/#webpage",
+        "url": "https://www.robust.film/",
+        "name": "Robust Film",
+        "description": "Fikirleri sinematik hikâyelere dönüştürüyoruz. Robust; İstanbul'da reklam ve marka içerikleri üreten yaratıcı prodüksiyon stüdyosu.",
+        "inLanguage": "tr-TR",
+        "isPartOf": {
+          "@id": "https://www.robust.film/#website"
+        },
+        "about": {
+          "@id": "https://www.robust.film/#studio"
+        },
+        "primaryImageOfPage": {
+          "@type": "ImageObject",
+          "url": "https://www.robust.film/og-cover.png"
+        }
+      }
     ]
   }
   </script>
 
-  <!-- Favicon — solid brand-orange disk -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ccircle%20cx='50'%20cy='50'%20r='50'%20fill='%23ff4500'/%3E%3C/svg%3E" />
+  <!-- Favicon — solid brand-orange disk, served as real static files (Google needs a crawlable icon URL, not a data: URI) -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -76,8 +200,7 @@
   <link rel="preconnect" href="https://i.vimeocdn.com" crossorigin />
   <link rel="preconnect" href="https://f.vimeocdn.com" crossorigin />
   <link rel="dns-prefetch" href="https://player.vimeo.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link href="robust.css" rel="stylesheet" />
 
   <style>
@@ -170,23 +293,14 @@
     }
   </style>
 
-  <!-- React 18 + Babel (pinned, with integrity) -->
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
-          integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
-          crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
-          integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
-          crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
-          integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
-          crossorigin="anonymous"></script>
+  <!-- React 18 production — JSX önceden derlendi, Babel gerekmiyor -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 
   <!-- GSAP — micro-animations (hero entrance, magnetic CTAs) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
   <!-- Vimeo Player API — lets the work overlay autoplay then unmute programmatically -->
   <script src="https://player.vimeo.com/api/player.js"></script>
-<link id="gfont-Fira-Sans" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&amp;display=swap">
-<link id="gfont-Space-Grotesk" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap">
 </head>
 <body>
 
@@ -205,24 +319,49 @@
        studio's core identity, offering and contact even before React mounts. -->
   <noscript>
     <div style="max-width:720px;margin:0 auto;padding:64px 24px;color:#fff;font-family:sans-serif;">
-      <h1 style="font-size:32px;font-weight:700;">Robust — Independent Film &amp; Visual Studio, Istanbul</h1>
-      <p style="color:#c9c9c9;font-size:18px;line-height:1.6;margin-top:16px;">
-        We shape ideas into stories, motion and visuals. Robust is an independent film and visual
-        studio based in Istanbul, working on commercials, music videos, branded content, motion
-        design and post-production.
+      <h1 style="font-size:32px;font-weight:700;line-height:1.15;">Robust Film — İstanbul merkezli bağımsız film ve görsel prodüksiyon stüdyosu</h1>
+      <p style="color:#c9c9c9;font-size:17px;line-height:1.6;margin-top:16px;">
+        2019’da İstanbul’da kurulan Robust; fikirlerin, zanaatın ve görsel hikâye anlatıcılığının
+        kesişim noktasında konumlanan yaratıcı bir medya stüdyosudur. Kreatif direktörlük,
+        prodüksiyon ve post-prodüksiyonu bütüncül bir yaklaşımla ele alıyor; net bir amaca ve özgün
+        bir görsel kimliğe sahip işler üretiyoruz.
       </p>
-      <p style="color:#9a9a9a;margin-top:20px;">
-        İstanbul merkezli bağımsız film ve görsel prodüksiyon stüdyosu — reklam filmi, müzik videosu,
-        marka içeriği, motion tasarım ve post prodüksiyon.
+      <p style="color:#c9c9c9;font-size:17px;line-height:1.6;margin-top:16px;">
+        Marka filmlerinden dijital kampanyalara, animasyondan hareket odaklı deneyimlere uzanan her
+        projede tek bir niyetle yola çıkıyoruz: Fikre en doğru görsel formu kazandırmak.
       </p>
-      <p style="margin-top:24px;">
+      <p style="color:#ff4500;font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-top:32px;">Disiplinlerimiz</p>
+      <ul style="color:#c9c9c9;margin-top:12px;padding-left:18px;line-height:1.7;">
+        <li>Film & Video Prodüksiyonu</li>
+        <li>Animasyon & Motion Design</li>
+        <li>Kampanya & Marka İçerikleri</li>
+        <li>AI Film Yapımı / Generative Prodüksiyon</li>
+        <li>Görsel Tasarım / Art Direction</li>
+      </ul>
+      <p style="color:#ff4500;font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-top:32px;">Seçki</p>
+      <ul style="color:#c9c9c9;margin-top:12px;padding-left:18px;line-height:1.7;">
+        <li>23 Nisan Bayram Filmi — <span style="color:#8a8a8a;">T-ONE BY KALE</span></li>
+        <li>Liberating Choices — <span style="color:#8a8a8a;">CANSUXI</span></li>
+        <li>Stone Horizons Vegas — <span style="color:#8a8a8a;">KALE</span></li>
+        <li>Designed for Every Space — <span style="color:#8a8a8a;">İNZERA</span></li>
+        <li>EVERYTHING Teaser — <span style="color:#8a8a8a;">NOHLAB</span></li>
+        <li>Digital Journey — <span style="color:#8a8a8a;">İGA PASS</span></li>
+        <li>Altın Yaka — <span style="color:#8a8a8a;">BRISA</span></li>
+        <li>Çağdaş Sanata Yeni Bakış Açıları — <span style="color:#8a8a8a;">EMBASSY OF ITALY</span></li>
+      </ul>
+      <p style="color:#ff4500;font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-top:32px;">İletişim</p>
+      <p style="margin-top:12px;">
         <a href="mailto:contact@robust.film" style="color:#ff4500;">contact@robust.film</a>
+        <span style="color:#8a8a8a;"> · İstanbul, Türkiye</span>
       </p>
-      <ul style="color:#9a9a9a;margin-top:16px;list-style:none;padding:0;">
+      <ul style="color:#9a9a9a;margin-top:16px;list-style:none;padding:0;display:flex;gap:18px;flex-wrap:wrap;">
         <li><a href="https://www.instagram.com/robust.film/" style="color:#9a9a9a;">Instagram</a></li>
         <li><a href="https://vimeo.com/robust" style="color:#9a9a9a;">Vimeo</a></li>
         <li><a href="https://www.linkedin.com/company/robustfims" style="color:#9a9a9a;">LinkedIn</a></li>
       </ul>
+      <p style="color:#8a8a8a;margin-top:28px;font-size:14px;">
+        <a href="en/" style="color:#9a9a9a;" lang="en">English version</a>
+      </p>
     </div>
   </noscript>
 
@@ -280,18 +419,18 @@
   <!-- Client-side history / deep-link router (plain JS, before components) -->
   <script src="router.js"></script>
 
-  <!-- Component files (order matters — each exports to window) -->
-  <script type="text/babel" src="loader-ascii.jsx"></script>
-  <script type="text/babel" src="kinetic.jsx"></script>
-  <script type="text/babel" src="nav.jsx"></script>
-  <script type="text/babel" src="hero.jsx"></script>
-  <script type="text/babel" src="about-ticker.jsx"></script>
-  <script type="text/babel" src="works-vitrin.jsx"></script>
-  <script type="text/babel" src="project-case.jsx"></script>
-  <script type="text/babel" src="services-contact.jsx"></script>
-  <script type="text/babel" src="works-archive.jsx"></script>
-  <script type="text/babel" src="tweaks-panel.jsx"></script>
-  <script type="text/babel" src="app.jsx"></script>
+  <!-- Derlenmiş bileşenler (kaynak: kök dizindeki .jsx dosyaları) -->
+  <script src="loader-ascii.js"></script>
+  <script src="kinetic.js"></script>
+  <script src="nav.js"></script>
+  <script src="hero.js"></script>
+  <script src="about-ticker.js"></script>
+  <script src="works-vitrin.js"></script>
+  <script src="project-case.js"></script>
+  <script src="services-contact.js"></script>
+  <script src="works-archive.js"></script>
+  <script src="tweaks-panel.js"></script>
+  <script src="app.js"></script>
 
   <!-- Interactive background (vanilla JS, renders into #rb-warp) -->
   <script src="warp-bg.js"></script>

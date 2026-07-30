@@ -164,8 +164,13 @@ body[data-view="works"] #rb-warp { display: none; }
 /* "Work" is split into one span per letter for the cursor-light effect,
    which loses the font's own kerning — the W/o pair in particular reads
    with a much bigger gap than o/r or r/k. Nudge just that pair in, in em
-   so it scales with the fluid font-size at every breakpoint. */
-.display-xl .kchar:nth-child(2) { margin-left: -0.14em; }
+   so it scales with the fluid font-size at every breakpoint. Scoped to the
+   English archive heading only (lang="en") — the same nth-child(2) rule
+   was firing on the Turkish "İşler" heading too, yanking its 2nd letter
+   ("ş") into the İ and making them collide. */
+.display-xl[lang="en"] .kchar:nth-child(2) { margin-left: -0.14em; }
+.hero-line[lang="tr"] .kchar:nth-child(2) { margin-left: -0.03em; }
+.display-xl[lang="tr"] .kchar:nth-child(2) { margin-left: -0.03em; }
 /* "What We Do" — the per-letter split loses kerning, leaving too big a gap
    between the "W" and "E" of "We". Pull the "E" (and everything after it,
    which follows inline) left. In em so it scales with the fluid font-size and
@@ -262,9 +267,15 @@ body[data-view="works"] #rb-warp { display: none; }
 }
 
 /* hero entrance: GSAP owns char styles until line enters (soft-focus reveal, no masks) */
-.hero-line { display: block; }
-.hero-line:not(.entered) .kchar { transition: none; }
+.hero-line { display: block; position: relative; }
 .hero-line-accent { color: var(--orange); }
+/* hero headline typewriter: letters + caret are revealed/positioned by JS
+   (hero.jsx) — CSS just owns base hidden state and the blink loop. */
+.hero-line .kchar { opacity: 0; }
+.hero-caret { position: absolute; left: 0; top: 0; width: 5px; display: none; background: var(--orange); opacity: 1; will-change: transform; transition: opacity 0.25s ease; pointer-events: none; }
+.hero-period { opacity: 0; }
+.hero-period.blinking { animation: rb-cursor-pulse 1.1s ease-in-out infinite; }
+@keyframes rb-cursor-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
 /* hero headline — single line, bold, all-accent, left-aligned */
 .hero-h1 {
@@ -280,6 +291,11 @@ body[data-view="works"] #rb-warp { display: none; }
 }
 @media (max-width: 760px) {
   .hero-h1 { white-space: normal; }
+}
+/* laptop-sized screens (MacBook): shrink the hero headline ~20% so it sits
+   comfortably; larger desktop monitors keep the full size */
+@media (min-width: 961px) and (max-width: 1600px) {
+  #hero .hero-h1 { font-size: clamp(30px, 3.8vw, 64px) !important; }
 }
 
 /* "Explore the Work / Showreel" treatment (desktop): white labels, orange
@@ -549,7 +565,12 @@ body[data-view="works"] #rb-warp { display: none; }
 .about-lead {
   font-family: var(--f-text);
   font-weight: 300;
-  font-size: var(--t-lead);
+  /* Deliberately a step below the shared --t-lead cap (38px). The Turkish lead
+     runs ~11% longer than the English one, and at 38px it spilled onto a fifth
+     line in the 766px description column on wide screens. 35px lands both
+     languages on four lines with margin to spare, and still reads as the
+     editorial lead against the 17px body. */
+  font-size: clamp(20px, 2.35vw, 35px);
   line-height: 1.3;
   letter-spacing: -0.015em;
   color: var(--white);
@@ -888,6 +909,14 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
   .fn-meter { margin-top: 20px; }
 }
 
+/* Desktop (≥961px): centre the Highlights credit copy + slider inside their
+   existing column — same alignment behaviour as tablet, position unchanged. */
+@media (min-width: 961px) {
+  .fn-text { text-align: center; }
+  .fn-text .body-text { margin-left: auto; margin-right: auto; }
+  .fn-meter { margin-left: auto; margin-right: auto; }
+}
+
 /* Tablet only (phones <760px use the plain MobileWorks stack). Pull the copy
    up under the card, shrink the oversized title, and tell touch users the
    cards sweep sideways as they swipe. */
@@ -956,6 +985,7 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
      (the white line) is pushed past the overflow:hidden box — same trick the
      background reel uses. Tablet only. */
   .wo-video { transform: scale(1.03); transform-origin: center; }
+
   /* ── Horizontal carousel (replaces the 3D funnel scene on tablet) ── */
   .tw-viewport {
     position: absolute;
@@ -2799,7 +2829,7 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
 .contact-headline {
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: clamp(30px, 4.6vw, 76px);
+  font-size: clamp(32px, 4vw, 67px);
   line-height: 0.92;
   letter-spacing: -0.03em;
   color: var(--white);
@@ -3493,6 +3523,7 @@ textarea.cf-input { min-height: 76px; }
 }
 .mm-label { display: inline-block; }
 .mm-tuck { margin-left: -0.12em; }
+.mm-tuck-tr { margin-left: -0.05em; }
 .mmenu-foot {
   margin-top: 40px;
   border-top: 1px solid rgba(255, 255, 255, 0.14);
@@ -3666,10 +3697,16 @@ textarea.cf-input { min-height: 76px; }
     color: #0a0a0a;
     justify-content: flex-start;
     border: none;
-    font-size: clamp(46px, 12.8vw, 78px);
+    font-size: clamp(43px, 11.8vw, 56px);
+    letter-spacing: -0.02em;
     line-height: 1.06;
     padding: 8px 0;
   }
+  /* TR "Work" nav item used an EN-only kerning tuck (see nav.jsx) that was
+     wrongly also splitting "Isler" and pulling S into I - fixed by gating
+     that tuck to EN. Base tracking kept slightly negative (-0.02em, was
+     -0.025em) - Syne at this weight looks gappy/uneven at true 0 tracking;
+     dropping it to "normal" last pass was the wrong fix. */
   .mmenu.open .mmenu-link { color: #0a0a0a; }
   .mmenu-link:hover, .mmenu-link:active { color: rgba(10, 10, 10, 0.5); }
   .mmenu-link::after { display: none; }
@@ -3733,9 +3770,8 @@ textarea.cf-input { min-height: 76px; }
   /* let the "We shape…" headline wrap so it fits narrow screens
      (inline styles force nowrap, so override with !important) */
   .hero-h1, .hero-h1 span { white-space: normal !important; }
-  .hero-h1 { font-size: clamp(28px, 7.4vw, 44px) !important; min-height: 2.1em; }
-  /* keep "We shape ideas into" on line 1; only the cycling word + caret move on line 2 */
-  .hero-h1 .ht-prefix { display: block; white-space: nowrap !important; }
+  .hero-h1 { font-size: clamp(34px, 10.5vw, 52px) !important; line-height: 1.02 !important; }
+  .about-founders { font-size: 16px !important; gap: 10px !important; }
 
   .side-rail { gap: 4px; }
   .side-rail-glyph { font-size: 13px; }
@@ -3944,8 +3980,8 @@ textarea.cf-input { min-height: 76px; }
   .hero-actions > button { justify-content: flex-start; }
   .about-stats { gap: 28px 40px; }
   .contact-meta { gap: 36px; }
-  .footer-bottom { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; }
   .arch-filters { gap: 8px; }
+  .footer-bottom { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; }
 }
 
 /* short landscape phones: free up vertical room in the hero */
@@ -3974,7 +4010,9 @@ textarea.cf-input { min-height: 76px; }
     transition: none !important;
   }
   .kchar { transition: none; }
-  .hero-line:not(.entered) .kchar { opacity: 1 !important; transform: none !important; }
+  .hero-line .kchar { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .hero-period { opacity: 1 !important; animation: none !important; }
+  .hero-caret { display: none !important; }
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -4080,10 +4118,9 @@ img, svg, video, canvas, iframe { max-width: 100%; }
 }
 .mworks-head {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 18px;
-  flex-wrap: wrap;
   padding-bottom: clamp(64px, 10vh, 96px);
 }
 /* nudge the "View Full Archive" button 10px lower (mobile only) */
@@ -4284,6 +4321,15 @@ img, svg, video, canvas, iframe { max-width: 100%; }
    against their line. Applies on desktop homepage, tablet and mobile. */
 .eyebrow { display: inline-block; }
 
+/* Timecode flicker on section eyebrows — site-wide (was mobile-only). */
+.rv-fade .eyebrow { transition: letter-spacing 1.1s var(--ease); transition-delay: var(--rv-delay, 0s); }
+.rv-fade:not(.is-in) .eyebrow { letter-spacing: 0.58em; }
+.rv-fade.is-in .eyebrow { animation: rb-tc-flicker 0.75s steps(1, end) both; animation-delay: var(--rv-delay, 0s); }
+@keyframes rb-tc-flicker { 0% { opacity: 0; } 14% { opacity: 1; } 28% { opacity: 0.25; } 44% { opacity: 1; } 58% { opacity: 0.4; } 72% { opacity: 1; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .rv-fade .eyebrow { transition: none; letter-spacing: normal !important; animation: none !important; opacity: 1 !important; }
+}
+
 /* ════════════════════════════════════════════════════════════
    MOBILE scroll choreography (phones ≤760px only)
    Creative direction: "FOOTAGE BEING LOGGED" — no added graphics,
@@ -4313,17 +4359,7 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   }
   .rv-fade.is-in { transform: translateY(0); }
 
-  /* ── Timecode eyebrows: flicker on like a REC indicator, then the
-        letter-tracking locks tight ── */
-  .rv-fade .eyebrow {
-    transition: letter-spacing 1.1s var(--ease);
-    transition-delay: var(--rv-delay, 0s);
-  }
-  .rv-fade:not(.is-in) .eyebrow { letter-spacing: 0.58em; }
-  .rv-fade.is-in .eyebrow {
-    animation: rb-tc-flicker 0.75s steps(1, end) both;
-    animation-delay: var(--rv-delay, 0s);
-  }
+  /* (Timecode eyebrow flicker moved site-wide, see top of file) */
 
   /* ── Headlines: roll up off the slate with a slight tilt that
         straightens as the line seats ── */
@@ -4433,15 +4469,6 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   [data-mm="wire"][data-mm-in] { transform: scaleX(1); }
 
   /* ── Shared keyframes ── */
-  @keyframes rb-tc-flicker {
-    0%   { opacity: 0; }
-    14%  { opacity: 1; }
-    28%  { opacity: 0.25; }
-    44%  { opacity: 1; }
-    58%  { opacity: 0.4; }
-    72%  { opacity: 1; }
-    100% { opacity: 1; }
-  }
   @keyframes rb-exposure {
     0%   { opacity: 0; }
     30%  { opacity: 1; }
@@ -4458,3 +4485,110 @@ img, svg, video, canvas, iframe { max-width: 100%; }
     100% { transform: scaleX(0); transform-origin: right; }
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   LAPTOP SCALING (961–1600px) — "standard MacBook" pass
+   ────────────────────────────────────────────────────────────
+   The whole desktop composition was tuned at the studio's ~2312px 4K
+   width, so on a 1440×900 laptop the type/blocks read oversized. This
+   block scales the offending pieces down for laptop widths only;
+   ≥1601px stays byte-identical to the 4K tuning, ≤960 keeps tablet.
+   New laptop-only corrections belong HERE.
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 961px) and (max-width: 1600px) {
+  /* ── Highlights funnel: the active-project description block, ~50%
+        smaller. Title is halved; body copy only trims (it must stay
+        readable), spacing + column width follow the title down. ── */
+  .fn-stage { grid-template-columns: minmax(240px, 340px) 1fr; }
+  .fn-text .display-m { font-size: clamp(22px, 2vw, 30px) !important; margin-top: 10px !important; }
+  .fn-text .wc-client { font-size: 12.5px !important; letter-spacing: 0.13em; margin-top: 7px !important; }
+  .fn-text .body-text { font-size: 14px !important; line-height: 1.65 !important; margin-top: 12px !important; max-width: 320px !important; }
+  .fn-text-inner > span:first-child { font-size: 10px !important; letter-spacing: 0.22em !important; }
+  .fn-meter { margin-top: clamp(22px, 3vh, 30px); max-width: 220px; }
+
+  /* ── UI chrome: nav, logo, language switch, hero CTAs, socials, scroll
+        cue, client ticker. All were sized in fixed px against a 2312px
+        canvas, so they eat far more of a 1440px screen. Scaled to ~0.8×
+        (small labels) so they stay legible while reading lighter. ── */
+  .rb-nav-links { gap: clamp(20px, 2.2vw, 30px); }
+  .rb-nav-links a, .rb-nav-links button, .rb-nav-links span { font-size: 10px !important; letter-spacing: 0.13em !important; }
+  .rb-nav svg[aria-label="Robust"] { height: 13.5px !important; width: auto !important; }
+  .rb-nav-right { gap: clamp(12px, 1.4vw, 18px); }
+  .rb-lang button, .rb-lang span { font-size: 9.5px !important; }
+
+  #hero .hero-h1 { margin-bottom: clamp(30px, 4vh, 48px) !important; }
+  #hero .hero-cta { font-size: 12px !important; letter-spacing: 0.18em !important; gap: 11px !important; }
+  #hero .hero-cta span[aria-hidden="true"] { font-size: 12px !important; }
+  #hero .hero-actions { gap: clamp(20px, 2.4vw, 34px); }
+
+  .hero-socials svg { width: 14px !important; height: 14px !important; }
+  .hero-socials { gap: 16px; }
+  .hero-scrollcue-text { font-size: 9px !important; letter-spacing: 0.26em !important; }
+  .hero-scrollcue-line { height: 28px !important; }
+
+  .ticker-brand { font-size: 15px !important; letter-spacing: 0.2em; padding: 10px clamp(10px, 1.1vw, 14px); }
+
+  /* ── Loading screen: the ASCII pulse row caps at 28px, which reads heavy
+        on a laptop. Smaller glyphs = a finer, more elegant pulse. ── */
+  .rb-ax-row { font-size: 18px !important; }
+
+  /* ── Global type scale, laptop pass ─────────────────────────
+        Every step keeps its 4K ceiling but reaches it later, so a
+        1440px screen gets the same hierarchy at roughly 0.7–0.8×.
+        Utility classes (.display-*, .lead, .body-text, .meta…) all
+        read these tokens, so this covers every page at once. ── */
+  :root {
+    --t-hero:       clamp(34px, 4.4vw, 72px);
+    --t-display-xl: clamp(36px, 5vw, 78px);
+    --t-display-l:  clamp(26px, 3.2vw, 50px);
+    --t-display-m:  clamp(22px, 2.5vw, 38px);
+    --t-title:      clamp(19px, 2.2vw, 34px);
+    --t-lead:       clamp(18px, 1.85vw, 27px);
+    --t-subhead:    clamp(15px, 1.35vw, 19px);
+    --t-body:       clamp(14px, 1vw, 15px);
+    --t-mono:       clamp(11px, 0.85vw, 12.5px);
+    --t-meta:       10px;
+  }
+
+  /* Section headers (The Studio / Highlights / What We Do / Got Something
+     in Mind), their numbered eyebrows and the About stats stay at their
+     original scale — they are the page's anchors. */
+  .eyebrow { font-size: 13px; }
+  /* the lead keeps its original 4K anchor (level with "Since 2019"), just
+     re-measured for the laptop's smaller body copy */
+  .about-desc { margin-top: clamp(88px, calc(41px + 4.3vw), 112px); }
+
+  /* Services — rolodex + accordion rows */
+  .svc-wheel-item .svc-title { font-size: clamp(20px, 2.2vw, 34px); }
+  .svc-wheel-item .svc-arrow { font-size: clamp(14px, 1.2vw, 18px); }
+  .svc-desc { font-size: clamp(14px, 1.1vw, 16px); }
+  .scc-t { font-size: clamp(17px, 1.55vw, 24px); }
+  .scc-arrow { font-size: clamp(16px, 1.5vw, 22px); }
+
+  /* Contact */
+  .contact-bigmail { font-size: clamp(17px, 1.45vw, 24px); margin-top: clamp(32px, 3.6vw, 52px); }
+
+  /* Works archive + project case */
+  h1.display-xl { font-size: clamp(30px, 4vw, 62px) !important; }
+  .arch-title { font-size: clamp(16px, 1.55vw, 26px) !important; }
+  .arch-client { font-size: clamp(12px, 0.85vw, 13px) !important; }
+  .arch-year { font-size: clamp(12px, 0.9vw, 14px) !important; }
+  .arch-type { font-size: clamp(10px, 0.78vw, 11px) !important; }
+  /* Work rows: taller resting state (~220px at 1440×900) so a row has
+     presence before the hover grow; the JS hover adds +160px on top of
+     this var, so the expansion itself is untouched. */
+  .arch-row { --vpad: clamp(64px, 8.6vh, 110px); }
+
+  /* Work page header: same logo size as the homepage nav, lighter filter
+     row and marker labels. */
+  .arch-header svg[aria-label="Robust"] { height: 13.5px !important; width: auto !important; }
+  .arch-header a, .arch-header button { font-size: 11px !important; }
+  .arch-filters button { font-size: 10.5px !important; padding: 12px 9px !important; }
+  .arch-filters button span { font-size: 10px !important; }
+  body[data-view="works"] .eyebrow { font-size: 11px; }
+}
+
+/* Film loading spinner — centred on the poster layer of the work overlay. */
+.wo-spinner { display: block; width: 76px; height: 76px; border-radius: 50%; border: 5px solid rgba(255,255,255,0.18); border-top-color: var(--orange); animation: wo-spin 0.9s linear infinite; }
+@media (max-width: 760px) { .wo-spinner { width: 54px; height: 54px; border-width: 4px; } }
+@keyframes wo-spin { to { transform: rotate(360deg); } }
