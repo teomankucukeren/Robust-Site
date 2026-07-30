@@ -1499,15 +1499,17 @@ function WorkOverlay({
     try {
       player = new window.Vimeo.Player(vimeoRef.current);
       playerRef.current = player;
-      // Keep it playing as soon as it's ready. If the viewer already had sound
-      // on (e.g. this film was auto-advanced into), unmute right away so sound
-      // carries over seamlessly; otherwise stay muted until the first gesture.
+      // Films play WITH SOUND. Opening a film is itself a click, which normally
+      // satisfies the browser's autoplay-with-sound rule — so assert unmuted as
+      // soon as the player is ready instead of waiting for another gesture.
+      // If the browser still refuses (cold load, iOS low-power), the gesture
+      // listeners below catch the viewer's next interaction.
       player.ready().then(() => {
-        if (soundOnRef.current) {
-          player.setMuted(false).catch(() => {});
+        player.setMuted(false).then(() => {
+          soundOnRef.current = true;
           done = true;
           cleanupListeners();
-        }
+        }).catch(() => {});
         player.play().catch(() => {});
       }).catch(() => {});
       // Our own end screen instead of Vimeo's outbound recommendations.
@@ -1686,7 +1688,7 @@ function WorkOverlay({
     key: work.vimeoId,
     ref: vimeoRef,
     className: "wo-video",
-    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=1&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1`,
+    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=0&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1`,
     style: {
       position: 'absolute',
       inset: 0,
