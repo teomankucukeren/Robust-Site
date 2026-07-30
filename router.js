@@ -78,7 +78,8 @@
   function urlFor(route) {
     switch (route.name) {
       case 'works':    return '#/work';
-      case 'project':  return '#/project/' + encodeURIComponent(route.slug || slugForWork(route.work));
+      case 'project':  return '#/project/' + encodeURIComponent(route.slug || slugForWork(route.work)) +
+                              (route.base === 'works' ? '?from=work' : '');
       case 'showreel': return '#/showreel';
       default:         return location.pathname + location.search; // home → no hash
     }
@@ -111,14 +112,27 @@
 
   function parseHash(hash) {
     let h = (hash || '').replace(/^#/, '');
+    // The page a project was opened FROM lives in the hash query (?from=work),
+    // not only in history.state — so Back still returns to the Work page after a
+    // reload, a shared link, or any browser that drops our state object.
+    let q = '';
+    const qi = h.indexOf('?');
+    if (qi >= 0) { q = h.slice(qi + 1); h = h.slice(0, qi); }
     if (h === '/work' || h === '/works') return { name: 'works' };
     if (h === '/showreel') return { name: 'showreel', work: SHOWREEL };
     const m = h.match(/^\/project\/(.+)$/);
     if (m) {
       const slug = decodeURIComponent(m[1]);
       const w = workForSlug(slug);
-      if (w) return { name: 'project', slug, base: 'home', noNav: false, work: w };
+      const base = /(^|&)from=work(&|$)/.test(q) ? 'works' : 'home';
+      if (w) return { name: 'project', slug, base, noNav: false, work: w };
     }
+    return { name: 'home' };
+  }
+
+  // The view that must sit under a route — i.e. where Back has to land.
+  function baseRouteUnder(route) {
+    if (route.name === 'project' && route.base === 'works') return { name: 'works' };
     return { name: 'home' };
   }
 
@@ -128,11 +142,19 @@
   function notify() { _subs.forEach((fn) => { try { fn(_current); } catch (e) {} }); }
   function setCurrent(route) { _current = route; notify(); }
 
+  // Where our own back() call expects to land. Checked on the next popstate: if
+  // the entry beneath us is not the base we came from (state dropped, an iframe
+  // slipped an entry into the stack), we correct the landing in place instead of
+  // dumping the viewer on the homepage.
+  let _expectBack = null;
+
   function push(route) {
+    _expectBack = null;
     history.pushState(serialize(route), '', urlFor(route));
     setCurrent(route);
   }
   function replace(route) {
+    _expectBack = null;
     history.replaceState(serialize(route), '', urlFor(route));
     setCurrent(route);
   }
@@ -173,7 +195,7 @@
 
     goHome() { if (_current.name !== 'home') push({ name: 'home' }); },
 
-    back() { history.back(); },
+    back() { _expectBack = baseRouteUnder(_current); history.back(); },
 
     // Called once, after the component catalogue is loaded, before React mounts.
     init() {
@@ -181,9 +203,11 @@
       if (route.name === 'home') {
         replace(route);
       } else {
-        // Synthesize a Home entry beneath the deep-linked view so Back always
-        // has somewhere to go (homepage) before leaving the site.
-        history.replaceState(serialize({ name: 'home' }), '', location.pathname + location.search);
+        // Synthesize the right entry beneath the deep-linked view so Back always
+        // has somewhere to go: the Work page for a project opened from the
+        // archive, the homepage for everything else.
+        const under = baseRouteUnder(route);
+        history.replaceState(serialize(under), '', urlFor(under));
         push(route);
       }
     },
@@ -198,6 +222,11 @@
 
   window.addEventListener('popstate', function (e) {
     const route = (e.state && e.state.rb) ? deserialize(e.state) : parseHash(location.hash);
+    const want = _expectBack;
+    _expectBack = null;
+    // Our own back() ran but the stack put us somewhere else — rewrite this
+    // entry into the view the viewer actually came from.
+    if (want && route.name !== want.name) { replace(want); return; }
     setCurrent(route);
   });
 

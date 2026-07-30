@@ -124,7 +124,7 @@
     'nav.contact':  { EN: 'Contact',  TR: 'İletişim' },
 
     // Hero
-    'hero.headline': { EN: 'Made of light and motion',  TR: 'Işık ve hareketten doğar' },
+    'hero.headline': { EN: 'Follow the path of motion',  TR: 'Hareketi takip et' },
     'hero.showreel': { EN: 'Showreel',                  TR: 'Showreel' },
     'hero.explore':  { EN: 'Explore the Work',          TR: 'İşlerimizi İncele' },
     'hero.scroll':   { EN: 'Scroll',                    TR: 'Kaydır' },

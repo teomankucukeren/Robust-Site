@@ -1688,7 +1688,7 @@ function WorkOverlay({
     key: work.vimeoId,
     ref: vimeoRef,
     className: "wo-video",
-    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=0&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1`,
+    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=0&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1&transparent=0`,
     style: {
       position: 'absolute',
       inset: 0,
@@ -1702,32 +1702,7 @@ function WorkOverlay({
     allowFullScreen: true
   }) : /*#__PURE__*/React.createElement(DesignShowcase, {
     work: work
-  }), work.vimeoId && !playing && !ended && /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    style: {
-      position: 'absolute',
-      inset: 0,
-      zIndex: 3,
-      pointerEvents: 'none',
-      background: work.cover ? `#060606 url(${work.cover}) ${work.thumbPos || 'center'} / cover no-repeat` : '#060606',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      opacity: 1,
-      transition: 'opacity 0.45s ease'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: 'absolute',
-      inset: 0,
-      background: 'rgba(6,6,6,0.62)'
-    }
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "wo-spinner",
-    style: {
-      position: 'relative'
-    }
-  })), work.vimeoId && ended && /*#__PURE__*/React.createElement(EndScreen, {
+  }), work.vimeoId && ended && /*#__PURE__*/React.createElement(EndScreen, {
     list: list,
     idx: idx,
     onPick: w => onChange && onChange(w),

@@ -83,10 +83,16 @@ function About() {
       flexWrap: 'wrap',
       rowGap: '6px'
     }
-  }, /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "https://www.instagram.com/snnakpnr/?hl=tr",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "founder-link",
     style: {
       whiteSpace: 'nowrap',
-      flex: 'none'
+      flex: 'none',
+      color: 'inherit',
+      textDecoration: 'none'
     }
   }, "Sinan Akp\u0131nar"), /*#__PURE__*/React.createElement("span", {
     "aria-hidden": "true",
@@ -97,10 +103,16 @@ function About() {
       opacity: 0.4,
       flex: 'none'
     }
-  }), /*#__PURE__*/React.createElement("span", {
+  }), /*#__PURE__*/React.createElement("a", {
+    href: "https://www.instagram.com/teomankucukeren/?hl=tr",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "founder-link",
     style: {
       whiteSpace: 'nowrap',
-      flex: 'none'
+      flex: 'none',
+      color: 'inherit',
+      textDecoration: 'none'
     }
   }, "Teoman K\xFC\xE7\xFCkeren")), /*#__PURE__*/React.createElement("div", {
     className: "meta",
@@ -343,8 +355,26 @@ function Ticker() {
       y: 0,
       init: false
     };
+    // Vertical reach of the tracker. The section box already stretches far ABOVE
+    // the TRACKING readout (its paddingTop overlaps the About text) — that is why
+    // the octopus wakes up well before the readout. Below the names the box ends
+    // almost immediately, so it used to die the instant the cursor headed toward
+    // Highlights. We listen on the document instead and test a symmetric band:
+    // the same pixel distance below the names as there is above the readout.
+    // The reach ABOVE the names band is the whole distance from the section's
+    // top edge (which sits ~140px up, over the About text) down to the band —
+    // TRACKING readout and all. Mirror exactly that much BELOW the band.
+    function reachPad(sr, br) {
+      return Math.max(120, br.top - sr.top);
+    }
     function onMove(e) {
       const r = section.getBoundingClientRect();
+      const br = wrap.getBoundingClientRect();
+      const bottom = Math.max(r.bottom, br.bottom + reachPad(r, br));
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > bottom) {
+        if (mouse.in) onLeave();
+        return;
+      }
       const nx = e.clientX - r.left,
         ny = e.clientY - r.top;
       if (mouse.in) {
@@ -360,8 +390,8 @@ function Ticker() {
       mouse.in = false;
       document.body.classList.remove('cursor-octopus');
     }
-    (section || wrap).addEventListener('mousemove', onMove);
-    (section || wrap).addEventListener('mouseleave', onLeave);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseleave', onLeave);
 
     // ── touch sensor — a finger becomes the octopus, mirroring the mouse ──
     function onTouch(e) {
@@ -445,7 +475,12 @@ function Ticker() {
     // Ambient marquee speed: fast by default, easing down while the pointer is
     // over the band (hover) or a finger is held on it. mouse.infl ramps 0→1.
     const SPEED_FAST = 72; // px/s — default
-    const SPEED_SLOW = 18; // px/s — while hovered / held
+    const SPEED_SLOW = 18; // px/s — at the closest tentacle grip
+    // Proximity-driven speed: the marquee eases between FAST and SLOW as a
+    // function of how near the octopus' arms are to the client names — not as a
+    // step when the cursor enters. proxTarget is recomputed per frame in draw()
+    // from the two strongest grips; proxEase adds inertia so it glides.
+    let proxTarget = 0, proxEase = 0;
     // Mobile: a horizontal finger-drag scrubs the marquee; a flick keeps it
     // gliding (userVel) before the ambient auto-scroll resumes.
     let dragging = false,
@@ -612,6 +647,7 @@ function Ticker() {
       }
       const visible = arr.length;
       let lock = 0;
+      let g1 = 0, g2 = 0; // strongest / second-strongest cursor grip
 
       // Only the single name the cursor is actually over gets the tracking box
       // (not every name within the grab radius).
@@ -638,6 +674,7 @@ function Ticker() {
       }
       for (const o of arr) {
         const cursorProx = clamp(1 - o.distCur / CURSOR_R, 0, 1) * mouse.infl;
+        if (cursorProx > g1) { g2 = g1; g1 = cursorProx; } else if (cursorProx > g2) { g2 = cursorProx; }
         let idleWa = 0;
         if (idleSet && idleSet.has(o)) {
           const distBody = Math.hypot(o.cx - ax0, o.cy - ay0);
@@ -672,6 +709,12 @@ function Ticker() {
           ctx.stroke();
         }
       }
+
+      // marquee brake: dominated by the nearest name, with the second name
+      // adding pull when the octopus hovers between two of them. Smoothstepped
+      // so the slowdown creeps in far out and saturates only at the grip.
+      const grip = clamp(g1 + 0.32 * g2, 0, 1);
+      proxTarget = grip * grip * (3 - 2 * grip);
 
       // octopus body (always alive) at the TRACKING dot / released head
       octopusBody(ax, ay, now);
@@ -786,7 +829,7 @@ function Ticker() {
           offset += userVel;
           userVel *= 0.94;
         } else {
-          offset -= (SPEED_FAST - (SPEED_FAST - SPEED_SLOW) * mouse.infl) * dt;
+          offset -= (SPEED_FAST - (SPEED_FAST - SPEED_SLOW) * proxEase) * dt;
         }
         if (oneSet > 0) {
           while (-offset >= oneSet) offset += oneSet;
@@ -795,6 +838,7 @@ function Ticker() {
       }
       track.style.transform = `translateX(${offset}px)`;
       mouse.infl += ((mouse.in ? 1 : 0) - mouse.infl) * 0.1;
+      proxEase += (proxTarget - proxEase) * 0.08; // glide toward the proximity brake
       idleRamp += ((touchMode && !mouse.in ? 1 : 0) - idleRamp) * 0.05;
       frameCount++;
       draw(now);
@@ -805,8 +849,8 @@ function Ticker() {
       cancelAnimationFrame(raf);
       ro.disconnect();
       document.body.classList.remove('cursor-octopus');
-      (section || wrap).removeEventListener('mousemove', onMove);
-      (section || wrap).removeEventListener('mouseleave', onLeave);
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseleave', onLeave);
       (section || wrap).removeEventListener('touchstart', onTouch);
       (section || wrap).removeEventListener('touchmove', onTouch);
       (section || wrap).removeEventListener('touchend', onTouchEnd);

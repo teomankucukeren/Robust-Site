@@ -295,8 +295,10 @@ body[data-view="works"] #rb-warp { display: none; }
 /* laptop-sized screens (MacBook): shrink the hero headline ~20% so it sits
    comfortably; larger desktop monitors keep the full size */
 @media (min-width: 961px) and (max-width: 1600px) {
-  #hero .hero-h1 { font-size: clamp(30px, 3.8vw, 64px) !important; }
+  #hero .hero-h1 { font-size: clamp(28px, 3.4vw, 58px) !important; }
 }
+/* the accent period must never orphan onto its own line */
+.hero-h1 .hero-tail { white-space: nowrap !important; }
 
 /* "Explore the Work / Showreel" treatment (desktop): white labels, orange
    accents, a thin divider line between them, and a circular play badge —
@@ -3770,7 +3772,7 @@ textarea.cf-input { min-height: 76px; }
   /* let the "We shape…" headline wrap so it fits narrow screens
      (inline styles force nowrap, so override with !important) */
   .hero-h1, .hero-h1 span { white-space: normal !important; }
-  .hero-h1 { font-size: clamp(34px, 10.5vw, 52px) !important; line-height: 1.02 !important; }
+  .hero-h1 { font-size: clamp(30px, 9.2vw, 46px) !important; line-height: 1.02 !important; }
   .about-founders { font-size: 16px !important; gap: 10px !important; }
 
   .side-rail { gap: 4px; }
@@ -4588,7 +4590,6 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   body[data-view="works"] .eyebrow { font-size: 11px; }
 }
 
-/* Film loading spinner — centred on the poster layer of the work overlay. */
-.wo-spinner { display: block; width: 76px; height: 76px; border-radius: 50%; border: 5px solid rgba(255,255,255,0.18); border-top-color: var(--orange); animation: wo-spin 0.9s linear infinite; }
-@media (max-width: 760px) { .wo-spinner { width: 54px; height: 54px; border-width: 4px; } }
-@keyframes wo-spin { to { transform: rotate(360deg); } }
+
+.about-founders .founder-link{cursor:pointer;transition:opacity .25s ease}
+.about-founders .founder-link:hover{opacity:.6}

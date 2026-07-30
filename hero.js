@@ -26,6 +26,10 @@ function Hero({
   const ctaStyle = tw.ctaStyle || 'links';
   const socialGlow = tw.socialGlow || 'bright';
   const eyebrowText = tw.eyebrowText || 'Brand films, campaigns, animation —';
+  const headline = t('hero.headline');
+  const headSpace = headline.lastIndexOf(' ');
+  const headHead = headSpace > 0 ? headline.slice(0, headSpace) : '';
+  const headTail = headSpace > 0 ? headline.slice(headSpace + 1) : headline;
   const H1_SIZE = {
     default: {
       fontSize: 'clamp(38px, 7vw, 104px)',
@@ -96,13 +100,11 @@ function Hero({
     if (period) period.style.opacity = '0';
     if (caret) caret.style.display = 'none';
 
-    // First paint: the h1 itself fades in via CSS (0.75s delay + 1.1s
-    // transition, started when `loaded` flips true ~120ms after mount) —
-    // start typing only once that fade finishes, or the first letters flip
-    // visible while still hidden behind the fade and typing looks like it
-    // begins mid-word. Language switches (container already visible) start
-    // right away.
-    const START = typedOnceRef.current ? 150 : 1850;
+    // First paint: the h1 fades in with the CTAs (0.4s delay + 0.85s
+    // transition, started when `loaded` flips true ~120ms after mount). The
+    // caret picks up once that fade has settled. Language switches (container
+    // already visible) start right away.
+    const START = typedOnceRef.current ? 150 : 1200;
     const STEP = 58; // ms per glyph
     typedOnceRef.current = true;
 
@@ -130,6 +132,14 @@ function Hero({
       acc += STEP * (wordEnd ? 1.55 : 1);
       s.t = acc;
     });
+    // The line isn't typed from scratch: its first half is already set when the
+    // h1 fades in, and the caret takes over from the middle.
+    const startIdx = Math.min(slots.length - 1, Math.max(1, Math.floor(chars.length * 0.5)));
+    const base = slots[startIdx - 1].t;
+    slots.forEach(s => {
+      s.t -= base;
+    });
+    for (let k = 0; k < startIdx; k++) slots[k].el.style.opacity = '1';
     const timers = [];
     let raf = null;
     const run = () => {
@@ -139,12 +149,13 @@ function Hero({
         });
         return;
       }
+      const s0 = slots[startIdx];
       caret.style.opacity = '1';
-      caret.style.transform = 'translate3d(' + slots[0].x + 'px,' + slots[0].top + 'px,0)';
-      caret.style.height = slots[0].h + 'px';
+      caret.style.transform = 'translate3d(' + s0.x + 'px,' + s0.top + 'px,0)';
+      caret.style.height = s0.h + 'px';
       caret.style.display = 'block';
       const t0 = performance.now();
-      let i = 0;
+      let i = startIdx;
       const tick = now => {
         const el = now - t0;
         while (i < slots.length && el >= slots[i].t) {
@@ -270,12 +281,12 @@ function Hero({
     style: {
       margin: '0 0 clamp(40px, 5vh, 64px)',
       ...H1_SIZE,
-      fontSize: 'clamp(36px, 4.8vw, 84px)',
+      fontSize: 'clamp(32px, 4.2vw, 72px)',
       lineHeight: 1.0,
       letterSpacing: '-0.03em',
       opacity: loaded ? 1 : 0,
       transform: loaded ? 'translateY(0)' : 'translateY(14px)',
-      transition: 'opacity 0.85s ease 0.9s, transform 0.85s cubic-bezier(0.16,1,0.3,1) 0.9s'
+      transition: 'opacity 0.85s ease 0.4s, transform 0.85s cubic-bezier(0.16,1,0.3,1) 0.4s'
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "hero-line",
@@ -289,9 +300,13 @@ function Hero({
     style: {
       color: '#ffffff'
     }
+  }, headHead ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(KineticText, {
+    text: headHead
+  }), ' ') : null, /*#__PURE__*/React.createElement("span", {
+    className: "hero-tail"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: t('hero.headline')
-  })), /*#__PURE__*/React.createElement("span", {
+    text: headTail
+  }), /*#__PURE__*/React.createElement("span", {
     className: "hero-period",
     style: {
       color: 'var(--orange)',
@@ -300,7 +315,7 @@ function Hero({
       marginLeft: '0.06em',
       display: 'inline-block'
     }
-  }, "."))), /*#__PURE__*/React.createElement("div", {
+  }, "."))))), /*#__PURE__*/React.createElement("div", {
     className: "hero-actions",
     style: {
       opacity: loaded ? 1 : 0,
