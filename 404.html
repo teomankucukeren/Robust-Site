@@ -11,40 +11,30 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@300;400&family=Space+Mono:wght@400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400&family=Space+Mono:wght@400&display=swap" rel="stylesheet" />
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{background:#050505;color:#fff;font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;padding:clamp(24px,6vw,80px);overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 0%,rgba(255,69,0,.10),transparent 60%)}
-.wrap{position:relative;width:100%;max-width:760px}
-.code{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.28em;color:rgba(255,69,0,.9);text-transform:uppercase}
-h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(64px,16vw,180px);line-height:.86;letter-spacing:-.04em;margin:clamp(18px,3vh,28px) 0 0}
-h1 span{color:#ff4500}
-.lines{display:flex;flex-direction:column;gap:8px;margin-top:clamp(22px,4vh,34px);max-width:46ch}
-.lines p{font-weight:300;font-size:clamp(15px,1.5vw,18px);line-height:1.6;color:#c9c9c9;text-wrap:pretty}
-.lines p+p{color:#8a8a8a;font-size:clamp(13.5px,1.3vw,15.5px)}
-.rule{height:1px;margin:clamp(28px,5vh,44px) 0 clamp(20px,3.5vh,28px);background:linear-gradient(to right,rgba(255,69,0,.5),transparent 70%)}
-.links{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center}
-a{color:#fff;text-decoration:none;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;border-bottom:1px solid rgba(255,69,0,.45);padding-bottom:3px;transition:color .25s ease,border-color .25s ease}
-a:hover{color:#ff4500;border-color:#ff4500}
-a.muted{color:#8a8a8a;border-color:rgba(255,255,255,.14)}
-a.muted:hover{color:#fff;border-color:rgba(255,69,0,.5)}
+.wrap{position:relative;z-index:1;width:100%;max-width:1000px;margin:0 auto;text-align:left}
+.code{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.3em;color:rgba(255,69,0,.9);text-transform:uppercase;display:flex;align-items:center;gap:14px}
+.code::before{content:'';width:28px;height:1px;background:#ff4500}
+h1{font-family:'Space Mono',monospace;font-weight:400;font-size:clamp(56px,10vw,96px);line-height:.9;letter-spacing:.02em;margin:24px 0 0;color:rgba(255,69,0,.85);text-shadow:0 0 18px rgba(255,69,0,.55),0 0 40px rgba(255,69,0,.25)}
+.links{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;margin-top:40px}
+a{color:#fff;text-decoration:none;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding-bottom:3px}
+a.muted{color:#8a8a8a}
+a:hover{color:#ff4500}
 ::selection{background:#ff4500;color:#050505}
 </style>
 </head>
 <body>
 <div class="wrap">
 <div class="code">Error 404 — Sayfa bulunamadı</div>
-<h1>404<span>.</span></h1>
-<div class="lines">
-<p lang="tr">Aradığın sayfa taşınmış ya da hiç var olmamış. Kadraj dışında kaldın.</p>
-<p lang="en">This page has moved or never existed. Let's get you back in frame.</p>
-</div>
-<div class="rule"></div>
+<h1>404</h1>
 <div class="links">
-<a href="/" lang="tr">Ana Sayfa</a>
-<a class="muted" href="/en/" lang="en">English Home</a>
+<a href="/en/" lang="en">Home</a>
+<a class="muted" href="/" lang="tr">Anasayfa</a>
 <a class="muted" href="mailto:contact@robust.film" lang="en">contact@robust.film</a>
 </div>
 </div>

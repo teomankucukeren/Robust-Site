@@ -31,8 +31,6 @@ try {
 const HERO_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "headlineSize": "large",
   "headlineMode": "statement",
-  "showEyebrow": true,
-  "eyebrowText": "",
   "ctaStyle": "links",
   "socialGlow": "bright",
   "svcLayout": "list"
@@ -262,16 +260,6 @@ function App() {
     value: tw.headlineMode,
     options: ['statement', 'rotate'],
     onChange: v => setTweak('headlineMode', v)
-  }), /*#__PURE__*/React.createElement(TweakSection, {
-    label: "Context"
-  }), /*#__PURE__*/React.createElement(TweakToggle, {
-    label: "Eyebrow line",
-    value: tw.showEyebrow,
-    onChange: v => setTweak('showEyebrow', v)
-  }), tw.showEyebrow && /*#__PURE__*/React.createElement(TweakText, {
-    label: "Eyebrow text",
-    value: tw.eyebrowText,
-    onChange: v => setTweak('eyebrowText', v)
   }), /*#__PURE__*/React.createElement(TweakSection, {
     label: "Actions & rail"
   }), /*#__PURE__*/React.createElement(TweakRadio, {

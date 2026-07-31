@@ -317,7 +317,7 @@ body[data-view="works"] #rb-warp { display: none; }
   transform: translateX(-50%);
 }
 .hero-mark { display: inline-block; width: 0; height: 0; vertical-align: -0.08em; margin: 0 0.18em; }
-.hero-mark-triangle { border-left: 0.09em solid transparent; border-right: 0.09em solid transparent; border-bottom: 0.16em solid var(--orange); }
+.hero-mark-triangle { border-left: 0.09em solid transparent; border-right: 0.09em solid transparent; border-bottom: 0.16em solid var(--orange); margin-left: 0.09em; }
 .hero-mark-square { width: 0.15em; height: 0.15em; background: var(--orange); }
 .hero-mark-circle { width: 0.15em; height: 0.15em; background: var(--orange); border-radius: 50%; }
 @keyframes rb-cursor-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }

@@ -1499,6 +1499,12 @@ function WorkOverlay({
     try {
       player = new window.Vimeo.Player(vimeoRef.current);
       playerRef.current = player;
+      // Fire the unmute/play commands immediately (the SDK queues them until
+      // the iframe is ready internally) instead of waiting on the ready()
+      // promise — every tick of delay narrows the window mobile Safari counts
+      // as "still part of the opening tap", which is what let the video sit on
+      // Vimeo's own paused poster thumbnail before sound kicked in.
+      try { player.setMuted(false); player.play(); } catch (e) {}
       // Films play WITH SOUND. Opening a film is itself a click, which normally
       // satisfies the browser's autoplay-with-sound rule — so assert unmuted as
       // soon as the player is ready instead of waiting for another gesture.
@@ -1623,7 +1629,12 @@ function WorkOverlay({
       boxSizing: 'border-box',
       overflowY: 'auto',
       opacity: vis ? 1 : 0,
-      transition: 'opacity 0.38s ease'
+      // Opening fades in fast (kills the window where the tapped card's own
+      // cover thumbnail shows through the backdrop before the video paints
+      // over it — only noticeable on mobile, where the tapped card sits
+      // full-bleed right where the video will land). Closing keeps the
+      // slower, gentler fade.
+      transition: vis ? 'opacity 0.08s ease' : 'opacity 0.38s ease'
     }
   }, /*#__PURE__*/React.createElement("button", {
     "data-no-unmute": true,

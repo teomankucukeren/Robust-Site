@@ -128,7 +128,7 @@ function About() {
     className: "about-lead"
   }, t('about.leadPre'), /*#__PURE__*/React.createElement("span", {
     className: "accent"
-  }, "Robust Film"), t('about.leadPost'))), /*#__PURE__*/React.createElement(Reveal, {
+  }, "Robust"), t('about.leadPost'))), /*#__PURE__*/React.createElement(Reveal, {
     delay: 0.22
   }, /*#__PURE__*/React.createElement("p", {
     className: "body-text",

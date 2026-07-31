@@ -39,10 +39,8 @@ function Hero({
   const t = k => rbT(k, lang);
   const headlineSize = tw.headlineSize || 'default';
   const headlineMode = tw.headlineMode || 'statement';
-  const showEyebrow = tw.showEyebrow !== false;
   const ctaStyle = tw.ctaStyle || 'links';
   const socialGlow = tw.socialGlow || 'bright';
-  const eyebrowText = tw.eyebrowText || t('hero.eyebrow');
   const headline = t('hero.headline');
   const headSpace = headline.lastIndexOf(' ');
   const headHead = headSpace > 0 ? headline.slice(0, headSpace) : '';
@@ -186,15 +184,7 @@ function Hero({
       transition: 'opacity 1.1s cubic-bezier(0.16,1,0.3,1)',
       willChange: 'transform, opacity'
     }
-  }, showEyebrow && /*#__PURE__*/React.createElement("div", {
-    className: "hero-kicker",
-    lang: lang === 'TR' ? 'tr' : 'en',
-    style: {
-      opacity: loaded ? 1 : 0,
-      transform: loaded ? 'translateY(0)' : 'translateY(10px)',
-      transition: 'opacity 0.9s ease 0.3s, transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s'
-    }
-  }, eyebrowText), /*#__PURE__*/React.createElement("h1", {
+  }, /*#__PURE__*/React.createElement("h1", {
     ref: h1Ref,
     className: "hero-h1",
     style: {

@@ -125,7 +125,6 @@
 
     // Hero
     'hero.headline': { EN: 'Ideas—developed, shaped, produced',  TR: 'Fikir. Form. Üretim' },
-    'hero.eyebrow': { EN: 'Creative production studio · Istanbul', TR: 'Kreatif prodüksiyon stüdyosu · İstanbul' },
     'hero.showreel': { EN: 'Showreel',                  TR: 'Showreel' },
     'hero.explore':  { EN: 'Explore the Work',          TR: 'Projeler' },
     'hero.scroll':   { EN: 'Scroll',                    TR: 'Kaydır' },
