@@ -78,10 +78,9 @@ function About() {
       fontWeight: 700,
       color: 'var(--orange)',
       display: 'flex',
-      alignItems: 'center',
-      gap: '16px',
-      flexWrap: 'wrap',
-      rowGap: '6px'
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      gap: '10px'
     }
   }, /*#__PURE__*/React.createElement("a", {
     href: "https://www.instagram.com/snnakpnr/?hl=tr",
@@ -97,8 +96,8 @@ function About() {
   }, "Sinan Akp\u0131nar"), /*#__PURE__*/React.createElement("span", {
     "aria-hidden": "true",
     style: {
-      width: '1px',
-      height: '16px',
+      width: '28px',
+      height: '1px',
       background: 'var(--orange)',
       opacity: 0.4,
       flex: 'none'
@@ -129,7 +128,7 @@ function About() {
     className: "about-lead"
   }, t('about.leadPre'), /*#__PURE__*/React.createElement("span", {
     className: "accent"
-  }, "Robust"), t('about.leadPost'))), /*#__PURE__*/React.createElement(Reveal, {
+  }, "Robust Film"), t('about.leadPost'))), /*#__PURE__*/React.createElement(Reveal, {
     delay: 0.22
   }, /*#__PURE__*/React.createElement("p", {
     className: "body-text",
@@ -276,15 +275,18 @@ function Ticker() {
     const GR = 130; // grid displacement radius
 
     let W = 0,
-      H = 0;
+      H = 0,
+      HT = 0;
     function resize() {
       const r = section.getBoundingClientRect();
+      const br = wrap.getBoundingClientRect();
       W = r.width;
       H = r.height;
+      HT = H + reachPad(r, br);
       canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
+      canvas.height = Math.round(HT * dpr);
       canvas.style.width = W + 'px';
-      canvas.style.height = H + 'px';
+      canvas.style.height = HT + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       oneSet = track.scrollWidth / 3;
     }
@@ -369,8 +371,7 @@ function Ticker() {
     }
     function onMove(e) {
       const r = section.getBoundingClientRect();
-      const br = wrap.getBoundingClientRect();
-      const bottom = Math.max(r.bottom, br.bottom + reachPad(r, br));
+      const bottom = r.top + HT;
       if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > bottom) {
         if (mouse.in) onLeave();
         return;
@@ -561,7 +562,7 @@ function Ticker() {
     }
     function draw(now) {
       const sr = section.getBoundingClientRect();
-      ctx.clearRect(0, 0, W, H);
+      ctx.clearRect(0, 0, W, HT);
 
       // velocity decay
       mouse.vx *= 0.86;
@@ -594,7 +595,7 @@ function Ticker() {
         ty = ay0;
       if (mouse.in) {
         tx = mouse.x;
-        ty = clamp(mouse.y, 18, H - 18);
+        ty = clamp(mouse.y, 18, HT - 18);
       }
       if (!body.init) {
         body.x = ax0;
@@ -959,7 +960,9 @@ function Ticker() {
     "aria-hidden": "true",
     style: {
       position: 'absolute',
-      inset: 0,
+      top: 0,
+      left: 0,
+      right: 0,
       zIndex: 6,
       pointerEvents: 'none'
     }

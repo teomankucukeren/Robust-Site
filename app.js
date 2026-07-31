@@ -31,8 +31,8 @@ try {
 const HERO_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "headlineSize": "large",
   "headlineMode": "statement",
-  "showEyebrow": false,
-  "eyebrowText": "Brand films, campaigns, animation \u2014",
+  "showEyebrow": true,
+  "eyebrowText": "",
   "ctaStyle": "links",
   "socialGlow": "bright",
   "svcLayout": "list"

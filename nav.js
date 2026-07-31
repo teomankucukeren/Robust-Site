@@ -143,10 +143,7 @@ function Nav({
     onClick: () => {
       setMenuOpen(false);
       setView('home');
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      window.rbScrollToTop();
     },
     style: {
       display: 'flex',

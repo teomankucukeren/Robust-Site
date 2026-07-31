@@ -1738,15 +1738,9 @@ function Contact() {
     }
   }, /*#__PURE__*/React.createElement(KineticText, {
     text: rbT('contact.headline2', lang)
-  }))) : lang === 'TR' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: 'var(--orange)'
-    }
-  }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "Hik\xE2yen"
-  })), ' ', /*#__PURE__*/React.createElement(KineticText, {
-    text: "mi var?"
-  })) : /*#__PURE__*/React.createElement("span", {
+  }))) : lang === 'TR' ? /*#__PURE__*/React.createElement(KineticText, {
+    text: "İletişim"
+  }) : /*#__PURE__*/React.createElement("span", {
     style: {
       color: 'var(--orange)'
     }
@@ -2080,10 +2074,7 @@ function BackToTop() {
   const [lang] = useLang();
   const [hov, setHov] = useState(false);
   return /*#__PURE__*/React.createElement("button", {
-    onClick: () => window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    }),
+    onClick: () => window.rbScrollToTop(),
     onMouseEnter: () => setHov(true),
     onMouseLeave: () => setHov(false),
     lang: lang === 'TR' ? 'tr' : 'en',

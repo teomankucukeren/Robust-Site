@@ -170,7 +170,13 @@ body[data-view="works"] #rb-warp { display: none; }
    ("ş") into the İ and making them collide. */
 .display-xl[lang="en"] .kchar:nth-child(2) { margin-left: -0.14em; }
 .hero-line[lang="tr"] .kchar:nth-child(2) { margin-left: -0.03em; }
-.display-xl[lang="tr"] .kchar:nth-child(2) { margin-left: -0.03em; }
+.hero-line[lang="tr"] .kword:first-child .kchar:nth-child(2) { margin-left: 0.02em; }
+/* "Arşiv" — the base -0.035em letter-spacing removes ALL of the A/r side
+   bearing, leaving zero gap between them (looks like they're touching,
+   worst at the larger relative size mobile renders this title at). Open
+   just that pair back up; every other pair in the word reads fine tight. */
+.display-xl[lang="tr"] .kchar:nth-child(2) { margin-left: 0.02em; }
+.display-xl[lang="tr"] .kchar:nth-child(3) { margin-left: 0.025em; }
 /* "What We Do" — the per-letter split loses kerning, leaving too big a gap
    between the "W" and "E" of "We". Pull the "E" (and everything after it,
    which follows inline) left. In em so it scales with the fluid font-size and
@@ -273,8 +279,47 @@ body[data-view="works"] #rb-warp { display: none; }
    (hero.jsx) — CSS just owns base hidden state and the blink loop. */
 .hero-line .kchar { opacity: 0; }
 .hero-caret { position: absolute; left: 0; top: 0; width: 5px; display: none; background: var(--orange); opacity: 1; will-change: transform; transition: opacity 0.25s ease; pointer-events: none; }
-.hero-period { opacity: 0; }
+.hero-period { opacity: 0; color: transparent; }
+/* The display font's own "." glyph reads as a small square at this weight —
+   draw a round dot instead, sized/positioned off the (now invisible) glyph. */
+.hero-period::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: 0.1em;
+  width: 0.15em; height: 0.15em;
+  border-radius: 50%;
+  background: var(--orange);
+  transform: translateX(-50%);
+}
 .hero-period.blinking { animation: rb-cursor-pulse 1.1s ease-in-out infinite; }
+.hero-dot { opacity: 0; color: transparent; display: inline-block; position: relative; }
+.hero-dot::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: 0.1em;
+  width: 0.15em; height: 0.15em;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateX(-50%);
+}
+.hero-shape { opacity: 0; color: transparent; display: inline-block; position: relative; }
+.hero-shape-triangle::after {
+  content: ''; position: absolute; left: 50%; bottom: 0.08em;
+  width: 0; height: 0;
+  border-left: 0.09em solid transparent; border-right: 0.09em solid transparent;
+  border-bottom: 0.16em solid var(--orange);
+  transform: translateX(-50%);
+}
+.hero-shape-square::after {
+  content: ''; position: absolute; left: 50%; bottom: 0.08em;
+  width: 0.15em; height: 0.15em;
+  background: var(--orange);
+  transform: translateX(-50%);
+}
+.hero-mark { display: inline-block; width: 0; height: 0; vertical-align: -0.08em; margin: 0 0.18em; }
+.hero-mark-triangle { border-left: 0.09em solid transparent; border-right: 0.09em solid transparent; border-bottom: 0.16em solid var(--orange); }
+.hero-mark-square { width: 0.15em; height: 0.15em; background: var(--orange); }
+.hero-mark-circle { width: 0.15em; height: 0.15em; background: var(--orange); border-radius: 50%; }
 @keyframes rb-cursor-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
 /* hero headline — single line, bold, all-accent, left-aligned */
@@ -304,10 +349,10 @@ body[data-view="works"] #rb-warp { display: none; }
    accents, a thin divider line between them, and a circular play badge —
    sized up slightly from the base links treatment. */
 #hero .hero-cta { font-size: 15px !important; letter-spacing: 0.22em !important; gap: 14px !important; }
-#hero .hero-cta-play { color: #ffffff !important; }
+#hero .hero-cta:not(.hero-cta-primary) { color: #ffffff !important; }
 /* "Explore the Work" reads orange on every breakpoint */
 #hero .hero-cta-primary { color: var(--orange) !important; }
-#hero .hero-cta-primary:hover, #hero .hero-cta-play:hover { color: var(--orange) !important; }
+#hero .hero-cta-primary:hover, #hero .hero-cta:not(.hero-cta-primary):hover { color: var(--orange) !important; }
 #hero .hero-cta-arrow { color: var(--orange); font-size: 16px !important; }
 #hero .hero-cta-divider {
   display: inline-block; width: 1px; height: 26px;
@@ -384,6 +429,9 @@ body[data-view="works"] #rb-warp { display: none; }
 
 /* masked line reveal for big headlines */
 .rv-mask { overflow: hidden; display: block; padding-bottom: clamp(10px, 1.1vw, 18px); margin-bottom: clamp(-18px, -1.1vw, -10px); }
+/* archive page title ('Projeler') has a tall capital J whose top gets
+   clipped by the tight line-height (0.94) inside this overflow:hidden mask */
+.arch-title-mask { padding-top: clamp(14px, 1.8vw, 26px); }
 .rv-mask .rv-mask-inner {
   display: block;
   transform: translateY(112%);
@@ -438,21 +486,22 @@ body[data-view="works"] #rb-warp { display: none; }
   padding: 2px 0;
 }
 .side-rail-glyph {
-  font-family: 'Space Mono', monospace;
-  font-weight: 700;
-  font-size: 15px;
-  line-height: 1;
-  color: rgba(255, 69, 0, 0.22);
+  display: inline-block;
+  width: 0; height: 0;
   transform: scale(0.9);
-  transition: color 0.35s ease, transform 0.45s var(--ease), text-shadow 0.35s ease;
+  opacity: 0.22;
+  transition: transform 0.45s var(--ease), opacity 0.35s ease, filter 0.35s ease;
 }
+.side-rail-shape-circle { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
+.side-rail-shape-square { width: 7px; height: 7px; background: var(--orange); }
+.side-rail-shape-triangle { border-left: 4.5px solid transparent; border-right: 4.5px solid transparent; border-bottom: 7.5px solid var(--orange); }
 .side-rail-item:hover .side-rail-glyph {
-  color: rgba(255, 69, 0, 0.6);
+  opacity: 0.6;
 }
 .side-rail-item.active .side-rail-glyph {
-  color: var(--orange);
+  opacity: 1;
   transform: scale(1.35) translateY(-1px);
-  text-shadow: 0 0 12px rgba(var(--orange-rgb), 0.65);
+  filter: drop-shadow(0 0 6px rgba(var(--orange-rgb), 0.65));
 }
 
 /* ── Top navigation ───────────────────────────────────────── */
@@ -3410,7 +3459,7 @@ textarea.cf-input { min-height: 76px; }
   font-weight: 700;
   color: var(--gray-4);
 }
-/* Sign-off middle line — shown on tablet + desktop, hidden on phone */
+/* Sign-off middle line */
 .footer-rights {
   font-family: var(--f-text);
   font-size: 12px;
@@ -3418,7 +3467,11 @@ textarea.cf-input { min-height: 76px; }
   font-weight: 400;
   color: var(--gray-4);
 }
-@media (max-width: 760px) { .footer-rights { display: none; } }
+/* Phone: dropped from the fine/back-to-top row onto its own centered line at
+   the very bottom of the footer, instead of being hidden. */
+@media (max-width: 760px) {
+  .footer-rights { display: block; order: 3; flex-basis: 100%; text-align: center; margin-top: 10px; }
+}
 @media (max-width: 1000px) {
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid > :first-child { grid-column: 1 / -1; }
@@ -3772,7 +3825,7 @@ textarea.cf-input { min-height: 76px; }
   /* let the "We shape…" headline wrap so it fits narrow screens
      (inline styles force nowrap, so override with !important) */
   .hero-h1, .hero-h1 span { white-space: normal !important; }
-  .hero-h1 { font-size: clamp(30px, 9.2vw, 46px) !important; line-height: 1.02 !important; }
+  .hero-h1 { font-size: clamp(28px, 8.7vw, 44px) !important; line-height: 1.02 !important; }
   .about-founders { font-size: 16px !important; gap: 10px !important; }
 
   .side-rail { gap: 4px; }

@@ -280,6 +280,7 @@ function WorksArchive({
     }
   }, ALL_WORKS.length, " ", rbT('archive.projects', lang)))), /*#__PURE__*/React.createElement(Reveal, {
     variant: "mask",
+    className: "arch-title-mask",
     style: {
       marginTop: '0'
     }
@@ -297,7 +298,7 @@ function WorksArchive({
       fontSize: 'clamp(34px, 5.4vw, 86px)'
     }
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: rbT('nav.works', lang)
+    text: rbT('archive.title', lang)
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "gutter arch-filters",
     style: {

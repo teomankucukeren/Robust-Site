@@ -119,19 +119,20 @@
   const DICT = {
     // Navigation
     'nav.studio':   { EN: 'Studio',   TR: 'Stüdyo' },
-    'nav.works':    { EN: 'Work',     TR: 'İşler' },
+    'nav.works':    { EN: 'Work',     TR: 'Projeler' },
     'nav.services': { EN: 'Services', TR: 'Hizmetler' },
     'nav.contact':  { EN: 'Contact',  TR: 'İletişim' },
 
     // Hero
-    'hero.headline': { EN: 'Follow the path of motion',  TR: 'Hareketi takip et' },
+    'hero.headline': { EN: 'Ideas—developed, shaped, produced',  TR: 'Fikir. Form. Üretim' },
+    'hero.eyebrow': { EN: 'Creative production studio · Istanbul', TR: 'Kreatif prodüksiyon stüdyosu · İstanbul' },
     'hero.showreel': { EN: 'Showreel',                  TR: 'Showreel' },
-    'hero.explore':  { EN: 'Explore the Work',          TR: 'İşlerimizi İncele' },
+    'hero.explore':  { EN: 'Explore the Work',          TR: 'Projeler' },
     'hero.scroll':   { EN: 'Scroll',                    TR: 'Kaydır' },
 
     // Highlights / Works
-    'works.title':   { EN: 'Highlights',        TR: 'Seçki' },
-    'works.viewAll': { EN: 'View Full Archive', TR: 'Tüm Arşivi İncele' },
+    'works.title':   { EN: 'Highlights',        TR: 'Seçili Projeler' },
+    'works.viewAll': { EN: 'View Full Archive', TR: 'Projeleri İncele' },
 
     // About / Studio
     'about.title':   { EN: 'The Studio',        TR: 'Stüdyo' },
@@ -144,27 +145,27 @@
       TR: '2019’da İstanbul’da kurulan ',
     },
     'about.leadPost': {
-      EN: ' is a creative media studio driven by ideas, craftsmanship, and visual storytelling.',
-      TR: '; fikirlerin, zanaatın ve görsel hikâye anlatıcılığının kesişim noktasında konumlanan yaratıcı bir medya stüdyosudur.',
+      EN: ' is a creative production studio driven by ideas, craftsmanship, and visual storytelling.',
+      TR: ', fikir, zanaat ve görsel hikâye anlatıcılığını bir araya getiren bir kreatif prodüksiyon stüdyosudur.',
     },
     'about.body': {
-      EN: 'Bringing together creative direction, production, and post-production, we build work with a clear purpose and a strong visual language. From brand films and digital campaigns to animation and motion-led experiences, every project begins with the same intention: to find the right visual expression for the idea.',
-      TR: 'Kreatif direktörlük, prodüksiyon ve post-prodüksiyonu bütüncül bir yaklaşımla ele alıyor; net bir amaca ve özgün bir görsel kimliğe sahip işler üretiyoruz. Marka filmlerinden dijital kampanyalara, animasyondan hareket odaklı deneyimlere uzanan her projede tek bir niyetle yola çıkıyoruz: Fikre en doğru görsel formu kazandırmak.',
+      EN: 'We work across creative development, production, and post-production, creating films and experiences with a clear point of view. From brand films and digital campaigns to animation and motion-led work, we develop ideas, build their visual worlds, and carry them through every stage of production.',
+      TR: 'Kreatif geliştirmeden prodüksiyon ve post-prodüksiyona kadar tüm süreci üstleniyor; güçlü fikirlerden beslenen, kendine özgü bir görsel dile sahip işler üretiyoruz. Marka filmleri, dijital kampanyalar, animasyon ve hareket odaklı deneyimler için hikâyeyi geliştiriyor, görsel dünyayı kuruyor ve üretimin her aşamasını yürütüyoruz.',
     },
     // TR çevirisi henüz onaylanmadı — boş kaldığı sürece paragraf Türkçede render edilmez.
     'about.body2': {
-      EN: 'We believe every frame should have a reason to exist — designed not only to be seen, but to leave a lasting impression.',
+      EN: '',
       TR: '',
     },
 
     // Services
-    'services.title': { EN: 'What We Do', TR: 'Disiplinlerimiz' },
+    'services.title': { EN: 'What We Do', TR: 'Hizmetler' },
 
     // Contact
     'contact.headline1': { EN: 'Got something', TR: '' },
-    'contact.headline2': { EN: 'in mind?',      TR: 'Hikâyen mi var?' },
+    'contact.headline2': { EN: 'in mind?',      TR: 'İletişim' },
     'contact.status':    { EN: 'Available for projects — 2026', TR: 'Yeni projeler için müsaitiz — 2026' },
-    'contact.label':     { EN: 'Contact Us', TR: 'Form' },
+    'contact.label':     { EN: 'Contact Us', TR: 'İletişim Formu' },
     'contact.note':      { EN: 'Every message reaches us directly — expect a reply within two working days.', TR: 'Her mesaj bize doğrudan ulaşır — iki iş günü içinde yanıt bekleyebilirsin.' },
     'contact.field.name':    { EN: 'Name',    TR: 'İsim' },
     'contact.field.email':   { EN: 'Email',   TR: 'E-posta' },
@@ -214,9 +215,10 @@
     'overlay.replay':    { EN: 'Replay', TR: 'Tekrar Oynat' },
 
     // Work / Archive page
-    'archive.eyebrow':  { EN: 'Archive',  TR: 'Arşiv' },
+    'archive.eyebrow':  { EN: 'Archive',  TR: 'Projeler' },
+    'archive.title':    { EN: 'Work',     TR: 'Arşiv' },
     'archive.projects': { EN: 'Projects', TR: 'Proje' },
-    'archive.backHome': { EN: '← Back to Home', TR: '← Ana Sayfaya Dön' },
+    'archive.backHome': { EN: '← Back to Home', TR: '← Ana Sayfa' },
     'archive.cat.all':             { EN: 'ALL',             TR: 'TÜMÜ' },
     'archive.cat.production':      { EN: 'PRODUCTION',      TR: 'PRODÜKSİYON' },
     'archive.cat.animation':       { EN: 'ANIMATION',       TR: 'ANİMASYON' },

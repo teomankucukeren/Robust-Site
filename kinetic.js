@@ -287,10 +287,7 @@ function SideNav({
     key: 'archive',
     label: 'Archive',
     active: true,
-    onClick: () => window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
+    onClick: () => window.rbScrollToTop()
   }, {
     key: 'home',
     label: 'Home',
@@ -301,10 +298,10 @@ function SideNav({
   // Every cell shows one of the boot loader's glyphs ( - = + ), scattered at
   // random. The mix is fixed per view so it doesn't reshuffle on every scroll;
   // the active section just lights its glyph up in bright orange.
-  const GLYPHS = ['-', '=', '+'];
-  const glyphMix = useMemo(() => {
+  const SHAPES = ['triangle', 'square', 'circle'];
+  const shapeMix = useMemo(() => {
     const seed = items.length;
-    return items.map((_, i) => GLYPHS[(i * 7 + seed * 3 + 1) % GLYPHS.length]);
+    return items.map((_, i) => SHAPES[(i * 7 + seed * 3 + 1) % SHAPES.length]);
   }, [items.length]);
   return /*#__PURE__*/React.createElement("nav", {
     className: "side-rail",
@@ -319,8 +316,8 @@ function SideNav({
       cursor: 'none'
     }
   }, /*#__PURE__*/React.createElement("span", {
-    className: "side-rail-glyph"
-  }, glyphMix[i]))));
+    className: `side-rail-glyph side-rail-shape-${shapeMix[i]}`
+  }))));
 }
 Object.assign(window, {
   KineticText,

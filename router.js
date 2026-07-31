@@ -232,3 +232,27 @@
 
   window.RBRouter = RBRouter;
 })();
+
+  // Reliable smooth "back to top". Plain window.scrollTo({top:0,behavior:'smooth'})
+  // can stop short on mobile: scrolling up shows the browser's address bar,
+  // which shrinks/grows the viewport mid-animation, and some browsers end the
+  // native smooth-scroll early against the now-stale target. We keep the native
+  // smooth animation (so it still looks/feels smooth) but watch it with rAF and
+  // snap the rest of the way if it stalls before reaching 0.
+  window.rbScrollToTop = function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    let last = -1, stalled = 0;
+    (function watch() {
+      const y = window.scrollY;
+      if (y <= 0) return;
+      if (y === last) {
+        stalled++;
+        if (stalled > 2) { window.scrollTo({ top: 0, behavior: 'smooth' }); stalled = 0; }
+      } else {
+        stalled = 0;
+      }
+      last = y;
+      requestAnimationFrame(watch);
+    })();
+  };
+

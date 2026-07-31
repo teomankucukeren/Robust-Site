@@ -14,6 +14,23 @@ const {
 // view, because remounting reset all local state. Once it has played, later
 // mounts skip straight to the settled state.
 let heroEnteredOnce = false;
+function KineticHead({
+  text
+}) {
+  const words = String(text).split(' ');
+  return words.map((w, i) => {
+    const dot = w.endsWith('.');
+    const core = dot ? w.slice(0, -1) : w;
+    const shapeClass = i === 0 ? 'hero-mark hero-mark-triangle' : 'hero-mark hero-mark-square';
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: i
+    }, /*#__PURE__*/React.createElement(KineticText, {
+      text: core
+    }), dot ? /*#__PURE__*/React.createElement("span", {
+      className: shapeClass
+    }) : null, (!dot && i < words.length - 1) ? ' ' : null);
+  });
+}
 function Hero({
   setView,
   tw = {}
@@ -25,7 +42,7 @@ function Hero({
   const showEyebrow = tw.showEyebrow !== false;
   const ctaStyle = tw.ctaStyle || 'links';
   const socialGlow = tw.socialGlow || 'bright';
-  const eyebrowText = tw.eyebrowText || 'Brand films, campaigns, animation —';
+  const eyebrowText = tw.eyebrowText || t('hero.eyebrow');
   const headline = t('hero.headline');
   const headSpace = headline.lastIndexOf(' ');
   const headHead = headSpace > 0 ? headline.slice(0, headSpace) : '';
@@ -63,7 +80,6 @@ function Hero({
   const caretRef = useRef(null);
   const typedOnceRef = useRef(heroEnteredOnce);
   useEffect(() => {
-    if (heroEnteredOnce) return;
     const t = setTimeout(() => {
       setLoaded(true);
       // direct-DOM fallback so the hero can never stay hidden if a re-render is lost
@@ -78,111 +94,13 @@ function Hero({
   // cursor duty once typing finishes.
   useLayoutEffect(() => {
     const h1 = h1Ref.current;
-    const line = lineRef.current;
-    const caret = caretRef.current;
-    if (!h1 || !line) return;
+    if (!h1) return;
     const chars = Array.from(h1.querySelectorAll('.kchar'));
     const period = h1.querySelector('.hero-period');
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || chars.length === 0 || heroEnteredOnce) {
-      chars.forEach(c => {
-        c.style.opacity = '1';
-      });
-      if (period) {
-        period.style.opacity = '1';
-        period.classList.add('blinking');
-      }
-      return;
-    }
     chars.forEach(c => {
-      c.style.opacity = '0';
+      c.style.opacity = '1';
     });
-    if (period) period.style.opacity = '0';
-    if (caret) caret.style.display = 'none';
-
-    // First paint: the h1 fades in with the CTAs (0.4s delay + 0.85s
-    // transition, started when `loaded` flips true ~120ms after mount). The
-    // caret picks up once that fade has settled. Language switches (container
-    // already visible) start right away.
-    const START = typedOnceRef.current ? 150 : 1200;
-    const STEP = 58; // ms per glyph
-    typedOnceRef.current = true;
-
-    // Professional typewriter: the glyph appears and the caret lands right
-    // after it IN THE SAME FRAME — that's what makes real typing read as
-    // smooth. One rAF loop (no timer swarm), steady cadence with a short
-    // breath after word ends, caret solid while typing.
-    const lr0 = line.getBoundingClientRect();
-    const targets = period ? chars.concat([period]) : chars;
-    const slots = targets.map(el => {
-      const r = el.getBoundingClientRect();
-      return {
-        el,
-        x: r.right - lr0.left,
-        top: r.top - lr0.top,
-        h: r.height,
-        ch: el.textContent || ''
-      };
-    });
-    // cumulative reveal times: slightly longer beat on the last letter of a word
-    let acc = 0;
-    slots.forEach((s, i) => {
-      const next = slots[i + 1];
-      const wordEnd = !next || Math.abs(next.x - s.x) > s.h * 0.28 || next.top !== s.top;
-      acc += STEP * (wordEnd ? 1.55 : 1);
-      s.t = acc;
-    });
-    // The line isn't typed from scratch: its first half is already set when the
-    // h1 fades in, and the caret takes over from the middle.
-    const startIdx = Math.min(slots.length - 1, Math.max(1, Math.floor(chars.length * 0.5)));
-    const base = slots[startIdx - 1].t;
-    slots.forEach(s => {
-      s.t -= base;
-    });
-    for (let k = 0; k < startIdx; k++) slots[k].el.style.opacity = '1';
-    const timers = [];
-    let raf = null;
-    const run = () => {
-      if (!caret) {
-        slots.forEach(s => {
-          s.el.style.opacity = '1';
-        });
-        return;
-      }
-      const s0 = slots[startIdx];
-      caret.style.opacity = '1';
-      caret.style.transform = 'translate3d(' + s0.x + 'px,' + s0.top + 'px,0)';
-      caret.style.height = s0.h + 'px';
-      caret.style.display = 'block';
-      const t0 = performance.now();
-      let i = startIdx;
-      const tick = now => {
-        const el = now - t0;
-        while (i < slots.length && el >= slots[i].t) {
-          slots[i].el.style.opacity = '1';
-          i++;
-        }
-        const cur = slots[Math.min(i, slots.length - 1)];
-        caret.style.transform = 'translate3d(' + cur.x + 'px,' + cur.top + 'px,0)';
-        caret.style.height = cur.h + 'px';
-        if (i >= slots.length) {
-          caret.style.opacity = '0';
-          timers.push(setTimeout(() => {
-            caret.style.display = 'none';
-            if (period) period.classList.add('blinking');
-            heroEnteredOnce = true;
-          }, 260));
-          return;
-        }
-        raf = requestAnimationFrame(tick);
-      };
-      raf = requestAnimationFrame(tick);
-    };
-    timers.push(setTimeout(run, START));
-    return () => {
-      timers.forEach(clearTimeout);
-      if (raf) cancelAnimationFrame(raf);
-    };
+    if (period) period.style.opacity = '1';
   }, [lang]);
 
   // Scroll parallax: manifesto drifts up + fades as you scroll past
@@ -195,7 +113,7 @@ function Hero({
       const y = window.scrollY;
       const vh = window.innerHeight;
       const p = Math.min(1, y / (vh * 0.9));
-      el.style.transform = `translateY(${y * -0.22}px)`;
+      el.style.transform = `translate3d(0, ${y * -0.22}px, 0)`;
       el.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
       // Mobile only: carry the social icons up with the same parallax so they
       // don't stay pinned while the headline/CTAs drift away on scroll.
@@ -205,7 +123,7 @@ function Hero({
           // drop the entrance transition once scrolling so the fade tracks the
           // headline/CTAs instantly instead of lagging on its 1.1s ease
           soc.style.transition = 'none';
-          soc.style.transform = `translateY(${y * -0.22}px)`;
+          soc.style.transform = `translate3d(0, ${y * -0.22}px, 0)`;
           soc.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
         } else {
           soc.style.transform = '';
@@ -270,6 +188,7 @@ function Hero({
     }
   }, showEyebrow && /*#__PURE__*/React.createElement("div", {
     className: "hero-kicker",
+    lang: lang === 'TR' ? 'tr' : 'en',
     style: {
       opacity: loaded ? 1 : 0,
       transform: loaded ? 'translateY(0)' : 'translateY(10px)',
@@ -281,12 +200,13 @@ function Hero({
     style: {
       margin: '0 0 clamp(40px, 5vh, 64px)',
       ...H1_SIZE,
-      fontSize: 'clamp(32px, 4.2vw, 72px)',
+      fontSize: 'clamp(34px, 4.4vw, 70px)',
       lineHeight: 1.0,
       letterSpacing: '-0.03em',
       opacity: loaded ? 1 : 0,
       transform: loaded ? 'translateY(0)' : 'translateY(14px)',
-      transition: 'opacity 0.85s ease 0.4s, transform 0.85s cubic-bezier(0.16,1,0.3,1) 0.4s'
+      transition: 'opacity 0.85s ease 0.4s, transform 0.85s cubic-bezier(0.16,1,0.3,1) 0.4s',
+      willChange: 'transform, opacity'
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "hero-line",
@@ -300,27 +220,24 @@ function Hero({
     style: {
       color: '#ffffff'
     }
-  }, headHead ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(KineticText, {
+  }, headHead ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(KineticHead, {
     text: headHead
-  }), ' ') : null, /*#__PURE__*/React.createElement("span", {
+  }), headHead.trim().endsWith('.') ? null : ' ') : null, /*#__PURE__*/React.createElement("span", {
     className: "hero-tail"
-  }, /*#__PURE__*/React.createElement(KineticText, {
+  }, /*#__PURE__*/React.createElement(KineticHead, {
     text: headTail
   }), /*#__PURE__*/React.createElement("span", {
-    className: "hero-period",
+    className: "hero-mark hero-mark-circle",
     style: {
-      color: 'var(--orange)',
-      fontFamily: 'var(--f-display)',
-      fontWeight: 700,
-      marginLeft: '0.06em',
-      display: 'inline-block'
+      marginLeft: lang === 'TR' ? '0.18em' : '0.06em'
     }
-  }, "."))))), /*#__PURE__*/React.createElement("div", {
+  }))))), /*#__PURE__*/React.createElement("div", {
     className: "hero-actions",
     style: {
       opacity: loaded ? 1 : 0,
       transform: loaded ? 'translateY(0)' : 'translateY(12px)',
-      transition: 'opacity 0.85s ease 0.4s, transform 0.85s cubic-bezier(0.16,1,0.3,1) 0.4s'
+      transition: 'opacity 0.85s ease 0.4s, transform 0.85s cubic-bezier(0.16,1,0.3,1) 0.4s',
+      willChange: 'transform, opacity'
     }
   }, ctaStyle === 'solid' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(HeroCtaSolid, {
     label: t('hero.explore'),
