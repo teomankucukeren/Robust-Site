@@ -156,7 +156,7 @@ const CLIENTS = [{
   year: '2026',
   vimeoId: '1193087002'
 }, {
-  name: 'TURKİSHBANK'
+  name: 'TURKISHBANK'
 }, {
   name: 'T-ONE',
   project: '23 Nisan Bayram Filmi',
@@ -204,7 +204,7 @@ const CLIENTS = [{
 }, {
   name: 'LOGOSKY'
 }, {
-  name: 'beIN'
+  name: 'beIN CONNECT'
 }, {
   name: 'BRİSA',
   project: 'Altın Yaka',

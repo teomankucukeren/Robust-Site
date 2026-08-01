@@ -112,7 +112,6 @@ const FEATURED_WORKS = [{
   title: 'Surface of Taste',
   client: 'T-ONE BY KALE',
   type: 'Motion Design',
-  typeTR: 'Motion Design',
   year: '2025',
   cat: 'ANIMATION',
   catTR: 'ANİMASYON',
@@ -516,8 +515,8 @@ const FEATURED_WORKS = [{
 // reserved for the Works archive.
 // Mobile drops ids 7 (Surface of Taste) & 2 (Patterns of Possibilities);
 // tablet + desktop keep the full curated set.
-const SELECTED_IDS = [1, 32, 3, 4, 5, 6, 8, 29];
-const SELECTED_IDS_FULL = [1, 32, 3, 4, 5, 6, 7, 8, 29, 2];
+const SELECTED_IDS = [1, 32, 3, 4, 5, 8, 6, 16];
+const SELECTED_IDS_FULL = [1, 32, 3, 4, 5, 8, 7, 6, 16, 2];
 // Credit-line helpers — cat/type are only translated for the 10 Highlights
 // works so far. Falls back to English, and tags whether the shown text is
 // actually Turkish so the uppercase styling doesn't apply Turkish casing to
