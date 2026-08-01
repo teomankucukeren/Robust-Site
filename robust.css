@@ -4107,9 +4107,6 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   /* push the TRACKING readout (and the octopus, which anchors to it) lower so
      it no longer overlaps the About text above */
   .clients-head { gap: 10px 16px; padding-top: 40px; }
-  /* nudge the whole Clients block (tracking text, client names, and the octopus
-     canvas, which all live inside #clients) 10px to the right */
-  #clients { transform: translateX(15px); }
   /* tighten the spacing between the flowing client names so more fit on screen */
   .ticker-brand {
     padding-left: 11px;
@@ -4120,12 +4117,6 @@ img, svg, video, canvas, iframe { max-width: 100%; }
   }
   /* hint that the names can be swiped */
   .vt-wrap { touch-action: pan-y; cursor: grab; }
-  /* The block is nudged +15px right (translateX above), which pushes the RIGHT
-     fade's solid black ~15px off-screen so names fade out subtly there. The LEFT
-     fade sat fully on-screen and went full black too early. Mirror the right's
-     VISIBLE profile — peak ~0.75 black fading out over the same span — so both
-     edges read identically. (.vt-wrap clips, so we soften rather than offset.) */
-  .vt-fade-left { background: linear-gradient(to right, rgba(5,5,5,0.75) 0%, transparent 75%) !important; }
 }
 @media (max-width: 480px) {
   .track-status { font-size: 8px; letter-spacing: 0.16em; padding-left: 14px; }

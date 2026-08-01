@@ -1587,6 +1587,10 @@ function WorkOverlay({
   }, []);
   useEffect(() => {
     const onKey = e => {
+      // Gallery works delegate their render (and their OWN Escape/arrow
+      // handling) to ProjectCase below — skip here so one keypress doesn't
+      // fire both handlers' close/back at once.
+      if (work.gallery && work.gallery.length) return;
       if (e.key === 'Escape') close();
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
       if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(-1);

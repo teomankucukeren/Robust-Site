@@ -124,7 +124,7 @@
     'nav.contact':  { EN: 'Contact',  TR: 'İletişim' },
 
     // Hero
-    'hero.headline': { EN: 'Ideas—developed, shaped, produced',  TR: 'Fikir. Form. Üretim' },
+    'hero.headline': { EN: 'Ideas—developed, shaped, produced',  TR: 'Ideas—developed, shaped, produced' },
     'hero.showreel': { EN: 'Showreel',                  TR: 'Showreel' },
     'hero.explore':  { EN: 'Explore the Work',          TR: 'Projeler' },
     'hero.scroll':   { EN: 'Scroll',                    TR: 'Kaydır' },

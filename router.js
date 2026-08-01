@@ -148,8 +148,24 @@
   // dumping the viewer on the homepage.
   let _expectBack = null;
 
+  // Escape/close is wired from more than one place at once (e.g. a design
+  // case-study overlay nests its own Escape handler inside the film overlay
+  // that opened it) — without a guard, one keypress could call back() twice,
+  // popping straight past the site's own history entry and out to whatever
+  // page (Google, etc.) the visitor arrived from. One physical key press may
+  // only ever pop one entry.
+  let _lastBack = 0;
+
+  // How many of OUR OWN entries are stacked on top of the page the visitor
+  // actually landed on. back() may never pop more of these than we pushed —
+  // that's the hard backstop behind the time debounce above: even if some
+  // future bug fires close()/back() an extra time, it becomes a harmless
+  // no-op instead of walking off the site's own history into the referrer.
+  let _pushDepth = 0;
+
   function push(route) {
     _expectBack = null;
+    _pushDepth++;
     history.pushState(serialize(route), '', urlFor(route));
     setCurrent(route);
   }
@@ -195,7 +211,15 @@
 
     goHome() { if (_current.name !== 'home') push({ name: 'home' }); },
 
-    back() { _expectBack = baseRouteUnder(_current); history.back(); },
+    back() {
+      const now = Date.now();
+      if (now - _lastBack < 600) return;
+      if (_pushDepth <= 0) { replace({ name: 'home' }); return; }
+      _lastBack = now;
+      _pushDepth--;
+      _expectBack = baseRouteUnder(_current);
+      history.back();
+    },
 
     // Called once, after the component catalogue is loaded, before React mounts.
     init() {
