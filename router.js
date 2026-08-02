@@ -77,7 +77,7 @@
   // ── route <-> url / state ───────────────────────────────────────────────────
   function urlFor(route) {
     switch (route.name) {
-      case 'works':    return '#/work';
+      case 'works':    return '#/work' + (route.cat && route.cat !== 'all' ? '/' + route.cat : '');
       case 'project':  return '#/project/' + encodeURIComponent(route.slug || slugForWork(route.work)) +
                               (route.base === 'works' ? '?from=work' : '');
       case 'showreel': return '#/showreel';
@@ -91,6 +91,7 @@
       name: route.name,
       slug: route.slug || (route.work ? slugForWork(route.work) : null),
       base: route.base || null,
+      cat: route.cat || null,
       noNav: !!route.noNav,
       work: route.work || null,
     };
@@ -101,6 +102,7 @@
       name: state.name || 'home',
       slug: state.slug || null,
       base: state.base || null,
+      cat: state.cat || null,
       noNav: !!state.noNav,
       work: state.work || null,
     };
@@ -119,6 +121,11 @@
     const qi = h.indexOf('?');
     if (qi >= 0) { q = h.slice(qi + 1); h = h.slice(0, qi); }
     if (h === '/work' || h === '/works') return { name: 'works' };
+    // #/work/<category> — a deep link into one archive tab (production,
+    // animation, post-production, design). Unknown segments fall back to ALL
+    // rather than 404ing the whole route.
+    const wm = h.match(/^\/works?\/([a-z-]+)$/);
+    if (wm) return { name: 'works', cat: wm[1] };
     if (h === '/showreel') return { name: 'showreel', work: SHOWREEL };
     const m = h.match(/^\/project\/(.+)$/);
     if (m) {
@@ -183,7 +190,11 @@
     get() { return _current; },
     subscribe(fn) { _subs.add(fn); return () => _subs.delete(fn); },
 
-    openWorks() { push({ name: 'works' }); },
+    openWorks(cat) { push({ name: 'works', cat: cat || null }); },
+
+    // Filter-tab clicks on the Work page itself — update the shareable URL
+    // in place (no extra Back stop per tab click).
+    setWorksCategory(cat) { replace({ name: 'works', cat: cat || null }); },
 
     openProject(work, opts) {
       opts = opts || {};

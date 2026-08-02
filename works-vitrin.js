@@ -1503,18 +1503,23 @@ function WorkOverlay({
       // promise — every tick of delay narrows the window mobile Safari counts
       // as "still part of the opening tap", which is what let the video sit on
       // Vimeo's own paused poster thumbnail before sound kicked in.
-      try { player.setMuted(false); player.play(); } catch (e) {}
+      // Mobile browsers refuse autoplay WITH SOUND, so the film never starts and
+      // Vimeo's poster/first-frame lingers. There we autoplay MUTED (allowed),
+      // then unmute on the viewer's first tap via the gesture handler below.
+      try { if (!isMobile) player.setMuted(false); player.play(); } catch (e) {}
       // Films play WITH SOUND. Opening a film is itself a click, which normally
       // satisfies the browser's autoplay-with-sound rule — so assert unmuted as
       // soon as the player is ready instead of waiting for another gesture.
       // If the browser still refuses (cold load, iOS low-power), the gesture
       // listeners below catch the viewer's next interaction.
       player.ready().then(() => {
-        player.setMuted(false).then(() => {
-          soundOnRef.current = true;
-          done = true;
-          cleanupListeners();
-        }).catch(() => {});
+        if (!isMobile) {
+          player.setMuted(false).then(() => {
+            soundOnRef.current = true;
+            done = true;
+            cleanupListeners();
+          }).catch(() => {});
+        }
         player.play().catch(() => {});
       }).catch(() => {});
       // Our own end screen instead of Vimeo's outbound recommendations.
@@ -1702,7 +1707,7 @@ function WorkOverlay({
     key: work.vimeoId,
     ref: vimeoRef,
     className: "wo-video",
-    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=0&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1&transparent=0`,
+    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=${isMobile ? 1 : 0}&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1&transparent=0`,
     style: {
       position: 'absolute',
       inset: 0,

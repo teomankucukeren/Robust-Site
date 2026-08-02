@@ -126,7 +126,7 @@ function ServicesCallSheet() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcd-wrap"
   }, SERVICES_DATA.map((svc, i) => {
@@ -207,7 +207,7 @@ function ServicesShowcase() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement(Reveal, {
     variant: "fade"
   }, /*#__PURE__*/React.createElement("div", {
@@ -291,7 +291,7 @@ function ServicesSpotlight() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: `svcw-list${hov !== null ? ' has-hov' : ''}`,
     onMouseMove: onMove,
@@ -352,7 +352,7 @@ function ServicesCrosshair() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement(Reveal, {
     variant: "fade"
   }, /*#__PURE__*/React.createElement("div", {
@@ -428,7 +428,7 @@ function ServicesColumns() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement(Reveal, {
     variant: "fade"
   }, /*#__PURE__*/React.createElement("div", {
@@ -494,7 +494,7 @@ function ServicesIndexAcc() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcy-wrap"
   }, SERVICES_DATA.map((svc, i) => {
@@ -568,7 +568,7 @@ function ServicesFrames() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcv-stage"
   }, /*#__PURE__*/React.createElement(Reveal, {
@@ -633,7 +633,7 @@ function ServicesFocus() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement(Reveal, {
     variant: "fade"
   }, /*#__PURE__*/React.createElement("div", {
@@ -691,7 +691,7 @@ function ServicesPanelsX() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement(Reveal, {
     variant: "fade"
   }, /*#__PURE__*/React.createElement("div", {
@@ -754,7 +754,7 @@ function ServicesNumerals() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcn-wrap"
   }, SERVICES_DATA.map((svc, i) => /*#__PURE__*/React.createElement(Reveal, {
@@ -807,7 +807,7 @@ function ServicesPanels() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement(Reveal, {
     variant: "fade"
   }, /*#__PURE__*/React.createElement("div", {
@@ -869,7 +869,7 @@ function ServicesCredits() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcc-wrap"
   }, SERVICES_DATA.map((svc, i) => /*#__PURE__*/React.createElement(Reveal, {
@@ -921,7 +921,7 @@ function ServicesQuiet() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcq-wrap"
   }, SERVICES_DATA.map((svc, i) => /*#__PURE__*/React.createElement(Reveal, {
@@ -972,7 +972,7 @@ function ServicesFullBleed() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcb-wrap"
   }, SERVICES_DATA.map((svc, i) => /*#__PURE__*/React.createElement(Reveal, {
@@ -1027,7 +1027,7 @@ function ServicesAccordionX() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svca-wrap"
   }, SERVICES_DATA.map((svc, i) => {
@@ -1094,7 +1094,7 @@ function ServicesCards() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcg-wrap"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1154,7 +1154,7 @@ function ServicesIndex() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "svcx-wrap"
   }, SERVICES_DATA.map((svc, i) => /*#__PURE__*/React.createElement(Reveal, {
@@ -1320,7 +1320,7 @@ function ServicesWheel() {
   }, /*#__PURE__*/React.createElement("h2", {
     className: "display-l"
   }, /*#__PURE__*/React.createElement(KineticText, {
-    text: "What We Do"
+    text: "Services"
   })))), /*#__PURE__*/React.createElement("div", {
     className: "gutter svc-split svc-split-wheel"
   }, /*#__PURE__*/React.createElement("div", {

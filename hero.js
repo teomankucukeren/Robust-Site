@@ -21,14 +21,16 @@ function KineticHead({
   return words.map((w, i) => {
     const dot = w.endsWith('.');
     const core = dot ? w.slice(0, -1) : w;
-    const shapeClass = i === 0 ? 'hero-mark hero-mark-triangle' : 'hero-mark hero-mark-square';
+    const sep = core === '◦' || core === '·' || core === '•';
     return /*#__PURE__*/React.createElement(React.Fragment, {
       key: i
-    }, /*#__PURE__*/React.createElement(KineticText, {
+    }, sep ? /*#__PURE__*/React.createElement("span", {
+      className: "hero-sep",
+      "aria-hidden": "true",
+      style: { display: 'inline-block', width: '0.11em', height: '0.11em', borderRadius: '50%', background: 'currentColor', verticalAlign: '0.22em', opacity: 0.55 }
+    }) : /*#__PURE__*/React.createElement(KineticText, {
       text: core
-    }), dot ? /*#__PURE__*/React.createElement("span", {
-      className: shapeClass
-    }) : null, (!dot && i < words.length - 1) ? ' ' : null);
+    }), (!dot && i < words.length - 1) ? ' ' : null);
   });
 }
 function Hero({
@@ -42,6 +44,8 @@ function Hero({
   const ctaStyle = tw.ctaStyle || 'links';
   const socialGlow = tw.socialGlow || 'bright';
   const headline = t('hero.headline');
+  const eyebrow = t('hero.eyebrow');
+  const headEndsDot = headline.trim().endsWith('.');
   const headSpace = headline.lastIndexOf(' ');
   const headHead = headSpace > 0 ? headline.slice(0, headSpace) : '';
   const headTail = headSpace > 0 ? headline.slice(headSpace + 1) : headline;
@@ -180,17 +184,27 @@ function Hero({
       padding: '0 var(--gutter)',
       width: '100%',
       maxWidth: '1400px',
+      marginTop: '-30px',
       opacity: loaded ? 1 : 0,
       transition: 'opacity 1.1s cubic-bezier(0.16,1,0.3,1)',
       willChange: 'transform, opacity'
     }
-  }, /*#__PURE__*/React.createElement("h1", {
+  }, eyebrow && /*#__PURE__*/React.createElement("div", {
+    className: "eyebrow hero-eyebrow",
+    lang: lang === 'TR' ? 'tr' : 'en',
+    style: {
+      marginBottom: 'clamp(20px, 2.4vh, 32px)',
+      opacity: loaded ? 1 : 0,
+      transform: loaded ? 'translateY(0)' : 'translateY(10px)',
+      transition: 'opacity 0.85s ease 0.3s, transform 0.85s cubic-bezier(0.16,1,0.3,1) 0.3s'
+    }
+  }, eyebrow), /*#__PURE__*/React.createElement("h1", {
     ref: h1Ref,
     className: "hero-h1",
     style: {
       margin: '0 0 clamp(40px, 5vh, 64px)',
       ...H1_SIZE,
-      fontSize: 'clamp(34px, 4.4vw, 70px)',
+      fontSize: 'clamp(28px, 3.56vw, 57px)',
       lineHeight: 1.0,
       letterSpacing: '-0.03em',
       opacity: loaded ? 1 : 0,
@@ -216,7 +230,7 @@ function Hero({
     className: "hero-tail"
   }, /*#__PURE__*/React.createElement(KineticHead, {
     text: headTail
-  }), /*#__PURE__*/React.createElement("span", {
+  }), headEndsDot && /*#__PURE__*/React.createElement("span", {
     className: "hero-mark hero-mark-circle",
     style: {
       marginLeft: lang === 'TR' ? '0.18em' : '0.06em'
@@ -381,7 +395,7 @@ function HeroCta({
       gap: '12px',
       whiteSpace: 'nowrap',
       cursor: 'none',
-      color: primary ? 'var(--orange)' : hov ? 'var(--orange)' : '#ffffff',
+      color: hov ? 'var(--orange)' : 'var(--gray-3)',
       transition: 'color 0.35s ease'
     }
   }, play && /*#__PURE__*/React.createElement("span", {

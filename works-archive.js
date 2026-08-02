@@ -52,7 +52,12 @@ function WorksArchive({
   setView
 }) {
   const [lang] = useLang();
-  const [activeCat, setActiveCat] = useState('ALL');
+  const route = window.RBRouter.useRoute();
+  const initialCat = (() => {
+    const c = route.cat ? route.cat.toUpperCase() : null;
+    return c && CATS.includes(c) ? c : 'ALL';
+  })();
+  const [activeCat, setActiveCat] = useState(initialCat);
   const [filterKey, setFilterKey] = useState(0); // bump to retrigger entrance + rebuild focus refs
   const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches;
 
@@ -80,6 +85,7 @@ function WorksArchive({
     hovRef.current = null;
     setActiveCat(cat);
     setFilterKey(k => k + 1);
+    window.RBRouter.setWorksCategory(cat === 'ALL' ? null : cat.toLowerCase());
   };
 
   // Scroll / cursor focus. The row nearest the viewport centre eases up to full

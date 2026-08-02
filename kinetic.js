@@ -87,7 +87,8 @@ function KineticText({
     className: "kword"
   }, [...word].map((ch, ci) => /*#__PURE__*/React.createElement("span", {
     key: ci,
-    className: "kchar"
+    className: "kchar",
+    "data-ch": ch
   }, ch))), wi < words.length - 1 ? ' ' : null)));
 }
 

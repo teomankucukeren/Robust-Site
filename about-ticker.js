@@ -51,7 +51,7 @@ function About() {
     style: {
       fontFamily: "'Syne'",
       fontWeight: 800,
-      fontSize: 'clamp(24px, 2.2vw, 32px)',
+      fontSize: 'clamp(19px, 1.76vw, 26px)',
       color: 'var(--orange)',
       letterSpacing: '-0.02em'
     }
@@ -59,14 +59,14 @@ function About() {
     className: "meta",
     style: {
       color: '#444',
-      marginTop: '6px',
+      marginTop: '8px',
       fontSize: '10px'
     }
   }, s.label)))), /*#__PURE__*/React.createElement(Reveal, {
     variant: "fade",
     delay: 0.6,
     style: {
-      marginTop: '28px'
+      marginTop: '40px'
     }
   }, /*#__PURE__*/React.createElement("div", {
     lang: "tr"
@@ -80,7 +80,7 @@ function About() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'flex-start',
-      gap: '10px'
+      gap: '16px'
     }
   }, /*#__PURE__*/React.createElement("a", {
     href: "https://www.instagram.com/snnakpnr/?hl=tr",
@@ -118,7 +118,7 @@ function About() {
     style: {
       color: '#444',
       fontSize: '10px',
-      marginTop: '8px'
+      marginTop: '12px'
     }
   }, t('about.foundedBy'))))), /*#__PURE__*/React.createElement("div", {
     className: "about-desc"

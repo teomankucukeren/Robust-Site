@@ -124,7 +124,9 @@
     'nav.contact':  { EN: 'Contact',  TR: 'İletişim' },
 
     // Hero
-    'hero.headline': { EN: 'Ideas—developed, shaped, produced',  TR: 'Ideas—developed, shaped, produced' },
+    'hero.headline': { EN: 'Films • Animation • Design',  TR: 'Film • Animasyon • Tasarım' },
+    // Eyebrow above the hero h1.
+    'hero.eyebrow':  { EN: 'Creative Production Studio',  TR: 'KREATİF PRODÜKSİYON STÜDYOSU' },
     'hero.showreel': { EN: 'Showreel',                  TR: 'Showreel' },
     'hero.explore':  { EN: 'Explore the Work',          TR: 'Projeler' },
     'hero.scroll':   { EN: 'Scroll',                    TR: 'Kaydır' },
@@ -158,11 +160,11 @@
     },
 
     // Services
-    'services.title': { EN: 'What We Do', TR: 'Hizmetler' },
+    'services.title': { EN: 'Services', TR: 'Hizmetler' },
 
     // Contact
-    'contact.headline1': { EN: 'Got something', TR: '' },
-    'contact.headline2': { EN: 'in mind?',      TR: 'İletişim' },
+    'contact.headline1': { EN: 'Get in', TR: '' },
+    'contact.headline2': { EN: 'Touch', TR: 'İletişim' },
     'contact.status':    { EN: 'Available for projects — 2026', TR: 'Yeni projeler için müsaitiz — 2026' },
     'contact.label':     { EN: 'Contact Us', TR: 'İletişim Formu' },
     'contact.note':      { EN: 'Every message reaches us directly — expect a reply within two working days.', TR: 'Her mesaj bize doğrudan ulaşır — iki iş günü içinde yanıt bekleyebilirsin.' },
@@ -217,7 +219,7 @@
     'archive.eyebrow':  { EN: 'Archive',  TR: 'Projeler' },
     'archive.title':    { EN: 'Work',     TR: 'Arşiv' },
     'archive.projects': { EN: 'Projects', TR: 'Proje' },
-    'archive.backHome': { EN: '← Back to Home', TR: '← Ana Sayfa' },
+    'archive.backHome': { EN: '← Back', TR: '← Geri' },
     'archive.cat.all':             { EN: 'ALL',             TR: 'TÜMÜ' },
     'archive.cat.production':      { EN: 'PRODUCTION',      TR: 'PRODÜKSİYON' },
     'archive.cat.animation':       { EN: 'ANIMATION',       TR: 'ANİMASYON' },

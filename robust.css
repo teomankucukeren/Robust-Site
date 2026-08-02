@@ -151,6 +151,9 @@ body[data-view="works"] #rb-warp { display: none; }
   background: var(--orange);
   display: inline-block;
 }
+.hero-eyebrow { color: var(--orange); }
+.hero-eyebrow::before { background: var(--orange); }
+.hero-h1 .kchar[data-ch=","] { font-size: 0.7em; margin: 0 0.02em; }
 .arch-eyebrow::before { display: none; }
 
 .display-xl {
@@ -319,7 +322,8 @@ body[data-view="works"] #rb-warp { display: none; }
 .hero-mark { display: inline-block; width: 0; height: 0; vertical-align: -0.08em; margin: 0 0.18em; }
 .hero-mark-triangle { border-left: 0.09em solid transparent; border-right: 0.09em solid transparent; border-bottom: 0.16em solid var(--orange); margin-left: 0.09em; }
 .hero-mark-square { width: 0.15em; height: 0.15em; background: var(--orange); }
-.hero-mark-circle { width: 0.15em; height: 0.15em; background: var(--orange); border-radius: 50%; }
+.hero-mark-circle { width: 0.15em; height: 0.15em; background: #ffffff; border-radius: 50%; }
+.hero-period-dot { margin-left: 0.02em; }
 @keyframes rb-cursor-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
 /* hero headline — single line, bold, all-accent, left-aligned */
@@ -349,11 +353,11 @@ body[data-view="works"] #rb-warp { display: none; }
    accents, a thin divider line between them, and a circular play badge —
    sized up slightly from the base links treatment. */
 #hero .hero-cta { font-size: 15px !important; letter-spacing: 0.22em !important; gap: 14px !important; }
-#hero .hero-cta:not(.hero-cta-primary) { color: #ffffff !important; }
-/* "Explore the Work" reads orange on every breakpoint */
-#hero .hero-cta-primary { color: var(--orange) !important; }
+#hero .hero-cta:not(.hero-cta-primary) { color: var(--gray-3) !important; }
+/* "Explore the Work" reads gray by default, orange on hover */
+#hero .hero-cta-primary { color: var(--gray-3) !important; }
 #hero .hero-cta-primary:hover, #hero .hero-cta:not(.hero-cta-primary):hover { color: var(--orange) !important; }
-#hero .hero-cta-arrow { color: var(--orange); font-size: 16px !important; }
+#hero .hero-cta-arrow { color: inherit; font-size: 16px !important; }
 #hero .hero-cta-divider {
   display: inline-block; width: 1px; height: 26px;
   background: rgba(255, 255, 255, 0.22);
@@ -3824,8 +3828,10 @@ textarea.cf-input { min-height: 76px; }
 
   /* let the "We shape…" headline wrap so it fits narrow screens
      (inline styles force nowrap, so override with !important) */
-  .hero-h1, .hero-h1 span { white-space: normal !important; }
-  .hero-h1 { font-size: clamp(28px, 8.7vw, 44px) !important; line-height: 1.02 !important; }
+  .hero-h1, .hero-h1 span { white-space: nowrap !important; }
+  .hero-h1 { font-size: clamp(16px, 6vw, 44px) !important; line-height: 1.02 !important; }
+  .hero-eyebrow { white-space: nowrap !important; font-size: 2.6vw !important; letter-spacing: 0.2em !important; gap: 8px !important; }
+  .hero-eyebrow::before { width: 14px !important; }
   .about-founders { font-size: 16px !important; gap: 10px !important; }
 
   .side-rail { gap: 4px; }
