@@ -115,22 +115,16 @@ function Hero({
       const y = window.scrollY;
       const vh = window.innerHeight;
       const p = Math.min(1, y / (vh * 0.9));
+      el.style.transition = 'none';
       el.style.transform = `translate3d(0, ${y * -0.22}px, 0)`;
       el.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
       // Mobile only: carry the social icons up with the same parallax so they
       // don't stay pinned while the headline/CTAs drift away on scroll.
       const soc = socialsRef.current;
       if (soc) {
-        if (window.matchMedia('(max-width:760px)').matches) {
-          // drop the entrance transition once scrolling so the fade tracks the
-          // headline/CTAs instantly instead of lagging on its 1.1s ease
-          soc.style.transition = 'none';
-          soc.style.transform = `translate3d(0, ${y * -0.22}px, 0)`;
-          soc.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
-        } else {
-          soc.style.transform = '';
-          soc.style.opacity = '';
-        }
+        soc.style.transition = 'none';
+        soc.style.transform = `translate3d(0, ${y * -0.22}px, 0)`;
+        soc.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
       }
     };
     const onScroll = () => {

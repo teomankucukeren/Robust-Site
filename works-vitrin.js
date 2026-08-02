@@ -1707,7 +1707,7 @@ function WorkOverlay({
     key: work.vimeoId,
     ref: vimeoRef,
     className: "wo-video",
-    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=${isMobile ? 1 : 0}&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1&transparent=0`,
+    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=0&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1&transparent=0`,
     style: {
       position: 'absolute',
       inset: 0,
