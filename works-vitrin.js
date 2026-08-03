@@ -1501,25 +1501,16 @@ function WorkOverlay({
       // Fire the unmute/play commands immediately (the SDK queues them until
       // the iframe is ready internally) instead of waiting on the ready()
       // promise — every tick of delay narrows the window mobile Safari counts
-      // as "still part of the opening tap", which is what let the video sit on
-      // Vimeo's own paused poster thumbnail before sound kicked in.
-      // Mobile browsers refuse autoplay WITH SOUND, so the film never starts and
-      // Vimeo's poster/first-frame lingers. There we autoplay MUTED (allowed),
-      // then unmute on the viewer's first tap via the gesture handler below.
-      try { if (!isMobile) player.setMuted(false); player.play(); } catch (e) {}
-      // Films play WITH SOUND. Opening a film is itself a click, which normally
-      // satisfies the browser's autoplay-with-sound rule — so assert unmuted as
-      // soon as the player is ready instead of waiting for another gesture.
-      // If the browser still refuses (cold load, iOS low-power), the gesture
-      // listeners below catch the viewer's next interaction.
+      // as "still part of the opening tap". Opening a film IS a tap, on every
+      // device, so we assert unmuted the same way on mobile as on desktop —
+      // no muted-autoplay fallback, no poster lingering.
+      try { player.setMuted(false); player.play(); } catch (e) {}
       player.ready().then(() => {
-        if (!isMobile) {
-          player.setMuted(false).then(() => {
-            soundOnRef.current = true;
-            done = true;
-            cleanupListeners();
-          }).catch(() => {});
-        }
+        player.setMuted(false).then(() => {
+          soundOnRef.current = true;
+          done = true;
+          cleanupListeners();
+        }).catch(() => {});
         player.play().catch(() => {});
       }).catch(() => {});
       // Our own end screen instead of Vimeo's outbound recommendations.
@@ -1603,6 +1594,8 @@ function WorkOverlay({
     return () => window.removeEventListener('keydown', onKey);
   }, [work.id]);
   const close = () => {
+    const p = playerRef.current;
+    if (p) { try { p.setMuted(true).catch(() => {}); p.pause().catch(() => {}); } catch (e) {} }
     setVis(false);
     setTimeout(onClose, 380);
   };
@@ -1618,8 +1611,24 @@ function WorkOverlay({
       instant: openedWithRef.current !== work.id
     });
   }
+  const touchRef = useRef(null);
+  const onTouchStart = (e) => {
+    if (!isMobile || !onChange) return;
+    const t = e.touches[0];
+    touchRef.current = { x: t.clientX, y: t.clientY };
+  };
+  const onTouchEnd = (e) => {
+    if (!isMobile || !onChange || !touchRef.current) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchRef.current.x;
+    const dy = t.clientY - touchRef.current.y;
+    touchRef.current = null;
+    if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy) * 1.4) go(dx < 0 ? 1 : -1);
+  };
   return /*#__PURE__*/React.createElement("div", {
     onClick: close,
+    onTouchStart: onTouchStart,
+    onTouchEnd: onTouchEnd,
     className: "wo-scroll",
     style: {
       position: 'fixed',

@@ -76,12 +76,14 @@ function Hero({ setView, tw = {} }) {
 
   useEffect(() => {
     let raf = null;
+    let vh = window.innerHeight;
+    const onResize = () => { vh = window.innerHeight; };
+    window.addEventListener('resize', onResize);
     const update = () => {
       raf = null;
       const el = contentRef.current;
       if (!el) return;
       const y = window.scrollY;
-      const vh = window.innerHeight;
       const p = Math.min(1, y / (vh * 0.9));
       el.style.transition = 'none';
       el.style.transform = `translate3d(0, ${y * -0.22}px, 0)`;
@@ -102,6 +104,7 @@ function Hero({ setView, tw = {} }) {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);

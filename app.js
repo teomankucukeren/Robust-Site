@@ -224,24 +224,21 @@ function App() {
       links: [{
         label: rbT('works.title', lang),
         onClick: () => {
-          window.RBRouter.back();
-          setTimeout(() => {
-            const el = document.getElementById('works-vitrin');
-            if (el) {
-              const top = el.getBoundingClientRect().top + window.scrollY - 80;
-              window.scrollTo({
-                top,
-                behavior: 'instant'
-              });
-              window.__rbFunnelSnapUntil = performance.now() + 300;
-            }
-          }, 440);
+          const el = document.getElementById('works-vitrin');
+          if (el) {
+            const top = el.getBoundingClientRect().top + window.scrollY - 80;
+            window.scrollTo({
+              top,
+              behavior: 'instant'
+            });
+            window.__rbFunnelSnapUntil = performance.now() + 300;
+          }
+          window.RBRouter.closeTo({ name: 'home' });
         }
       }, {
         label: rbT('nav.works', lang),
         onClick: () => {
-          window.RBRouter.back();
-          setTimeout(() => window.RBRouter.openWorks(), 460);
+          window.RBRouter.closeTo({ name: 'works', cat: null });
         }
       }],
       onClose: () => window.RBRouter.back()

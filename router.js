@@ -218,6 +218,16 @@
       });
     },
 
+    // Swap the CURRENT entry (e.g. an open showreel/project overlay) directly
+    // for a different destination route — one atomic transition, no pop to
+    // Home in between. Used by CTAs inside an overlay that jump straight to
+    // another section/page instead of just closing.
+    closeTo(route) {
+      _expectBack = null;
+      if (_pushDepth > 0) _pushDepth--;
+      replace(route);
+    },
+
     openShowreel() { push({ name: 'showreel', work: SHOWREEL }); },
 
     goHome() { if (_current.name !== 'home') push({ name: 'home' }); },
