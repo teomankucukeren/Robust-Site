@@ -1611,24 +1611,8 @@ function WorkOverlay({
       instant: openedWithRef.current !== work.id
     });
   }
-  const touchRef = useRef(null);
-  const onTouchStart = (e) => {
-    if (!isMobile || !onChange) return;
-    const t = e.touches[0];
-    touchRef.current = { x: t.clientX, y: t.clientY };
-  };
-  const onTouchEnd = (e) => {
-    if (!isMobile || !onChange || !touchRef.current) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - touchRef.current.x;
-    const dy = t.clientY - touchRef.current.y;
-    touchRef.current = null;
-    if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy) * 1.4) go(dx < 0 ? 1 : -1);
-  };
   return /*#__PURE__*/React.createElement("div", {
     onClick: close,
-    onTouchStart: onTouchStart,
-    onTouchEnd: onTouchEnd,
     className: "wo-scroll",
     style: {
       position: 'fixed',
