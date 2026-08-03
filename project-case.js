@@ -85,6 +85,7 @@ function ProjectCase({
       ...bgStyle,
       color: fg,
       '--pc-fg': fg,
+      '--pc-bg': bg,
       overflowY: 'auto',
       overflowX: 'hidden',
       opacity: vis ? 1 : 0,

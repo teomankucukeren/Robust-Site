@@ -167,7 +167,8 @@ function Hero({ setView, tw = {} }) {
       'data-line-pulse': linePulse ? (linePulse % 2 ? 'a' : 'b') : undefined,
       style: {
         opacity: isMobile ? (loaded ? (socialGlow === 'dim' ? 0.45 : 1) : 0) : (socialGlow === 'dim' ? 0.45 : 1),
-        transition: isMobile ? 'opacity 0.85s ease 0.4s' : 'opacity 0.4s ease'
+        transition: isMobile ? 'opacity 0.85s ease 0.4s' : 'opacity 0.4s ease',
+        willChange: 'transform, opacity'
       }
     },
       [

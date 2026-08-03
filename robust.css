@@ -373,7 +373,16 @@ body[data-view="works"] #rb-warp { display: none; }
 @media (max-width: 760px) {
   #hero .hero-cta-divider, #hero .hero-cta-playbadge { display: none !important; }
   #hero .hero-cta { font-size: 13px !important; letter-spacing: 0.2em !important; }
+  #hero .hero-actions .hero-cta-primary { order: -1; }
 }
+
+/* Design case-study page: swap the crude default scrollbar thumb for a thin
+   line tinted to the page's own colours instead of the browser's grey. */
+.pcase { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--pc-fg) 45%, transparent) transparent; }
+.pcase::-webkit-scrollbar { width: 6px; }
+.pcase::-webkit-scrollbar-track { background: transparent; }
+.pcase::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--pc-fg) 45%, transparent); border-radius: 0; }
+.pcase::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--pc-fg) 70%, transparent); }
 
 /* Tablet hero tweaks: lift the CTAs, nudge the social rail left a touch. */
 @media (min-width: 761px) and (max-width: 960px) {
