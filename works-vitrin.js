@@ -4,6 +4,7 @@
 const {
   useState,
   useEffect,
+  useLayoutEffect,
   useRef
 } = React;
 
@@ -1462,7 +1463,7 @@ function WorkOverlay({
   // that block sound-autoplay are covered by a one-shot gesture handler: the
   // user's very first interaction (click / key / touch) force-unmutes, so sound
   // kicks in the instant they do anything, with no lingering muted state.
-  useEffect(() => {
+  useLayoutEffect(() => {
     setEnded(false); // reset for the newly-opened film
     setPlaying(false);
     if (!work.vimeoId || !vimeoRef.current || !window.Vimeo) return;
@@ -1511,7 +1512,10 @@ function WorkOverlay({
           done = true;
           cleanupListeners();
         }).catch(() => {});
-        player.play().catch(() => {});
+        player.play().catch(() => {
+          if (disposed) return;
+          player.setMuted(true).then(() => player.play()).catch(() => {});
+        });
       }).catch(() => {});
       // Our own end screen instead of Vimeo's outbound recommendations.
       player.on('ended', () => {
@@ -1700,7 +1704,7 @@ function WorkOverlay({
     key: work.vimeoId,
     ref: vimeoRef,
     className: "wo-video",
-    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=0&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1&transparent=0`,
+    src: `https://player.vimeo.com/video/${work.vimeoId}?autoplay=1&muted=1&color=ff4500&title=0&byline=0&portrait=0&badge=0&sidedock=0&pip=0&dnt=1&transparent=0&playsinline=1`,
     style: {
       position: 'absolute',
       inset: 0,
