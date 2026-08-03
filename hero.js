@@ -88,9 +88,14 @@ function Hero({ setView, tw = {} }) {
       el.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
       const soc = socialsRef.current;
       if (soc) {
-        soc.style.transition = 'none';
-        soc.style.transform = `translate3d(0, ${y * -0.22}px, 0)`;
-        soc.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
+        if (window.matchMedia('(max-width:760px)').matches) {
+          soc.style.transition = 'none';
+          soc.style.transform = `translate3d(0, ${y * -0.22}px, 0)`;
+          soc.style.opacity = String(Math.max(0, Math.min(1, 1 - p * 1.1)));
+        } else {
+          soc.style.transform = '';
+          soc.style.opacity = '';
+        }
       }
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };

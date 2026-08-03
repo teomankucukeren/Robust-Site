@@ -373,8 +373,6 @@ body[data-view="works"] #rb-warp { display: none; }
 @media (max-width: 760px) {
   #hero .hero-cta-divider, #hero .hero-cta-playbadge { display: none !important; }
   #hero .hero-cta { font-size: 13px !important; letter-spacing: 0.2em !important; }
-  /* swap order: "Explore the Work" leads, "Showreel" follows */
-  #hero .hero-actions .hero-cta-primary { order: -1; }
 }
 
 /* Tablet hero tweaks: lift the CTAs, nudge the social rail left a touch. */
