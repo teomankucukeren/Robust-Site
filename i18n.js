@@ -124,7 +124,7 @@
     'nav.contact':  { EN: 'Contact',  TR: 'İletişim' },
 
     // Hero
-    'hero.headline': { EN: 'Films • Animation • Design',  TR: 'Film • Animasyon • Tasarım' },
+    'hero.headline': { EN: 'Film • Animation • Design',  TR: 'Film • Animasyon • Tasarım' },
     // Eyebrow above the hero h1.
     'hero.eyebrow':  { EN: 'Creative Production Studio',  TR: 'KREATİF PRODÜKSİYON STÜDYOSU' },
     'hero.showreel': { EN: 'Showreel',                  TR: 'Showreel' },
@@ -132,7 +132,7 @@
     'hero.scroll':   { EN: 'Scroll',                    TR: 'Kaydır' },
 
     // Highlights / Works
-    'works.title':   { EN: 'Highlights',        TR: 'Seçili Projeler' },
+    'works.title':   { EN: 'Selected Work',        TR: 'Seçili Projeler' },
     'works.viewAll': { EN: 'View Full Archive', TR: 'Projeleri İncele' },
 
     // About / Studio
@@ -142,17 +142,17 @@
     'about.foundedBy': { EN: 'Founded by',      TR: 'Founded by' },
     'about.basedIn': { EN: 'Based in Istanbul', TR: 'Based in Istanbul' },
     'about.leadPre': {
-      EN: 'Founded in Istanbul in 2019, ',
-      TR: '2019’da İstanbul’da kurulan ',
-    },
+      "EN": "Founded in Istanbul in 2019, ",
+      "TR": "2019’da İstanbul’da kurulan "
+},
     'about.leadPost': {
-      EN: ' is a creative production studio driven by ideas, craftsmanship, and visual storytelling.',
-      TR: ', fikir, zanaat ve görsel hikâye anlatıcılığını bir araya getiren bir kreatif prodüksiyon stüdyosudur.',
-    },
+      "EN": " is a creative production studio working with brands and agencies across film, animation and design.",
+      "TR": ", film, animasyon ve tasarım alanlarında markalar ve ajanslarla çalışan bir kreatif prodüksiyon stüdyosudur."
+},
     'about.body': {
-      EN: 'We work across creative development, production, and post-production, creating films and experiences with a clear point of view. From brand films and digital campaigns to animation and motion-led work, we develop ideas, build their visual worlds, and carry them through every stage of production.',
-      TR: 'Kreatif geliştirmeden prodüksiyon ve post-prodüksiyona kadar tüm süreci üstleniyor; güçlü fikirlerden beslenen, kendine özgü bir görsel dile sahip işler üretiyoruz. Marka filmleri, dijital kampanyalar, animasyon ve hareket odaklı deneyimler için hikâyeyi geliştiriyor, görsel dünyayı kuruyor ve üretimin her aşamasını yürütüyoruz.',
-    },
+      "EN": "We create films, animations, campaign content and visual identities. Whether developing an idea from the start or working from an existing creative brief, we find its visual direction and bring it to life through design, production and post-production.",
+      "TR": "Filmler, animasyonlar, kampanya içerikleri ve görsel kimlikler üretiyoruz. İster bir fikri en başından geliştirelim ister mevcut bir kreatif brief üzerinden ilerleyelim, fikrin görsel yönünü belirliyor; tasarım, prodüksiyon ve post prodüksiyonla hayata geçiriyoruz."
+},
     // TR çevirisi henüz onaylanmadı — boş kaldığı sürece paragraf Türkçede render edilmez.
     'about.body2': {
       EN: '',

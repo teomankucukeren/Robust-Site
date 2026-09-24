@@ -7,47 +7,93 @@ const {
   useEffect,
   useRef
 } = React;
-const SERVICES_DATA = [{
-  num: '01',
-  title: 'Film & Video Production',
-  titleTR: 'Film & Video Prodüksiyonu',
-  tags: ['Concept', 'Set', 'Delivery'],
-  tagsTR: ['KONSEPT', 'SET', 'YAYIN'],
-  desc: 'End-to-end film and video production across broadcast, digital, social, and out-of-home campaigns. Crafted from concept to final cut with a clear visual language and purpose.',
-  descTR: 'TV, dijital, sosyal medya ve açıkhava kampanyaları için uçtan uca film ve video prodüksiyonu. Konseptten son kurguya kadar her projeyi, net bir görsel dil ve belirgin bir amaca odaklanarak işliyoruz.'
-}, {
-  num: '02',
-  title: 'Animation & Motion Design',
-  titleTR: 'Animasyon & Motion Design',
-  tags: ['Rhythm', 'Clarity', 'Purpose'],
-  tagsTR: ['RİTİM', 'NETLİK', 'ANLAM'],
-  desc: 'We design animated visuals, motion graphics, and moving image systems that bring ideas to life beyond live-action. From brand animations to title sequences, explainers, and 2D/3D-led content, we craft motion with rhythm, clarity, and purpose.',
-  descTR: 'Fikirleri klasik prodüksiyon sınırlarının ötesine taşıyan hareketli görsel sistemler ve motion grafikler tasarlıyoruz. Marka animasyonlarından jenerik tasarımlarına, explainer videolardan 2D/3D içeriklere kadar harekete ritim, netlik ve amaç katıyoruz.'
-}, {
-  num: '03',
-  title: 'Campaign & Brand Content',
-  titleTR: 'Kampanya & Marka İçerikleri',
-  tags: ['Purpose', 'Consistency', 'Impact'],
-  tagsTR: ['ANLATI', 'SÜREKLİLİK', 'ETKİ'],
-  desc: 'Building campaign narratives and branded content systems for modern media ecosystems. Creating adaptable video frameworks that extend across launches, digital platforms, and social channels.',
-  descTR: 'Modern medya ekosistemleri için kampanya kurguları ve marka içerik sistemleri tasarlıyoruz. Lansmanlardan dijital mecralara ve sosyal kanallara kadar genişleyen esnek video yapıları üretiyoruz.'
-}, {
-  num: '04',
-  title: 'AI Film Making / Generative Production',
-  titleTR: 'AI Film Yapımı / Generative Prodüksiyon',
-  tags: ['Faster', 'Smarter', 'Distinct'],
-  tagsTR: ['ÖZGÜN', 'HIZLI', 'TUTARLI'],
-  desc: 'We explore AI-powered filmmaking as a new creative layer within visual production. From concept development and visual prototyping to generative scenes, AI-assisted workflows, and experimental film techniques, we use emerging tools to shape bold ideas faster, smarter, and with a distinct visual direction.',
-  descTR: 'Üretken yapay zekâ araçlarını stüdyo vizyonumuzla harmanlayarak yapım süreçlerini yeniden tanımlıyoruz. Konsept aşamasından final kareye kadar; özgün, hızlı ve tutarlı görsel dünyalar kurguluyoruz.'
-}, {
-  num: '05',
-  title: 'Visual Design / Art Direction',
-  titleTR: 'Görsel Tasarım / Art Direction',
-  tags: ['Mood', 'Composition', 'Identity'],
-  tagsTR: ['ATMOSFER', 'KOMPOZİSYON', 'KİMLİK'],
-  desc: 'Creating visual identities and art direction systems for brands, campaigns, and moving images. From brand guidelines to motion languages, building structured design frameworks across all platforms.',
-  descTR: 'Markalar, kampanyalar ve hareketli dünyalar için görsel kimlikler ve art direction sistemleri tasarlıyoruz. Marka rehberlerinden hareket dillerine kadar, tüm mecralarda işleyen güçlü tasarım altyapıları kurguluyoruz.'
-}];
+const SERVICES_DATA = [
+  {
+    "num": "01",
+    "title": "Film & Video Production",
+    "titleTR": "Film & Video Prodüksiyonu",
+    "tags": [
+      "Concept",
+      "Set",
+      "Delivery"
+    ],
+    "tagsTR": [
+      "Konsept",
+      "Set",
+      "Teslim"
+    ],
+    "desc": "We produce commercials, brand films and video content for brands and agencies. We can develop the idea and manage the full production, or work from an existing brief, script or treatment. From planning and casting to the shoot and post-production, we take on the stages your project needs.",
+    "descTR": "Markalar ve ajanslar için reklam filmleri, marka filmleri ve video içerikleri üretiyoruz. Fikri geliştirip tüm prodüksiyonu yönetebiliyor ya da mevcut bir brief, senaryo veya tretman üzerinden çalışabiliyoruz. Planlama ve oyuncu seçiminden çekim ve post prodüksiyona kadar, projenizin ihtiyaç duyduğu aşamaları üstleniyoruz."
+  },
+  {
+    "num": "02",
+    "title": "Animation & Motion Design",
+    "titleTR": "Animasyon & Motion Design",
+    "tags": [
+      "2D",
+      "3D",
+      "Motion Graphics"
+    ],
+    "tagsTR": [
+      "2D",
+      "3D",
+      "Hareketli Grafikler"
+    ],
+    "desc": "We create 2D and 3D animation for products, brands and stories. Our work includes product films, animated identities, title sequences and explainers. We develop the visual approach and build each piece from design and storyboards through to animation, compositing and sound.",
+    "descTR": "Ürünler, markalar ve hikâyeler için 2D ve 3D animasyonlar üretiyoruz. Ürün filmleri, hareketli marka kimlikleri, jenerikler ve açıklayıcı videolar hazırlıyoruz. Her projenin görsel yaklaşımını geliştiriyor; tasarım ve storyboard’dan animasyon, kompozit ve sese kadar tüm aşamalarını yürütüyoruz."
+  },
+  {
+    "num": "03",
+    "title": "Visual Design / Art Direction",
+    "titleTR": "Görsel Tasarım / Art Direction",
+    "tags": [
+      "Identity",
+      "Typography",
+      "Art Direction"
+    ],
+    "tagsTR": [
+      "Kimlik",
+      "Tipografi",
+      "Sanat Yönetimi"
+    ],
+    "desc": "We design logos, visual identities and brand guidelines, and develop the visual direction for campaigns and films. Our work spans typography, colour, imagery and layout, from the first design concepts to assets ready for use across print, digital and motion.",
+    "descTR": "Logo, görsel kimlik ve kurumsal kimlik kılavuzları tasarlıyor; kampanya ve filmlerin görsel yönünü belirliyoruz. Tipografi, renk, görsel seçimi ve düzenleme üzerine çalışarak ilk tasarım fikirlerini basılı, dijital ve hareketli mecralarda kullanıma hazır tasarımlara dönüştürüyoruz."
+  },
+  {
+    "num": "04",
+    "title": "AI Filmmaking",
+    "titleTR": "Yapay Zekâ ile Film Yapımı",
+    "tags": [
+      "Concept",
+      "Generation",
+      "Post-Production"
+    ],
+    "tagsTR": [
+      "Konsept",
+      "Üretim",
+      "Post Prodüksiyon"
+    ],
+    "desc": "We use generative AI to develop visual concepts and produce images and film sequences. We can build an AI-led film or combine generated scenes with live action, animation and VFX. Art direction guides the process, while editing, compositing, colour and sound bring the material together into a finished piece.",
+    "descTR": "Görsel konseptler geliştirmek, görseller ve film sahneleri üretmek için üretken yapay zekâ kullanıyoruz. Yapay zekâ odaklı bir film hazırlayabiliyor ya da üretilen sahneleri canlı çekim, animasyon ve VFX ile birleştirebiliyoruz. Süreci sanat yönetimiyle yönlendiriyor; kurgu, kompozit, renk ve ses çalışmalarıyla tüm malzemeyi tamamlanmış bir filme dönüştürüyoruz."
+  },
+  {
+    "num": "05",
+    "title": "Campaign & Brand Content",
+    "titleTR": "Kampanya & Marka İçerikleri",
+    "tags": [
+      "Strategy",
+      "Concept",
+      "Content"
+    ],
+    "tagsTR": [
+      "Strateji",
+      "Konsept",
+      "İçerik"
+    ],
+    "desc": "We help brands and agencies shape campaign ideas around what they need to say and who they need to reach. We develop the message, creative concept and content plan, then produce the main film and supporting assets. Content series, cutdowns and platform-specific versions carry the campaign across digital, social and out-of-home channels.",
+    "descTR": "Markaların ve ajansların kampanya fikirlerini, anlatmak istedikleri mesaj ve ulaşmak istedikleri kitle etrafında şekillendiriyoruz. Mesajı, yaratıcı konsepti ve içerik planını geliştiriyor; ardından ana filmi ve onu destekleyen içerikleri üretiyoruz. İçerik serileri, kısa versiyonlar ve mecraya özel uyarlamalarla kampanyayı dijital platformlara, sosyal medyaya ve açıkhavaya taşıyoruz."
+  }
+];
 function Services({
   layout = '01'
 }) {
@@ -1732,7 +1778,7 @@ function Contact() {
     lang: lang === 'TR' ? 'tr' : 'en'
   }, rbT('contact.headline1', lang) ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(KineticText, {
     text: rbT('contact.headline1', lang)
-  }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+  }), " ", /*#__PURE__*/React.createElement("span", {
     style: {
       color: 'var(--orange)'
     }

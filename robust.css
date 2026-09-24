@@ -2892,7 +2892,8 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
 .contact-headline {
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: clamp(32px, 4vw, 67px);
+  font-size: clamp(24px, 4vw, 67px);
+  white-space: nowrap;
   line-height: 0.92;
   letter-spacing: -0.03em;
   color: var(--white);
@@ -2978,7 +2979,7 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
 .contact-lead { position: static; top: auto; }
 .ct-block {
   width: 100%;
-  margin-top: 90px;
+  margin-top: clamp(32px, 4vw, 56px);
   padding: 0 max(var(--gutter), calc(var(--align-x) - 200px));
 }
 .ct-grid {
