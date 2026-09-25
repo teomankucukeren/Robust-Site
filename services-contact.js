@@ -22,8 +22,8 @@ const SERVICES_DATA = [
       "Set",
       "Teslim"
     ],
-    "desc": "We produce commercials, brand films and video content for brands and agencies. We can develop the idea and manage the full production, or work from an existing brief, script or treatment.",
-    "descTR": "Markalar ve ajanslar için reklam filmleri, marka filmleri ve video içerikleri üretiyoruz. Fikri geliştirip tüm prodüksiyonu yönetebiliyor ya da mevcut bir brief, senaryo veya tretman üzerinden çalışabiliyoruz."
+    "desc": "We produce commercials, brand films and video content. We can develop the idea and manage the full production, or work from an existing brief, script or treatment.",
+    "descTR": "Reklam filmleri, marka filmleri ve video içerikleri üretiyoruz. Fikri geliştirip tüm prodüksiyonu yönetebiliyor ya da mevcut bir brief, senaryo veya tretman üzerinden çalışabiliyoruz."
   },
   {
     "num": "02",
@@ -39,8 +39,8 @@ const SERVICES_DATA = [
       "3D",
       "Hareketli Grafikler"
     ],
-    "desc": "We create 2D and 3D animation for products, brands and stories. Our work includes product films, animated identities, title sequences and explainers. We develop the visual approach and build each piece from design and storyboards through to animation, compositing and sound.",
-    "descTR": "Ürünler, markalar ve hikâyeler için 2D ve 3D animasyonlar üretiyoruz. Ürün filmleri, hareketli marka kimlikleri, jenerikler ve açıklayıcı videolar hazırlıyoruz. Her projenin görsel yaklaşımını geliştiriyor; tasarım ve storyboard’dan animasyon, compositing ve sese kadar tüm aşamalarını yürütüyoruz."
+    "desc": "We create 2D and 3D animation to showcase products and tell stories. Our work includes product films, animated identities, title sequences and explainers. We develop the visual approach and build each piece from design and storyboards through to animation, compositing and sound.",
+    "descTR": "Ürünleri tanıtmak ve hikâyeler anlatmak için 2D ve 3D animasyonlar üretiyoruz. Ürün filmleri, hareketli marka kimlikleri, jenerikler ve açıklayıcı videolar hazırlıyoruz. Her projenin görsel yaklaşımını geliştiriyor; tasarım ve storyboard’dan animasyon, compositing ve sese kadar tüm aşamalarını yürütüyoruz."
   },
   {
     "num": "03",
@@ -90,8 +90,8 @@ const SERVICES_DATA = [
       "Konsept",
       "İçerik"
     ],
-    "desc": "We help brands and agencies shape campaign ideas around what they need to say and who they need to reach. We develop the message, creative concept and content plan, then produce the main film and supporting assets. Content series, cutdowns and platform-specific versions carry the campaign across digital, social and out-of-home channels.",
-    "descTR": "Markaların ve ajansların kampanya fikirlerini, anlatmak istedikleri mesaj ve ulaşmak istedikleri kitle etrafında şekillendiriyoruz. Mesajı, yaratıcı konsepti ve içerik planını geliştiriyor; ardından ana filmi ve onu destekleyen içerikleri üretiyoruz. İçerik serileri, kısa versiyonlar ve mecraya özel uyarlamalarla kampanyayı dijital platformlara, sosyal medyaya ve açıkhavaya taşıyoruz."
+    "desc": "We shape campaign ideas around the message and the audience they need to reach. We develop the message, creative concept and content plan, then produce the main film and supporting assets. Content series, cutdowns and platform-specific versions carry the campaign across digital, social and out-of-home channels.",
+    "descTR": "Kampanya fikirlerini, iletilecek mesaj ve ulaşılmak istenen kitle etrafında şekillendiriyoruz. Mesajı, yaratıcı konsepti ve içerik planını geliştiriyor; ardından ana filmi ve onu destekleyen içerikleri üretiyoruz. İçerik serileri, kısa versiyonlar ve mecraya özel uyarlamalarla kampanyayı dijital platformlara, sosyal medyaya ve açıkhavaya taşıyoruz."
   }
 ];
 function Services({
