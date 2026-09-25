@@ -2979,7 +2979,7 @@ body.cursor-light #rb-cursor-ring { border-color: rgba(255,255,255,0.55); }
 .contact-lead { position: static; top: auto; }
 .ct-block {
   width: 100%;
-  margin-top: clamp(32px, 4vw, 56px);
+  margin-top: clamp(61px, calc(45px + 2vw), 73px);
   padding: 0 max(var(--gutter), calc(var(--align-x) - 200px));
 }
 .ct-grid {

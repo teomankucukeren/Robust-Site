@@ -150,8 +150,8 @@
       "TR": ", film, animasyon ve tasarım alanlarında markalar ve ajanslarla çalışan bir kreatif prodüksiyon stüdyosudur."
 },
     'about.body': {
-      "EN": "We create films, animations, campaign content and visual identities. Whether developing an idea from the start or working from an existing creative brief, we find its visual direction and bring it to life through design, production and post-production.",
-      "TR": "Filmler, animasyonlar, kampanya içerikleri ve görsel kimlikler üretiyoruz. İster bir fikri en başından geliştirelim ister mevcut bir kreatif brief üzerinden ilerleyelim, fikrin görsel yönünü belirliyor; tasarım, prodüksiyon ve post prodüksiyonla hayata geçiriyoruz."
+      "EN": "We create films, campaign content, animation and visual identities. We work with brands to develop ideas and bring them to life, and with agencies to turn creative briefs into finished work. Depending on the project, our role spans creative development, design, production and post-production.",
+      "TR": "Filmler, kampanya içerikleri, animasyonlar ve görsel kimlikler üretiyoruz. Markalarla birlikte fikir geliştirip hayata geçiriyor, ajansların kreatif brief’lerini tamamlanmış projelere dönüştürüyoruz. Projenin ihtiyaçlarına göre kreatif geliştirme, tasarım, prodüksiyon ve post prodüksiyon aşamalarını üstleniyoruz."
 },
     // TR çevirisi henüz onaylanmadı — boş kaldığı sürece paragraf Türkçede render edilmez.
     'about.body2': {

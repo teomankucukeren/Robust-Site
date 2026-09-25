@@ -22,8 +22,8 @@ const SERVICES_DATA = [
       "Set",
       "Teslim"
     ],
-    "desc": "We produce commercials, brand films and video content for brands and agencies. We can develop the idea and manage the full production, or work from an existing brief, script or treatment. From planning and casting to the shoot and post-production, we take on the stages your project needs.",
-    "descTR": "Markalar ve ajanslar için reklam filmleri, marka filmleri ve video içerikleri üretiyoruz. Fikri geliştirip tüm prodüksiyonu yönetebiliyor ya da mevcut bir brief, senaryo veya tretman üzerinden çalışabiliyoruz. Planlama ve oyuncu seçiminden çekim ve post prodüksiyona kadar, projenizin ihtiyaç duyduğu aşamaları üstleniyoruz."
+    "desc": "We produce commercials, brand films and video content for brands and agencies. We can develop the idea and manage the full production, or work from an existing brief, script or treatment.",
+    "descTR": "Markalar ve ajanslar için reklam filmleri, marka filmleri ve video içerikleri üretiyoruz. Fikri geliştirip tüm prodüksiyonu yönetebiliyor ya da mevcut bir brief, senaryo veya tretman üzerinden çalışabiliyoruz."
   },
   {
     "num": "02",
@@ -40,7 +40,7 @@ const SERVICES_DATA = [
       "Hareketli Grafikler"
     ],
     "desc": "We create 2D and 3D animation for products, brands and stories. Our work includes product films, animated identities, title sequences and explainers. We develop the visual approach and build each piece from design and storyboards through to animation, compositing and sound.",
-    "descTR": "Ürünler, markalar ve hikâyeler için 2D ve 3D animasyonlar üretiyoruz. Ürün filmleri, hareketli marka kimlikleri, jenerikler ve açıklayıcı videolar hazırlıyoruz. Her projenin görsel yaklaşımını geliştiriyor; tasarım ve storyboard’dan animasyon, kompozit ve sese kadar tüm aşamalarını yürütüyoruz."
+    "descTR": "Ürünler, markalar ve hikâyeler için 2D ve 3D animasyonlar üretiyoruz. Ürün filmleri, hareketli marka kimlikleri, jenerikler ve açıklayıcı videolar hazırlıyoruz. Her projenin görsel yaklaşımını geliştiriyor; tasarım ve storyboard’dan animasyon, compositing ve sese kadar tüm aşamalarını yürütüyoruz."
   },
   {
     "num": "03",
@@ -74,7 +74,7 @@ const SERVICES_DATA = [
       "Post Prodüksiyon"
     ],
     "desc": "We use generative AI to develop visual concepts and produce images and film sequences. We can build an AI-led film or combine generated scenes with live action, animation and VFX. Art direction guides the process, while editing, compositing, colour and sound bring the material together into a finished piece.",
-    "descTR": "Görsel konseptler geliştirmek, görseller ve film sahneleri üretmek için üretken yapay zekâ kullanıyoruz. Yapay zekâ odaklı bir film hazırlayabiliyor ya da üretilen sahneleri canlı çekim, animasyon ve VFX ile birleştirebiliyoruz. Süreci sanat yönetimiyle yönlendiriyor; kurgu, kompozit, renk ve ses çalışmalarıyla tüm malzemeyi tamamlanmış bir filme dönüştürüyoruz."
+    "descTR": "Üretken yapay zekâyı görsel fikirler geliştirmek, görseller ve film sahneleri üretmek için kullanıyoruz. Filmleri ağırlıklı olarak yapay zekâyla üretebiliyor veya bu sahneleri gerçek çekimler, animasyon ve VFX ile bir araya getirebiliyoruz. Sanat yönetimiyle filmin görsel dilini belirliyor; kurgu, compositing, renk düzenleme ve ses çalışmalarıyla filmi tamamlıyoruz."
   },
   {
     "num": "05",
