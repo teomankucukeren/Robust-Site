@@ -146,12 +146,12 @@
       "TR": "2019’da İstanbul’da kurulan "
 },
     'about.leadPost': {
-      "EN": " is a creative production studio working with brands and agencies across film, animation and design.",
-      "TR": ", film, animasyon ve tasarım alanlarında markalar ve ajanslarla çalışan bir kreatif prodüksiyon stüdyosudur."
+      "EN": " is a creative production studio driven by ideas and visual storytelling.",
+      "TR": ", fikirlerin ve görsel anlatının yön verdiği bir kreatif prodüksiyon stüdyosudur."
 },
     'about.body': {
-      "EN": "We create films, campaign content, animation and visual identities. We develop ideas for brands and bring them to life, and turn agency creative briefs into finished work. Depending on the project, our role spans creative development, design, production and post-production.",
-      "TR": "Filmler, kampanya içerikleri, animasyonlar ve görsel kimlikler üretiyoruz. Markalar için fikir geliştirip hayata geçiriyor, ajansların kreatif brief’lerini tamamlanmış projelere dönüştürüyoruz. Projenin ihtiyaçlarına göre kreatif geliştirme, tasarım, prodüksiyon ve post prodüksiyon aşamalarını üstleniyoruz."
+      "EN": "We work across creative development, production, and post-production, creating films and experiences with a clear point of view. From brand films and digital campaigns to animation and motion-led work, we develop ideas, build their visual worlds, and carry them through every stage of production.",
+      "TR": "Kreatif geliştirmeden prodüksiyon ve post-prodüksiyona kadar tüm süreci üstleniyoruz. Net bir bakış açısına ve kendine özgü bir görsel dile sahip işler üretiyoruz. Marka filmleri ve dijital kampanyalardan animasyon ve motion design projelerine kadar fikirleri geliştiriyor, görsel dünyalarını kuruyor ve üretimin her aşamasını yürütüyoruz."
 },
     // TR çevirisi henüz onaylanmadı — boş kaldığı sürece paragraf Türkçede render edilmez.
     'about.body2': {
