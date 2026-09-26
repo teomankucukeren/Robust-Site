@@ -126,7 +126,7 @@ function Hero({ setView, tw = {} }) {
       WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%)',
       maskImage: 'linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%)'
     } }),
-    React.createElement('div', { ref: contentRef, style: {
+    React.createElement('div', { ref: contentRef, className: 'hero-content', style: {
       position: 'relative', zIndex: 4, textAlign: 'left', padding: '0 var(--gutter)', width: '100%',
       maxWidth: '1400px', marginTop: '-30px', opacity: loaded ? 1 : 0,
       transition: 'opacity 1.1s cubic-bezier(0.16,1,0.3,1)', willChange: 'transform, opacity'
