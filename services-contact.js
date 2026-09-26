@@ -44,8 +44,8 @@ const SERVICES_DATA = [
   },
   {
     "num": "03",
-    "title": "Visual Design / Art Direction",
-    "titleTR": "Görsel Tasarım / Art Direction",
+    "title": "Visual Design & Art Direction",
+    "titleTR": "Görsel Tasarım & Art Direction",
     "tags": [
       "Identity",
       "Typography",
