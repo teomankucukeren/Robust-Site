@@ -9,6 +9,9 @@ const {
 function About() {
   const [lang] = useLang();
   const t = k => rbT(k, lang);
+  const leadPost = t('about.leadPost').replace(/\u00a0/g, ' ').replace(/^[, ]+/, '');
+  const leadBreakTerm = lang === 'TR' ? 'bir kreatif' : 'by ideas';
+  const leadBreakIndex = leadPost.indexOf(leadBreakTerm);
   return /*#__PURE__*/React.createElement("section", {
     id: "about",
     className: "gutter shell about-grid"
@@ -128,7 +131,7 @@ function About() {
     className: "about-lead"
   }, t('about.leadPre'), /*#__PURE__*/React.createElement("span", {
     className: "accent"
-  }, lang === 'TR' ? "Robust," : "Robust"), /*#__PURE__*/React.createElement("br", null), t('about.leadPost').replace(/^[, ]+/, ''))), /*#__PURE__*/React.createElement(Reveal, {
+  }, lang === 'TR' ? "Robust," : "Robust"), /*#__PURE__*/React.createElement("br", null), leadBreakIndex < 0 ? leadPost : leadPost.slice(0, leadBreakIndex), leadBreakIndex >= 0 && /*#__PURE__*/React.createElement("br", null), leadBreakIndex >= 0 && leadPost.slice(leadBreakIndex))), /*#__PURE__*/React.createElement(Reveal, {
     delay: 0.22
   }, /*#__PURE__*/React.createElement("p", {
     className: "body-text",
