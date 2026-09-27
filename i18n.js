@@ -146,8 +146,8 @@
       "TR": "2019’da İstanbul’da kurulan "
 },
     'about.leadPost': {
-      "EN": " is a creative production studio driven by\u00a0ideas and visual storytelling.",
-      "TR": ", fikirlerin ve görsel anlatının yön verdiği bir\u00a0kreatif prodüksiyon stüdyosudur."
+      "EN": " is a creative production studio driven by ideas and visual storytelling.",
+      "TR": ", fikirlerin ve görsel anlatının yön verdiği bir kreatif prodüksiyon stüdyosudur."
 },
     'about.body': {
       "EN": "We work across creative development, production, and post-production, creating films and experiences with a clear point of view. From brand films and digital campaigns to animation and motion-led work, we develop ideas, build their visual worlds, and carry them through every stage of production.",
