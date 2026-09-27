@@ -146,7 +146,7 @@
       "TR": "2019’da İstanbul’da kurulan "
 },
     'about.leadPost': {
-      "EN": " is a\u00a0creative production studio driven by\u00a0ideas and visual storytelling.",
+      "EN": " is a creative production studio driven by\u00a0ideas and visual storytelling.",
       "TR": ", fikirlerin ve görsel anlatının yön verdiği bir\u00a0kreatif prodüksiyon stüdyosudur."
 },
     'about.body': {
